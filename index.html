@@ -1,0 +1,840 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RBWR — Weekly Parlay Ledger</title>
+<meta name="description" content="Six seasons of weekly college football parlay picks, records and trends for Ross, Adam, AJ and Kev.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@400;700;900&family=Space+Grotesk:wght@400;500;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ground:#0D1714;
+  --panel:#13201C;
+  --panel2:#1A2A24;
+  --line:#26382F;
+  --line2:#33493E;
+  --ink:#E9F0EA;
+  --ink2:#9DB2A6;
+  --ink3:#68806F;
+  --bone:#F3ECD8;
+  --ross:#63A7D4;
+  --adam:#EFB53F;
+  --aj:#E0705C;
+  --kev:#8FD1B0;
+  --loss:#7E3B37;
+  --display:'Big Shoulders Display',Impact,'Haettenschweiler','Arial Narrow',sans-serif;
+  --body:'Space Grotesk',ui-sans-serif,system-ui,-apple-system,'Segoe UI',sans-serif;
+  --mono:'DM Mono',ui-monospace,'SF Mono',Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0;background:var(--ground);color:var(--ink);
+  font-family:var(--body);font-size:15px;line-height:1.5;
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:1180px;margin:0 auto;padding:0 20px}
+a{color:inherit}
+button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
+
+/* ---------- masthead ---------- */
+.top{border-bottom:1px solid var(--line);position:relative}
+.topbar{display:flex;justify-content:space-between;align-items:baseline;gap:16px;
+  padding:14px 0;font-family:var(--mono);font-size:11px;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--ink3)}
+.topbar b{color:var(--bone);font-weight:500;letter-spacing:.24em}
+
+.hero{padding:44px 0 26px}
+.kicker{font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--ink3);margin-bottom:18px}
+h1{
+  font-family:var(--display);font-weight:900;
+  font-size:clamp(38px,7.2vw,86px);line-height:.88;letter-spacing:-.01em;
+  text-transform:uppercase;margin:0;max-width:16ch;color:var(--bone);
+}
+h1 em{font-style:normal;color:var(--adam)}
+.dek{margin:20px 0 0;max-width:56ch;color:var(--ink2);font-size:15px}
+
+/* ---------- the grid ---------- */
+.gridwrap{padding:8px 0 40px}
+.gridhead{display:flex;justify-content:space-between;align-items:flex-end;
+  gap:20px;flex-wrap:wrap;margin-bottom:14px}
+.gridtitle{font-family:var(--mono);font-size:11px;letter-spacing:.18em;
+  text-transform:uppercase;color:var(--ink2)}
+.legend{display:flex;gap:16px;flex-wrap:wrap;font-family:var(--mono);font-size:11px;color:var(--ink3)}
+.legend span{display:flex;align-items:center;gap:6px}
+.swatch{width:11px;height:11px;border:1px solid var(--line2);display:inline-block}
+.swatch.on{background:var(--ink2);border-color:var(--ink2)}
+
+.gridscroll{overflow-x:auto;padding-bottom:10px;-webkit-overflow-scrolling:touch}
+.gridinner{display:flex;gap:0;min-width:min-content}
+.gnames{flex:0 0 auto;padding-right:10px;display:flex;flex-direction:column;gap:2px}
+.gname{height:20px;display:flex;align-items:center;justify-content:flex-end;
+  font-family:var(--mono);font-size:11px;color:var(--ink2);letter-spacing:.06em}
+.gruler{height:14px}
+.gcols{display:flex;gap:2px}
+.gcol{display:flex;flex-direction:column;gap:2px;position:relative;
+  background:none;padding:0;cursor:pointer;border-radius:1px}
+.gcol:focus-visible{outline:2px solid var(--bone);outline-offset:2px}
+.gcell{width:11px;height:20px;border:1px solid var(--line2);border-radius:1px}
+.gcell.w{border-color:transparent}
+.gcell.p{opacity:.55}
+.gcol.sweep::before{content:"";position:absolute;left:-2px;right:-2px;top:-5px;bottom:-3px;
+  background:rgba(243,236,216,.10);border-top:2px solid var(--bone);border-radius:2px}
+.gcol.sel::after{content:"";position:absolute;left:-2px;right:-2px;top:-5px;bottom:-3px;
+  border:1px solid var(--bone);border-radius:2px}
+.gcol:hover .gcell{filter:brightness(1.25)}
+.yrmark{position:absolute;top:100%;margin-top:6px;left:0;font-family:var(--mono);
+  font-size:10px;color:var(--ink3);letter-spacing:.1em;white-space:nowrap}
+.gcol.yrstart{margin-left:9px}
+.gridscroll .gcols{padding-bottom:22px}
+
+/* week detail */
+.weekcard{margin-top:22px;border:1px solid var(--line);background:var(--panel);
+  padding:16px 18px;display:none}
+.weekcard.show{display:block}
+.weekcard h3{margin:0 0 12px;font-family:var(--mono);font-size:11px;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--ink2);font-weight:400}
+.wlegs{display:grid;gap:8px;grid-template-columns:repeat(auto-fit,minmax(210px,1fr))}
+.wleg{display:flex;gap:10px;align-items:baseline;border-left:2px solid;padding-left:10px}
+.wleg .who{font-family:var(--mono);font-size:11px;width:34px;flex:0 0 34px;letter-spacing:.06em}
+.wleg .what{font-size:13px;color:var(--ink)}
+.wleg .what small{display:block;color:var(--ink3);font-family:var(--mono);font-size:11px}
+.wleg.lost .what{color:var(--ink3)}
+
+/* ---------- filters ---------- */
+.filters{position:sticky;top:0;z-index:20;background:rgba(13,23,20,.94);
+  backdrop-filter:blur(8px);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.filterrow{display:flex;gap:26px;flex-wrap:wrap;padding:12px 0}
+.fgroup{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.flabel{font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--ink3);margin-right:2px}
+.chip{font-family:var(--mono);font-size:11.5px;letter-spacing:.04em;padding:4px 9px;
+  border:1px solid var(--line2);color:var(--ink2);border-radius:2px;transition:.12s}
+.chip:hover{border-color:var(--ink3);color:var(--ink)}
+.chip[aria-pressed="true"]{background:var(--bone);border-color:var(--bone);color:#10201B;font-weight:500}
+.chip:focus-visible{outline:2px solid var(--bone);outline-offset:2px}
+
+/* ---------- sections ---------- */
+section{padding:44px 0;border-bottom:1px solid var(--line)}
+section:last-of-type{border-bottom:none}
+.shead{display:flex;align-items:baseline;gap:14px;margin-bottom:6px}
+.snum{font-family:var(--mono);font-size:11px;color:var(--ink3);letter-spacing:.1em}
+h2{font-family:var(--display);font-weight:700;text-transform:uppercase;
+  font-size:clamp(24px,3.4vw,34px);line-height:1;letter-spacing:.01em;margin:0;color:var(--bone)}
+.snote{color:var(--ink3);font-size:13px;margin:0 0 24px;max-width:62ch}
+
+/* standings */
+.cards{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
+.card{border:1px solid var(--line);background:var(--panel);padding:16px 16px 14px;position:relative}
+.card::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--c)}
+.card.dim{opacity:.42}
+.card .nm{font-family:var(--display);font-size:30px;font-weight:900;text-transform:uppercase;
+  line-height:1;color:var(--c);letter-spacing:.01em}
+.card .rec{font-family:var(--mono);font-size:23px;margin-top:8px;color:var(--ink)}
+.card .pct{font-family:var(--mono);font-size:12px;color:var(--ink2);margin-top:2px}
+.mini{margin-top:12px;border-top:1px solid var(--line);padding-top:10px;display:grid;gap:5px}
+.mini div{display:flex;justify-content:space-between;gap:10px;font-family:var(--mono);font-size:11.5px;color:var(--ink3)}
+.mini div b{color:var(--ink2);font-weight:400}
+
+/* chart */
+.chartbox{border:1px solid var(--line);background:var(--panel);padding:18px 8px 8px}
+.chartbox svg{display:block;width:100%;height:auto}
+.chartlegend{display:flex;gap:18px;flex-wrap:wrap;padding:10px 12px 6px;
+  font-family:var(--mono);font-size:11.5px;color:var(--ink2)}
+.chartlegend button{display:flex;align-items:center;gap:7px;opacity:.45;transition:.12s}
+.chartlegend button.on{opacity:1}
+.chartlegend i{width:14px;height:3px;display:block;background:currentColor}
+
+/* matrices */
+.mats{display:grid;gap:28px;grid-template-columns:repeat(auto-fit,minmax(280px,1fr))}
+.mat h3{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--ink2);font-weight:400;margin:0 0 10px}
+table{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:12px}
+th{font-weight:400;color:var(--ink3);text-align:right;padding:6px 8px;
+  border-bottom:1px solid var(--line);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;
+  white-space:nowrap}
+th:first-child{text-align:left}
+td{padding:6px 8px;text-align:right;border-bottom:1px solid rgba(38,56,47,.6);color:var(--ink2);white-space:nowrap}
+td:first-child{text-align:left;color:var(--ink)}
+tbody tr:hover td{background:rgba(255,255,255,.025)}
+.cell{position:relative}
+.cell .fill{position:absolute;left:0;top:0;bottom:0;background:currentColor;opacity:.16}
+.cell span{position:relative}
+.hi{color:var(--bone)}
+.dimcol{opacity:.4}
+
+/* sortable */
+th.sortable{cursor:pointer;user-select:none}
+th.sortable:hover{color:var(--ink)}
+th .arw{opacity:.5;font-size:9px}
+
+/* oddities */
+.odds{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(230px,1fr))}
+.odd{border:1px solid var(--line);background:var(--panel);padding:14px 15px}
+.odd .lab{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3)}
+.odd .val{font-family:var(--display);font-weight:700;font-size:26px;line-height:1.05;
+  text-transform:uppercase;color:var(--bone);margin-top:6px}
+.odd .sub{font-family:var(--mono);font-size:11.5px;color:var(--ink2);margin-top:4px}
+
+/* log */
+.logtools{display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin-bottom:14px}
+input[type=search]{font-family:var(--mono);font-size:12.5px;background:var(--panel);
+  border:1px solid var(--line2);color:var(--ink);padding:7px 11px;border-radius:2px;min-width:220px}
+input[type=search]:focus{outline:2px solid var(--bone);outline-offset:1px}
+.count{font-family:var(--mono);font-size:11.5px;color:var(--ink3)}
+.tablescroll{overflow-x:auto;border:1px solid var(--line)}
+.tablescroll table{min-width:640px}
+.tablescroll th{background:var(--panel2);position:sticky;top:0}
+.res{font-weight:500}
+.res.W{color:var(--adam)}
+.res.L{color:#B3706B}
+.res.P{color:var(--ink3)}
+.more{margin-top:14px}
+.more button{font-family:var(--mono);font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;
+  border:1px solid var(--line2);padding:8px 16px;color:var(--ink2)}
+.more button:hover{border-color:var(--ink3);color:var(--ink)}
+
+.empty{padding:30px 4px;color:var(--ink3);font-family:var(--mono);font-size:12.5px}
+
+footer{padding:32px 0 60px;color:var(--ink3);font-family:var(--mono);font-size:11px;
+  letter-spacing:.06em;line-height:1.8}
+
+@media (max-width:640px){
+  .hero{padding:30px 0 20px}
+  section{padding:34px 0}
+  .filterrow{gap:14px}
+}
+@media (prefers-reduced-motion:reduce){
+  *{transition:none!important;animation:none!important}
+}
+</style>
+</head>
+<body>
+
+<div class="top">
+  <div class="wrap">
+    <div class="topbar">
+      <b>RBWR</b>
+      <span id="stamp">Weekly parlay ledger</span>
+    </div>
+  </div>
+  <div class="wrap hero">
+    <div class="kicker">Ross · Adam · AJ · Kev — one pick each, every week since 2020</div>
+    <h1 id="heroline">Six seasons.<br>91 Saturdays.<br>The parlay cashed <em>—</em>.</h1>
+    <p class="dek" id="herodek"></p>
+  </div>
+
+  <div class="wrap gridwrap">
+    <div class="gridhead">
+      <div class="gridtitle" id="gridtitle">Every leg, every week</div>
+      <div class="legend">
+        <span><i class="swatch on"></i> covered</span>
+        <span><i class="swatch"></i> lost</span>
+        <span><i class="swatch" style="border-style:dashed"></i> push</span>
+        <span style="color:var(--bone)"><i class="swatch" style="background:rgba(243,236,216,.35);border-color:var(--bone)"></i> parlay cashed</span>
+      </div>
+    </div>
+    <div class="gridscroll">
+      <div class="gridinner">
+        <div class="gnames" id="gnames"></div>
+        <div class="gcols" id="gcols"></div>
+      </div>
+    </div>
+    <div class="weekcard" id="weekcard"></div>
+  </div>
+</div>
+
+<div class="filters">
+  <div class="wrap filterrow" id="filters"></div>
+</div>
+
+<main class="wrap">
+
+  <section>
+    <div class="shead"><span class="snum">01</span><h2>Standings</h2></div>
+    <p class="snote">Win percentage leaves pushes out of the denominator, so a 46&#8209;44&#8209;1 line reads as 51.1%. Streaks count consecutive weeks, ignoring pushes.</p>
+    <div class="cards" id="cards"></div>
+  </section>
+
+  <section>
+    <div class="shead"><span class="snum">02</span><h2>The long haul</h2></div>
+    <p class="snote">Running win percentage after each pick. Early swings are noise — the interesting part is where the lines separate and stay separated.</p>
+    <div class="chartbox">
+      <div id="chart"></div>
+      <div class="chartlegend" id="chartlegend"></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="shead"><span class="snum">03</span><h2>What works for who</h2></div>
+    <p class="snote">Win percentage by pick shape. Cell shading tracks the rate; the small figures are the raw record. Thin samples lie, so the count is always shown.</p>
+    <div class="mats" id="mats"></div>
+  </section>
+
+  <section>
+    <div class="shead"><span class="snum">04</span><h2>Season by season</h2></div>
+    <p class="snote">Every man's year, side by side.</p>
+    <div id="seasonmat"></div>
+  </section>
+
+  <section>
+    <div class="shead"><span class="snum">05</span><h2>Teams</h2></div>
+    <p class="snote">Every school anyone has laid money on. Totals count for both teams in the game. Sort any column.</p>
+    <div class="logtools">
+      <input type="search" id="teamsearch" placeholder="Find a school" aria-label="Find a school">
+      <span class="count" id="teamcount"></span>
+    </div>
+    <div class="tablescroll"><table id="teamtable"></table></div>
+    <div class="more"><button id="teammore">Show all</button></div>
+  </section>
+
+  <section>
+    <div class="shead"><span class="snum">06</span><h2>Notes for the group chat</h2></div>
+    <p class="snote">Whatever the current filter is pointed at.</p>
+    <div class="odds" id="odds"></div>
+  </section>
+
+  <section>
+    <div class="shead"><span class="snum">07</span><h2>The ledger</h2></div>
+    <p class="snote">Every pick on record. "Margin" is how far the result landed from the number.</p>
+    <div class="logtools">
+      <input type="search" id="logsearch" placeholder="Search team, picker, season" aria-label="Search the ledger">
+      <span class="count" id="logcount"></span>
+    </div>
+    <div class="tablescroll"><table id="logtable"></table></div>
+    <div class="more"><button id="logmore">Show more</button></div>
+  </section>
+
+</main>
+
+<footer class="wrap">
+  <div>RBWR — weekly college football parlay, 2020 to present.</div>
+  <div id="source">Loading…</div>
+  <div>Data column order: year, week, name, type, team, points, result, diff.</div>
+</footer>
+
+<script>
+/* ============================ data ============================ */
+/* Optional: paste a published-CSV URL here to read the sheet straight from the
+   browser. Leave blank to use picks.csv sitting next to this file (recommended —
+   see the GitHub Action in .github/workflows/sync-picks.yml). */
+const SHEET_CSV_URL = "";
+
+const EMBEDDED = [[2020,1,"Adam","Dog","Georgia Tech",12.5,"W",16,["Georgia Tech"]],[2020,1,"Kev","Favorite","Kansas",7.0,"L",23,["Kansas"]],[2020,1,"AJ","Favorite","Notre Dame",20.5,"L",7,["Notre Dame"]],[2020,1,"Ross","Favorite","Pitt",27.0,"W",28,["Pitt"]],[2020,2,"Ross","Over","Appalachian State / Marshall",59.0,"L",25,["Appalachian State","Marshall"]],[2020,2,"Kev","Dog","Boston College",6.0,"W",26,["Boston College"]],[2020,2,"Adam","Dog","Georgia Tech",7.5,"L",21,["Georgia Tech"]],[2020,2,"AJ","Favorite","Oklahoma State",23.0,"L",14,["Oklahoma State"]],[2020,3,"AJ","Favorite","Alabama",27.5,"L",8,["Alabama"]],[2020,3,"Adam","Favorite","Auburn",7.5,"W",8,["Auburn"]],[2020,3,"Ross","Favorite","Liberty",7.0,"L",2,["Liberty"]],[2020,3,"Kev","Dog","Mississippi State",17.0,"W",27,["Mississippi State"]],[2020,4,"Ross","Dog","Arkansas",17.0,"W",24,["Arkansas"]],[2020,4,"Adam","Favorite","Oklahoma State",22.0,"W",18,["Oklahoma State"]],[2020,4,"AJ","Favorite","Oklahoma",7.0,"L",14,["Oklahoma"]],[2020,4,"Kev","Favorite","SMU",0.0,"W",3,["SMU"]],[2020,5,"AJ","Under","Arkansas / Auburn",48.0,"L",10,["Arkansas","Auburn"]],[2020,5,"Ross","Favorite","Florida",6.5,"L",9,["Florida"]],[2020,5,"Adam","Favorite","Georgia",12.0,"W",11,["Georgia"]],[2020,5,"Kev","Dog","Miami",14.0,"L",11,["Miami"]],[2020,6,"Kev","Over","Navy / East Carolina",55.5,"L",6,["Navy","East Carolina"]],[2020,6,"Adam","Favorite","Notre Dame",16.5,"L",12,["Notre Dame"]],[2020,6,"AJ","Over","Pitt / Miami",47.5,"W",3,["Pitt","Miami"]],[2020,6,"Ross","Favorite","UCF",3.0,"L",4,["UCF"]],[2020,7,"AJ","Favorite","Alabama",21.0,"W",10,["Alabama"]],[2020,7,"Kev","Dog","Rutgers",13.5,"W",25,["Rutgers"]],[2020,7,"Adam","Favorite","Troy",2.5,"L",5,["Troy"]],[2020,7,"Ross","Favorite","North Carolina",14.0,"W",13,["North Carolina"]],[2020,8,"AJ","Favorite","Clemson",24.5,"L",19,["Clemson"]],[2020,8,"Kev","Favorite","Oklahoma State",3.5,"L",4,["Oklahoma State"]],[2020,8,"Adam","Favorite","Purdue",7.5,"L",1,["Purdue"]],[2020,8,"Ross","Favorite","North Carolina",7.0,"L",10,["North Carolina"]],[2020,9,"Kev","Dog","Boise State",3.5,"L",31,["Boise State"]],[2020,9,"Adam","Favorite","Michigan",3.0,"L",20,["Michigan"]],[2020,9,"AJ","Favorite","Oregon",8.0,"W",13,["Oregon"]],[2020,9,"Ross","Favorite","USC",11.0,"L",10,["USC"]],[2020,10,"AJ","Dog","Arizona",14.0,"W",10,["Arizona"]],[2020,10,"Kev","Over","East Carolina / Cincinnati",55.5,"W",17,["East Carolina","Cincinnati"]],[2020,10,"Adam","Favorite","Oregon",10.0,"W",4,["Oregon"]],[2020,10,"Ross","Favorite","Rutgers",7.0,"L",10,["Rutgers"]],[2020,11,"Adam","Favorite","Cincinnati",5.5,"L",3,["Cincinnati"]],[2020,11,"Ross","Favorite","Iowa State",11.0,"W",34,["Iowa State"]],[2020,11,"Kev","Over","Liberty / NC State",66.0,"L",37,["Liberty","NC State"]],[2020,11,"AJ","Over","Michigan / Rutgers",52.5,"W",47,["Michigan","Rutgers"]],[2020,12,"AJ","Favorite","Alabama",24.0,"W",5,["Alabama"]],[2020,12,"Kev","Over","Clemson / Pitt",55.0,"W",14,["Clemson","Pitt"]],[2020,12,"Ross","Over","Michigan / Penn State",58.0,"L",14,["Michigan","Penn State"]],[2020,12,"Adam","Favorite","Oregon",13.0,"L",16,["Oregon"]],[2020,13,"AJ","Favorite","Clemson",11.5,"L",5,["Clemson"]],[2020,13,"Kev","Favorite","Iowa State",6.5,"W",29,["Iowa State"]],[2020,13,"Adam","Favorite","NC State",6.5,"W",4,["NC State"]],[2020,13,"Ross","Favorite","Oklahoma State",1.0,"L",8,["Oklahoma State"]],[2020,14,"Kev","Over","Arizona State / Arizona",55.0,"W",22,["Arizona State","Arizona"]],[2020,14,"Adam","Dog","Mississippi State",6.5,"L",8,["Mississippi State"]],[2020,14,"AJ","Over","Northwestern / Illinois",40.0,"L",2,["Northwestern","Illinois"]],[2020,14,"Ross","Dog","Utah",1.0,"W",18,["Utah"]],[2020,15,"AJ","Favorite","Alabama",15.5,"L",10,["Alabama"]],[2020,15,"Kev","Over","Clemson / Notre Dame",60.0,"L",17,["Clemson","Notre Dame"]],[2020,15,"Ross","Dog","Notre Dame",10.5,"L",14,["Notre Dame"]],[2020,15,"Adam","Dog","Tulsa",14.0,"W",11,["Tulsa"]],[2021,1,"Kev","Favorite","Fresno State",27.5,"W",28,["Fresno State"]],[2021,1,"Ross","Over","Nebraska / Illinois",54.0,"L",2,["Nebraska","Illinois"]],[2021,1,"Adam","Favorite","UCLA",17.5,"W",17,["UCLA"]],[2021,1,"AJ","Under","UCLA / Hawaii",68.0,"W",14,["UCLA","Hawaii"]],[2021,2,"Kev","Favorite","Iowa",3.5,"W",25,["Iowa"]],[2021,2,"AJ","Over","LSU / UCLA",64.5,"W",1,["LSU","UCLA"]],[2021,2,"Ross","Favorite","San Diego State",31.5,"L",14,["San Diego State"]],[2021,2,"Adam","Favorite","Wisconsin",5.5,"L",12,["Wisconsin"]],[2021,3,"AJ","Favorite","Coastal Carolina",25.5,"W",1,["Coastal Carolina"]],[2021,3,"Adam","Dog","Iowa",4.5,"W",15,["Iowa"]],[2021,3,"Kev","Favorite","Rutgers",1.5,"W",9,["Rutgers"]],[2021,3,"Ross","Favorite","Wyoming",6.5,"W",1,["Wyoming"]],[2021,4,"Ross","Favorite","Boise State",3.0,"L",4,["Boise State"]],[2021,4,"Adam","Favorite","Cincinnati",4.0,"W",10,["Cincinnati"]],[2021,4,"Kev","Favorite","Notre Dame",7.0,"W",7,["Notre Dame"]],[2021,4,"AJ","Favorite","USC",8.0,"W",23,["USC"]],[2021,5,"Adam","Favorite","Air Force",4.0,"W",20,["Air Force"]],[2021,5,"AJ","Over","Michigan / Rutgers",49.5,"L",17,["Michigan","Rutgers"]],[2021,5,"Kev","Over","Oklahoma / West Virginia",55.5,"L",27,["Oklahoma","West Virginia"]],[2021,5,"Ross","Favorite","UCLA",4.5,"W",24,["UCLA"]],[2021,6,"Adam","Dog","Boston College",15.0,"W",9,["Boston College"]],[2021,6,"AJ","Under","Louisville / Wake Forest",62.0,"L",9,["Louisville","Wake Forest"]],[2021,6,"Kev","Dog","Notre Dame",2.0,"L",9,["Notre Dame"]],[2021,6,"Ross","Favorite","Oregon",8.0,"L",15,["Oregon"]],[2021,7,"Adam","Favorite","Air Force",5.0,"W",5,["Air Force"]],[2021,7,"AJ","Favorite","Florida",39.0,"W",3,["Florida"]],[2021,7,"Kev","Under","Ohio State / Maryland",71.0,"L",12,["Ohio State","Maryland"]],[2021,7,"Ross","Favorite","Wisconsin",10.0,"W",14,["Wisconsin"]],[2021,8,"Adam","Dog","Air Force",4.0,"W",11,["Air Force"]],[2021,8,"AJ","Favorite","Alabama",17.0,"W",23,["Alabama"]],[2021,8,"Ross","Favorite","Florida",11.5,"L",19,["Florida"]],[2021,8,"Kev","Favorite","Michigan State",4.5,"W",1,["Michigan State"]],[2021,9,"Adam","Favorite","Air Force",3.5,"L",10,["Air Force"]],[2021,9,"AJ","Favorite","Alabama",25.0,"W",3,["Alabama"]],[2021,9,"Ross","Favorite","Ohio State",20.0,"W",27,["Ohio State"]],[2021,9,"Kev","Favorite","Pitt",3.0,"W",7,["Pitt"]],[2021,10,"Kev","Over","Georgia / Florida",51.0,"L",10,["Georgia","Florida"]],[2021,10,"Ross","Dog","Iowa",3.5,"L",16,["Iowa"]],[2021,10,"AJ","Favorite","Rutgers",0.0,"W",6,["Rutgers"]],[2021,10,"Adam","Favorite","Wake Forest",15.5,"W",22,["Wake Forest"]],[2021,11,"Adam","Favorite","Air Force",2.5,"L",10,["Air Force"]],[2021,11,"Ross","Favorite","Fresno State",4.5,"L",31,["Fresno State"]],[2021,11,"Kev","Favorite","Oklahoma State",3.5,"W",18,["Oklahoma State"]],[2021,11,"AJ","Under","Wake Forest / North Carolina",76.5,"L",36,["Wake Forest","North Carolina"]],[2021,12,"Adam","Over","Coastal Carolina / Georgia State",57.0,"W",25,["Coastal Carolina","Georgia State"]],[2021,12,"Ross","Dog","Minnesota",5.0,"P",0,["Minnesota"]],[2021,12,"Kev","Dog","New Mexico State",51.5,"L",5,["New Mexico State"]],[2021,12,"AJ","Favorite","Oklahoma",5.5,"L",13,["Oklahoma"]],[2021,13,"AJ","Favorite","Alabama",20.5,"L",14,["Alabama"]],[2021,13,"Ross","Dog","Navy",4.0,"W",1,["Navy"]],[2021,13,"Adam","Over","Texas / West Virginia",56.0,"L",2,["Texas","West Virginia"]],[2021,13,"Kev","Favorite","UCLA",3.0,"W",26,["UCLA"]],[2021,14,"Adam","Favorite","BYU",6.5,"L",3,["BYU"]],[2021,14,"AJ","Favorite","Florida",0.0,"W",4,["Florida"]],[2021,14,"Ross","Favorite","Notre Dame",19.5,"W",12,["Notre Dame"]],[2021,14,"Kev","Favorite","Oregon",6.5,"W",2,["Oregon"]],[2021,15,"Kev","Dog","Louisiana",2.5,"W",11,["Louisiana"]],[2021,15,"AJ","Favorite","Montana",3.5,"W",12,["Montana"]],[2021,15,"Ross","Dog","Oregon",3.0,"L",25,["Oregon"]],[2021,15,"Adam","Favorite","Pitt",3.5,"W",21,["Pitt"]],[2022,0,"Adam","Dog","Charlotte",7.5,"L",23,["Charlotte"]],[2022,0,"AJ","Dog","Hawaii",9.0,"L",44,["Hawaii"]],[2022,0,"Ross","Under","Nebraska / Northwestern",50.5,"L",9,["Nebraska","Northwestern"]],[2022,0,"Kev","Dog","UConn",26.5,"W",16,["UConn"]],[2022,1,"Ross","Favorite","LSU",2.5,"L",4,["LSU"]],[2022,1,"AJ","Over","Notre Dame / Ohio State",59.5,"L",29,["Notre Dame","Ohio State"]],[2022,1,"Adam","Favorite","South Carolina",12.5,"W",8,["South Carolina"]],[2022,1,"Kev","Favorite","North Carolina",0.5,"W",1,["North Carolina"]],[2022,2,"Adam","Favorite","Arkansas",8.5,"W",5,["Arkansas"]],[2022,2,"AJ","Over","Iowa / Iowa State",40.0,"L",23,["Iowa","Iowa State"]],[2022,2,"Ross","Favorite","Mississippi State",11.0,"W",11,["Mississippi State"]],[2022,2,"Kev","Favorite","USC",8.5,"W",4,["USC"]],[2022,3,"Kev","Dog","Nevada",24.0,"L",3,["Nevada"]],[2022,3,"Adam","Favorite","Purdue",0.0,"L",4,["Purdue"]],[2022,3,"AJ","Over","Vanderbilt / Northern Illinois",60.0,"W",6,["Vanderbilt","Northern Illinois"]],[2022,3,"Ross","Dog","Western Kentucky",6.5,"W",4,["Western Kentucky"]],[2022,4,"Ross","Favorite","Clemson",7.0,"L",1,["Clemson"]],[2022,4,"Kev","Over","Iowa / Rutgers",34.0,"W",3,["Iowa","Rutgers"]],[2022,4,"AJ","Over","Rice / Houston",52.0,"W",9,["Rice","Houston"]],[2022,4,"Adam","Favorite","USC",6.0,"L",3,["USC"]],[2022,5,"AJ","Over","Cincinnati / Tulsa",58.5,"L",7,["Cincinnati","Tulsa"]],[2022,5,"Ross","Over","Clemson / NC State",44.0,"W",6,["Clemson","NC State"]],[2022,5,"Kev","Over","Fresno State / UConn",52.0,"L",19,["Fresno State","UConn"]],[2022,5,"Adam","Dog","Wake Forest",7.0,"W",3,["Wake Forest"]],[2022,6,"Kev","Favorite","Buffalo",2.5,"W",28,["Buffalo"]],[2022,6,"AJ","Under","Texas Tech / Oklahoma State",68.0,"L",4,["Texas Tech","Oklahoma State"]],[2022,6,"Ross","Favorite","Utah",4.0,"L",14,["Utah"]],[2022,6,"Adam","Favorite","Wisconsin",10.0,"W",25,["Wisconsin"]],[2022,7,"Adam","Favorite","Arkansas",0.0,"W",17,["Arkansas"]],[2022,7,"AJ","Favorite","Clemson",3.5,"W",2,["Clemson"]],[2022,7,"Kev","Favorite","Mississippi State",4.0,"L",14,["Mississippi State"]],[2022,7,"Ross","Dog","South Florida",12.0,"L",2,["South Florida"]],[2022,8,"Adam","Over","BYU / Liberty",58.0,"L",3,["BYU","Liberty"]],[2022,8,"Kev","Dog","Ole Miss",1.5,"L",24,["Ole Miss"]],[2022,8,"AJ","Favorite","Texas",6.0,"L",13,["Texas"]],[2022,8,"Ross","Dog","UCLA",6.5,"L",9,["UCLA"]],[2022,9,"AJ","Favorite","Iowa",11.0,"W",9,["Iowa"]],[2022,9,"Kev","Dog","Oklahoma State",1.5,"L",47,["Oklahoma State"]],[2022,9,"Adam","Favorite","Syracuse",0.0,"L",18,["Syracuse"]],[2022,9,"Ross","Favorite","Wake Forest",3.5,"L",31,["Wake Forest"]],[2022,10,"AJ","Favorite","Iowa State",7.5,"W",9,["Iowa State"]],[2022,10,"Ross","Favorite","Texas",1.5,"W",5,["Texas"]],[2022,10,"Kev","Over","UCF / Memphis",58.5,"W",4,["UCF","Memphis"]],[2022,10,"Adam","Over","UConn / UMass",40.0,"L",3,["UConn","UMass"]],[2022,11,"Adam","Favorite","Liberty",14.0,"L",17,["Liberty"]],[2022,11,"Kev","Over","Missouri / Tennessee",56.5,"W",33,["Missouri","Tennessee"]],[2022,11,"AJ","Dog","Oklahoma State",1.5,"W",8,["Oklahoma State"]],[2022,11,"Ross","Over","Wisconsin / Iowa",34.5,"L",1,["Wisconsin","Iowa"]],[2022,12,"Adam","Favorite","Florida State",24.0,"W",8,["Florida State"]],[2022,12,"AJ","Favorite","Michigan State",10.0,"L",18,["Michigan State"]],[2022,12,"Ross","Favorite","Michigan",17.5,"L",16,["Michigan"]],[2022,12,"Kev","Dog","Oklahoma State",7.5,"L",8,["Oklahoma State"]],[2022,13,"Kev","Over","Arkansas / Missouri",55.5,"W",1,["Arkansas","Missouri"]],[2022,13,"Adam","Over","Cincinnati / Tulane",44.0,"W",7,["Cincinnati","Tulane"]],[2022,13,"AJ","Favorite","Clemson",14.5,"L",16,["Clemson"]],[2022,13,"Ross","Favorite","Kansas State",11.5,"W",8,["Kansas State"]],[2022,14,"AJ","Favorite","Michigan",17.0,"W",4,["Michigan"]],[2022,14,"Ross","Favorite","Troy",8.5,"W",10,["Troy"]],[2022,14,"Adam","Over","UCF / Tulane",56.5,"W",16,["UCF","Tulane"]],[2022,14,"Kev","Favorite","USC",2.5,"L",26,["USC"]],[2023,0,"Kev","Favorite","New Mexico State",7.0,"L",18,["New Mexico State"]],[2023,0,"AJ","Favorite","Notre Dame",20.5,"W",18,["Notre Dame"]],[2023,0,"Ross","Over","USC / San Jose State",66.0,"W",18,["USC","San Jose State"]],[2023,0,"Adam","Favorite","Vanderbilt",17.5,"L",11,["Vanderbilt"]],[2023,1,"AJ","Favorite","Alabama",39.5,"W",9,["Alabama"]],[2023,1,"Ross","Favorite","TCU",20.5,"L",24,["TCU"]],[2023,1,"Adam","Favorite","Washington State",10.5,"W",25,["Washington State"]],[2023,1,"Kev","Dog","Wyoming",14.0,"W",16,["Wyoming"]],[2023,2,"Adam","Favorite","Alabama",7.0,"L",17,["Alabama"]],[2023,2,"Kev","Over","Ohio / FAU",62.5,"L",36,["Ohio","FAU"]],[2023,2,"Ross","Favorite","Ole Miss",7.0,"W",10,["Ole Miss"]],[2023,2,"AJ","Dog","Tulsa",35.0,"W",2,["Tulsa"]],[2023,3,"Adam","Over","Kansas State / Missouri",47.0,"W",10,["Kansas State","Missouri"]],[2023,3,"Ross","Favorite","LSU",9.5,"W",17,["LSU"]],[2023,3,"AJ","Over","LSU / Mississippi State",54.5,"W",1,["LSU","Mississippi State"]],[2023,3,"Kev","Dog","Purdue",2.5,"L",13,["Purdue"]],[2023,4,"Kev","Favorite","Florida State",1.5,"W",5,["Florida State"]],[2023,4,"AJ","Favorite","Kansas",9.5,"W",2,["Kansas"]],[2023,4,"Adam","Over","Kansas / BYU",55.0,"W",10,["Kansas","BYU"]],[2023,4,"Ross","Favorite","Texas A&M",8.0,"W",9,["Texas A&M"]],[2023,5,"Ross","Favorite","Georgia Southern",6.5,"W",3,["Georgia Southern"]],[2023,5,"Adam","Dog","South Carolina",11.5,"L",10,["South Carolina"]],[2023,5,"AJ","Favorite","USC",21.5,"L",15,["USC"]],[2023,5,"Kev","Over","Virginia / Boston College",54.5,"L",4,["Virginia","Boston College"]],[2023,6,"Kev","Favorite","Georgia",14.5,"W",23,["Georgia"]],[2023,6,"AJ","Over","LSU / Missouri",64.0,"W",25,["LSU","Missouri"]],[2023,6,"Ross","Favorite","Michigan",19.5,"W",22,["Michigan"]],[2023,6,"Adam","Favorite","TCU",6.5,"L",20,["TCU"]],[2023,7,"Kev","Over","Georgia / Vanderbilt",55.5,"W",1,["Georgia","Vanderbilt"]],[2023,7,"Ross","Favorite","LSU",11.5,"W",18,["LSU"]],[2023,7,"AJ","Dog","Michigan State",4.5,"W",2,["Michigan State"]],[2023,7,"Adam","Favorite","North Carolina",3.5,"W",6,["North Carolina"]],[2023,8,"Kev","Over","Air Force / Navy",34.5,"L",12,["Air Force","Navy"]],[2023,8,"Ross","Favorite","Nebraska",11.5,"L",4,["Nebraska"]],[2023,8,"Adam","Favorite","Oklahoma",17.5,"L",15,["Oklahoma"]],[2023,8,"AJ","Favorite","USC",7.0,"L",9,["USC"]],[2023,9,"AJ","Favorite","Notre Dame",20.5,"W",30,["Notre Dame"]],[2023,9,"Kev","Favorite","Oklahoma",9.5,"L",15,["Oklahoma"]],[2023,9,"Adam","Favorite","Oregon State",3.0,"L",6,["Oregon State"]],[2023,9,"Ross","Under","Wisconsin / Ohio State",45.5,"W",11,["Wisconsin","Ohio State"]],[2023,10,"Kev","Dog","Army",17.5,"W",37,["Army"]],[2023,10,"Adam","Over","Kentucky / Mississippi State",45.5,"L",19,["Kentucky","Mississippi State"]],[2023,10,"AJ","Dog","Pitt",21.5,"W",4,["Pitt"]],[2023,10,"Ross","Over","USC / Washington",76.5,"W",17,["USC","Washington"]],[2023,11,"Adam","Favorite","Kansas",3.5,"L",7,["Kansas"]],[2023,11,"Kev","Favorite","Michigan",4.5,"W",4,["Michigan"]],[2023,11,"Ross","Under","Northwestern / Wisconsin",42.5,"W",8,["Northwestern","Wisconsin"]],[2023,11,"AJ","Favorite","UCLA",16.5,"L",27,["UCLA"]],[2023,12,"AJ","Favorite","Kansas State",9.5,"L",6,["Kansas State"]],[2023,12,"Kev","Favorite","Louisville",1.5,"W",5,["Louisville"]],[2023,12,"Adam","Favorite","Oklahoma State",6.5,"W",6,["Oklahoma State"]],[2023,12,"Ross","Dog","UNLV",2.5,"W",7,["UNLV"]],[2023,13,"Ross","Favorite","Kansas",7.0,"W",26,["Kansas"]],[2023,13,"AJ","Under","TCU / Oklahoma",63.5,"L",51,["TCU","Oklahoma"]],[2023,13,"Adam","Favorite","UNLV",2.5,"L",9,["UNLV"]],[2023,13,"Kev","Favorite","Utah",20.5,"L",15,["Utah"]],[2023,14,"Adam","Over","Florida State / Louisville",47.5,"L",26,["Florida State","Louisville"]],[2023,14,"AJ","Over","Georgia / Alabama",55.0,"L",4,["Georgia","Alabama"]],[2023,14,"Ross","Favorite","Texas",15.0,"W",13,["Texas"]],[2023,14,"Kev","Dog","UNLV",2.5,"L",22,["UNLV"]],[2024,1,"AJ","Favorite","Michigan",21.0,"L",1,["Michigan"]],[2024,1,"Kev","Over","Pitt / Kent State",55.5,"W",23,["Pitt","Kent State"]],[2024,1,"Ross","Dog","Stanford",9.0,"W",2,["Stanford"]],[2024,1,"Adam","Favorite","Virginia Tech",13.5,"L",21,["Virginia Tech"]],[2024,2,"Ross","Favorite","Kansas",5.5,"L",12,["Kansas"]],[2024,2,"Kev","Favorite","Navy",12.5,"W",15,["Navy"]],[2024,2,"AJ","Dog","Syracuse",2.5,"W",5,["Syracuse"]],[2024,2,"Adam","Favorite","Utah",14.5,"L",4,["Utah"]],[2024,3,"Ross","Favorite","Alabama",17.5,"W",15,["Alabama"]],[2024,3,"Kev","Dog","Boston College",16.5,"W",11,["Boston College"]],[2024,3,"Adam","Favorite","Indiana",3.0,"W",26,["Indiana"]],[2024,3,"AJ","Favorite","Minnesota",17.5,"W",10,["Minnesota"]],[2024,4,"AJ","Under","Florida / Mississippi State",58.5,"L",15,["Florida","Mississippi State"]],[2024,4,"Adam","Dog","Navy",9.0,"W",21,["Navy"]],[2024,4,"Kev","Favorite","Oklahoma State",2.5,"L",6,["Oklahoma State"]],[2024,4,"Ross","Favorite","Tennessee",6.5,"W",4,["Tennessee"]],[2024,5,"Kev","Over","Fordham / Monmouth",63.5,"W",21,["Fordham","Monmouth"]],[2024,5,"Ross","Favorite","Ohio State",23.5,"W",8,["Ohio State"]],[2024,5,"Adam","Favorite","Ole Miss",15.5,"L",19,["Ole Miss"]],[2024,5,"AJ","Favorite","UConn",5.5,"W",39,["UConn"]],[2024,6,"AJ","Over","Florida / UCF",62.0,"L",25,["Florida","UCF"]],[2024,6,"Kev","Dog","Minnesota",9.0,"W",16,["Minnesota"]],[2024,6,"Ross","Favorite","Ohio State",19.5,"W",9,["Ohio State"]],[2024,6,"Adam","Over","TCU / Houston",51.0,"L",2,["TCU","Houston"]],[2024,7,"AJ","Dog","Cincinnati",2.5,"W",9,["Cincinnati"]],[2024,7,"Adam","Favorite","Minnesota",3.5,"W",1,["Minnesota"]],[2024,7,"Ross","Favorite","Ohio State",3.0,"L",4,["Ohio State"]],[2024,7,"Kev","Favorite","Pitt",2.5,"L",1,["Pitt"]],[2024,8,"Ross","Favorite","Iowa",4.0,"L",16,["Iowa"]],[2024,8,"AJ","Dog","Maryland",7.5,"W",9,["Maryland"]],[2024,8,"Kev","Under","Oregon / Purdue",60.5,"W",26,["Oregon","Purdue"]],[2024,8,"Adam","Favorite","Wisconsin",7.5,"W",13,["Wisconsin"]],[2024,9,"Adam","Over","Texas / Vanderbilt",51.0,"P",1,["Texas","Vanderbilt"]],[2024,9,"AJ","Favorite","Notre Dame",14.0,"W",37,["Notre Dame"]],[2024,9,"Kev","Favorite","Michigan",4.5,"W",3,["Michigan"]],[2024,9,"Ross","Favorite","Boise State",3.5,"W",2,["Boise State"]],[2024,10,"Adam","Dog","Florida",14.5,"W",1,["Florida"]],[2024,10,"AJ","Favorite","Minnesota",3.0,"W",5,["Minnesota"]],[2024,10,"Kev","Favorite","Navy",10.5,"L",25,["Navy"]],[2024,10,"Ross","Over","Wisconsin / Iowa",41.5,"W",11,["Wisconsin","Iowa"]],[2024,11,"Adam","Over","Vanderbilt / South Carolina",45.5,"L",11,["Vanderbilt","South Carolina"]],[2024,11,"AJ","Favorite","TCU",10.5,"W",15,["TCU"]],[2024,11,"Kev","Under","Army / North Texas",62.5,"W",46,["Army","North Texas"]],[2024,11,"Ross","Favorite","Oklahoma",3.5,"L",11,["Oklahoma"]],[2024,12,"Adam","Under","Boise State / San Jose State",61.5,"L",2,["Boise State","San Jose State"]],[2024,12,"AJ","Dog","Michigan State",2.5,"L",20,["Michigan State"]],[2024,12,"Kev","Over","LSU / Florida",55.5,"L",13,["LSU","Florida"]],[2024,12,"Ross","Favorite","Oregon",13.5,"L",11,["Oregon"]],[2024,13,"AJ","Favorite","Ohio State",10.5,"W",13,["Ohio State"]],[2024,13,"Adam","Favorite","Alabama",13.5,"L",35,["Alabama"]],[2024,13,"Kev","Favorite","Colorado",2.5,"L",19,["Colorado"]],[2024,13,"Ross","Favorite","Notre Dame",14.0,"W",21,["Notre Dame"]],[2024,14,"AJ","Dog","Baylor",1.5,"W",30,["Baylor"]],[2024,14,"Adam","Dog","Syracuse",11.0,"W",16,["Syracuse"]],[2024,14,"Kev","Favorite","Arizona State",8.5,"W",34,["Arizona State"]],[2024,14,"Ross","Dog","South Carolina",3.0,"W",6,["South Carolina"]],[2024,15,"AJ","Dog","Penn State",3.5,"L",5,["Penn State"]],[2024,15,"Adam","Over","Clemson / SMU",55.5,"W",11,["Clemson","SMU"]],[2024,15,"Kev","Favorite","Arizona State",1.5,"W",25,["Arizona State"]],[2024,15,"Ross","Dog","Clemson",2.5,"W",6,["Clemson"]],[2025,0,"Adam","Favorite","Kansas",13.5,"W",11,["Kansas"]],[2025,0,"AJ","Under","Stanford / Hawaii",50.0,"W",7,["Stanford","Hawaii"]],[2025,0,"Kev","Favorite","Kansas State",3.0,"L",6,["Kansas State"]],[2025,0,"Ross","Over","Western Kentucky / Sam Houston State",60.5,"W",5,["Western Kentucky","Sam Houston State"]],[2025,1,"Kev","Dog","Baylor",1.0,"L",13,["Baylor"]],[2025,1,"AJ","Favorite","Penn State",43.0,"L",8,["Penn State"]],[2025,1,"Ross","Favorite","Georgia Tech",3.5,"W",4,["Georgia Tech"]],[2025,1,"Adam","Dog","Toledo",10.0,"W",2,["Toledo"]],[2025,2,"Adam","Over","Fresno State / Oregon State",45.0,"W",18,["Fresno State","Oregon State"]],[2025,2,"Ross","Dog","Western Kentucky",7.0,"L",17,["Western Kentucky"]],[2025,2,"AJ","Dog","Iowa",3.5,"W",1,["Iowa"]],[2025,2,"Kev","Favorite","Syracuse",6.5,"W",1,["Syracuse"]],[2025,3,"Adam","Favorite","Liberty",5.0,"L",15,["Liberty"]],[2025,3,"Ross","Favorite","Houston",4.0,"W",12,["Houston"]],[2025,3,"AJ","Dog","Arkansas",7.0,"W",1,["Arkansas"]],[2025,3,"Kev","Favorite","Georgia",3.5,"L",1,["Georgia"]],[2025,4,"Adam","Favorite","Utah",3.5,"L",28,["Utah"]],[2025,4,"AJ","Favorite","FIU",5.0,"L",27,["FIU"]],[2025,4,"Ross","Favorite","Wisconsin",10.0,"L",27,["Wisconsin"]],[2025,4,"Kev","Favorite","Buffalo",5.5,"L",10,["Buffalo"]],[2025,5,"Ross","Over","Ohio State / Washington",51.5,"L",32,["Ohio State","Washington"]],[2025,5,"Adam","Favorite","Penn State",3.5,"L",10,["Penn State"]],[2025,5,"AJ","Dog","UCLA",6.5,"W",4,["UCLA"]],[2025,5,"Kev","Favorite","Indiana",7.5,"L",3,["Indiana"]],[2025,6,"AJ","Favorite","Texas",5.5,"L",14,["Texas"]],[2025,6,"Adam","Favorite","Baylor",6.0,"L",7,["Baylor"]],[2025,6,"Ross","Favorite","Alabama",10.5,"W",6,["Alabama"]],[2025,6,"Kev","Favorite","Notre Dame",20.5,"W",1,["Notre Dame"]],[2025,7,"Kev","Favorite","Penn State",21.0,"L",23,["Penn State"]],[2025,7,"Ross","Favorite","Oregon",7.0,"L",17,["Oregon"]],[2025,7,"AJ","Over","Navy / Temple",52.0,"W",11,["Navy","Temple"]],[2025,7,"Adam","Favorite","Cincinnati",10.5,"L",2,["Cincinnati"]],[2025,8,"Ross","Dog","Purdue",3.0,"L",16,["Purdue"]],[2025,8,"Adam","Over","Georgia Tech / Duke",60.0,"L",15,["Georgia Tech","Duke"]],[2025,8,"AJ","Over","Army / Tulane",45.0,"L",4,["Army","Tulane"]],[2025,8,"Kev","Dog","USC",10.0,"P",1,["USC"]],[2025,9,"Adam","Favorite","Iowa State",2.5,"L",17,["Iowa State"]],[2025,9,"AJ","Favorite","Miami",29.0,"W",6,["Miami"]],[2025,9,"Ross","Dog","Tulsa",5.5,"W",4,["Tulsa"]],[2025,9,"Kev","Favorite","Virginia Tech",4.5,"W",2,["Virginia Tech"]],[2025,10,"Kev","Under","Navy / North Texas",65.5,"W",18,["Navy","North Texas"]],[2025,10,"Adam","Dog","Rice",14.0,"L",10,["Rice"]],[2025,10,"Ross","Favorite","Tennessee",3.0,"L",9,["Tennessee"]],[2025,10,"AJ","Favorite","Arkansas",4.5,"L",8,["Arkansas"]],[2025,11,"Kev","Favorite","Texas Tech",10.5,"W",12,["Texas Tech"]],[2025,11,"Ross","Favorite","Indiana",15.0,"L",12,["Indiana"]],[2025,11,"Adam","Favorite","Houston",1.0,"W",2,["Houston"]],[2025,11,"AJ","Dog","Auburn",6.5,"L",1,["Auburn"]],[2025,12,"Adam","Favorite","Georgia",6.5,"W",19,["Georgia"]],[2025,12,"AJ","Dog","Clemson",2.5,"W",4,["Clemson"]],[2025,12,"Kev","Over","Notre Dame / Pitt",53.5,"L",2,["Notre Dame","Pitt"]],[2025,12,"Ross","Favorite","USC",6.5,"L",2,["USC"]],[2025,13,"Ross","Dog","UCLA",10.5,"L",24,["UCLA"]],[2025,13,"AJ","Dog","Cincinnati",3.0,"L",9,["Cincinnati"]],[2025,13,"Kev","Under","Ohio State / Rutgers",55.5,"W",5,["Ohio State","Rutgers"]],[2025,13,"Adam","Dog","TCU",1.0,"W",4,["TCU"]],[2025,14,"Ross","Favorite","Indiana",28.5,"W",25,["Indiana"]],[2025,14,"AJ","Favorite","Miami",7.0,"W",24,["Miami"]],[2025,14,"Kev","Over","Miami / Pitt",49.0,"L",4,["Miami","Pitt"]],[2025,14,"Adam","Favorite","BYU",17.5,"W",3,["BYU"]],[2025,15,"Ross","Favorite","North Texas",2.0,"L",15,["North Texas"]],[2025,15,"AJ","Favorite","Ohio State",4.0,"L",7,["Ohio State"]],[2025,15,"Kev","Under","Alabama / Georgia",49.0,"W",14,["Alabama","Georgia"]],[2025,15,"Adam","Over","Indiana / Ohio State",47.0,"L",24,["Indiana","Ohio State"]]];
+const PLAYERS = ["Ross","Adam","AJ","Kev"];
+const COLOR = {Ross:"#63A7D4",Adam:"#EFB53F",AJ:"#E0705C",Kev:"#8FD1B0"};
+const TYPES = ["Favorite","Dog","Over","Under"];
+const ALIAS = {"GA Tech":"Georgia Tech","GaTech":"Georgia Tech","Okie State":"Oklahoma State",
+"ISU":"Iowa State","Kstate":"Kansas State","KState":"Kansas State","Mich State":"Michigan State",
+"Cincinnatti":"Cincinnati","Fresno":"Fresno State","Fresno St.":"Fresno State","Clemson (1H)":"Clemson",
+"Bama":"Alabama","UNT":"North Texas","WVU":"West Virginia","Louisiana Laf":"Louisiana",
+"San Jose St":"San Jose State","Kent St":"Kent State","Vandy":"Vanderbilt","UVA":"Virginia",
+"FSU":"Florida State","VA Tech":"Virginia Tech","NIU":"Northern Illinois","ASU":"Arizona State",
+"ECU":"East Carolina","USF":"South Florida","GA State":"Georgia State","App State":"Appalachian State",
+"UNC":"North Carolina"};
+
+let PICKS = [];
+
+function fromRows(rows){
+  return rows.map(r=>({y:r[0],w:r[1],n:r[2],t:r[3],team:r[4],pts:r[5],r:r[6],d:r[7],tm:r[8]}));
+}
+
+/* --- CSV handling (quoted fields, BOM, CRLF, blank rows) --- */
+function splitCSVLine(line){
+  const out=[]; let cur="", q=false;
+  for(let i=0;i<line.length;i++){
+    const c=line[i];
+    if(q){
+      if(c==='"'){ if(line[i+1]==='"'){cur+='"';i++;} else q=false; }
+      else cur+=c;
+    } else if(c==='"') q=true;
+    else if(c===","){ out.push(cur); cur=""; }
+    else cur+=c;
+  }
+  out.push(cur); return out;
+}
+function parseCSV(text){
+  const lines = text.replace(/^\uFEFF/,"").trim().split(/\r?\n/);
+  const head = splitCSVLine(lines[0]).map(s=>s.trim().toLowerCase());
+  const ix = k=>head.indexOf(k);
+  const need = ["year","week","name","type","team","points","result","diff"];
+  if(need.some(k=>ix(k)<0)) throw new Error("CSV is missing a column: needs "+need.join(", "));
+  const out=[];
+  for(let i=1;i<lines.length;i++){
+    const c = splitCSVLine(lines[i]).map(v=>v.trim());
+    const y=parseInt(c[ix("year")],10), w=parseInt(c[ix("week")],10);
+    const nm=c[ix("name")], raw=c[ix("team")]||"";
+    if(isNaN(y)||isNaN(w)||!nm||!raw) continue;
+    const tm = raw.split("/").map(v=>{v=v.trim();return ALIAS[v]||v;});
+    const res=(c[ix("result")]||"").trim().charAt(0).toUpperCase();
+    if(!"WLP".includes(res)) continue;
+    const d=parseInt(c[ix("diff")],10);
+    out.push([y,w,nm,c[ix("type")]||"",tm.join(" / "),
+      parseFloat(c[ix("points")])||0,res,isNaN(d)?0:d,tm]);
+  }
+  return out;
+}
+function setSource(txt){
+  const el=document.getElementById("source");
+  if(el) el.textContent = txt;
+}
+
+/* ============================ state ============================ */
+const state = {year:"all", player:"all", type:"all", teamAll:false, logN:60,
+               teamQ:"", logQ:"", hidden:new Set(), week:null};
+
+const isDecided = p => p.r==="W" || p.r==="L";
+function pct(w,l){const n=w+l;return n? w/n : 0;}
+function fmtPct(v,n){return n? (v*100).toFixed(1)+"%" : "—";}
+
+function base(){ // year + type filter (used almost everywhere)
+  return PICKS.filter(p =>
+    (state.year==="all" || p.y===+state.year) &&
+    (state.type==="all" || p.t===state.type));
+}
+function scoped(){ // + player
+  return base().filter(p => state.player==="all" || p.n===state.player);
+}
+function recordOf(list){
+  let w=0,l=0,ps=0;
+  for(const p of list){ if(p.r==="W")w++; else if(p.r==="L")l++; else ps++; }
+  return {w,l,p:ps,pct:pct(w,l),n:w+l};
+}
+
+/* ============================ the grid ============================ */
+function weekKeys(list){
+  const seen=new Set(),out=[];
+  for(const p of list){const k=p.y+"-"+p.w; if(!seen.has(k)){seen.add(k);out.push([p.y,p.w]);}}
+  out.sort((a,b)=>a[0]-b[0]||a[1]-b[1]);
+  return out;
+}
+function renderGrid(){
+  const list = base();
+  const keys = weekKeys(list);
+  const byWeek = new Map();
+  for(const p of list){const k=p.y+"-"+p.w;(byWeek.get(k)||byWeek.set(k,[]).get(k)).push(p);}
+
+  document.getElementById("gnames").innerHTML =
+    '<div class="gruler"></div>' +
+    PLAYERS.map(n=>`<div class="gname" style="color:${COLOR[n]}">${n}</div>`).join("");
+
+  let prevYear=null, html="";
+  let sweeps=0;
+  keys.forEach(([y,w])=>{
+    const legs = byWeek.get(y+"-"+w)||[];
+    const wins = legs.filter(p=>p.r==="W").length;
+    const sweep = legs.length===4 && legs.every(p=>p.r!=="L");
+    if(sweep) sweeps++;
+    const yr = y!==prevYear;
+    const mark = yr ? `<span class="yrmark">${y}</span>` : "";
+    prevYear=y;
+    const cells = PLAYERS.map(n=>{
+      const p = legs.find(x=>x.n===n);
+      if(!p) return `<div class="gcell" style="border-color:rgba(38,56,47,.5)"></div>`;
+      if(p.r==="W") return `<div class="gcell w" style="background:${COLOR[n]}"></div>`;
+      if(p.r==="P") return `<div class="gcell p" style="border-color:${COLOR[n]};border-style:dashed"></div>`;
+      return `<div class="gcell" style="border-color:${COLOR[n]}66"></div>`;
+    }).join("");
+    const sel = state.week===y+"-"+w ? " sel":"";
+    html += `<button class="gcol${sweep?" sweep":""}${yr?" yrstart":""}${sel}" data-k="${y}-${w}"
+      aria-label="${y} week ${w}, ${wins} of ${legs.length} covered${sweep?", parlay cashed":""}">
+      <div class="gruler"></div>${cells}${mark}</button>`;
+  });
+  document.getElementById("gcols").innerHTML = html;
+  document.querySelectorAll(".gcol").forEach(b=>b.addEventListener("click",()=>{
+    state.week = state.week===b.dataset.k ? null : b.dataset.k;
+    renderGrid(); renderWeekCard();
+  }));
+
+  const label = state.year==="all" ? "2020 – 2025" : state.year;
+  document.getElementById("gridtitle").textContent =
+    `${keys.length} weeks · ${label}` + (state.type!=="all"? ` · ${state.type.toLowerCase()} picks only` : "");
+  return {weeks:keys.length, sweeps};
+}
+function renderWeekCard(){
+  const el = document.getElementById("weekcard");
+  if(!state.week){el.className="weekcard";el.innerHTML="";return;}
+  const [y,w] = state.week.split("-").map(Number);
+  const legs = base().filter(p=>p.y===y&&p.w===w);
+  if(!legs.length){el.className="weekcard";return;}
+  const hit = legs.filter(p=>p.r==="W").length;
+  el.className="weekcard show";
+  const clean = legs.every(p=>p.r!=="L");
+  el.innerHTML = `<h3>${y} · Week ${w} — ${hit} of ${legs.length} covered${clean?" · ticket cashed":""}</h3><div class="wlegs">` +
+    PLAYERS.map(n=>{
+      const p = legs.find(x=>x.n===n); if(!p) return "";
+      const sign = p.t==="Favorite" ? "−" : p.t==="Dog" ? "+" : "";
+      const num = (p.t==="Over"?"o":p.t==="Under"?"u":sign)+p.pts;
+      return `<div class="wleg ${p.r==="W"?"":"lost"}" style="border-color:${COLOR[n]}">
+        <span class="who" style="color:${COLOR[n]}">${n}</span>
+        <span class="what">${p.team} ${num}
+        <small>${p.r==="W"?"covered":p.r==="P"?"push":"lost"} by ${p.d}</small></span></div>`;
+    }).join("") + `</div>`;
+}
+
+/* ============================ filters ============================ */
+function renderFilters(){
+  const years = [...new Set(PICKS.map(p=>p.y))].sort();
+  const group = (label,key,opts) => `<div class="fgroup"><span class="flabel">${label}</span>` +
+    opts.map(o=>`<button class="chip" data-k="${key}" data-v="${o[0]}"
+      aria-pressed="${state[key]===o[0]}">${o[1]}</button>`).join("") + `</div>`;
+  document.getElementById("filters").innerHTML =
+    group("Season","year",[["all","All"],...years.map(y=>[String(y),y])]) +
+    group("Picker","player",[["all","Everyone"],...PLAYERS.map(n=>[n,n])]) +
+    group("Bet","type",[["all","All"],...TYPES.map(t=>[t,t==="Dog"?"Underdog":t])]);
+  document.querySelectorAll("#filters .chip").forEach(b=>b.addEventListener("click",()=>{
+    const v=b.dataset.v; state[b.dataset.k] = (v==="all"?"all":(b.dataset.k==="year"?v:v));
+    state.week=null; state.logN=60;
+    renderAll();
+  }));
+}
+
+/* ============================ hero ============================ */
+function renderHero(g){
+  const list = base();
+  const rec = recordOf(list);
+  const word = ["never","once","twice",g.sweeps+" times"][Math.min(g.sweeps,3)];
+  document.getElementById("heroline").innerHTML =
+    `${g.weeks} Saturdays.<br>${list.length} picks.<br>The parlay cashed <em>${g.sweeps===0?"never":g.sweeps+"×"}</em>.`;
+  document.getElementById("herodek").textContent =
+    `Together they are ${rec.w}–${rec.l}${rec.p?"–"+rec.p:""} against the number, ${fmtPct(rec.pct,rec.n)} on the season` +
+    (state.year==="all"?"s":"") + `. All four legs have to survive for the ticket to pay, which has happened ${word} in ${g.weeks} weeks. Pushes void a leg rather than killing the ticket.`;
+  document.getElementById("stamp").textContent =
+    (state.year==="all"?"2020–2025":state.year) + " · " + list.length + " picks";
+}
+
+/* ============================ standings ============================ */
+function streaks(list){
+  let best=0,cur=0,run=0,type=null;
+  const chron=[...list].sort((a,b)=>a.y-b.y||a.w-b.w);
+  for(const p of chron){
+    if(p.r==="P") continue;
+    if(p.r==="W"){ run = run>0? run+1 : 1; } else { run = run<0? run-1 : -1; }
+    if(run>best) best=run;
+    cur=run;
+  }
+  return {best, cur};
+}
+function renderCards(){
+  const el=document.getElementById("cards");
+  el.innerHTML = PLAYERS.map(n=>{
+    const mine = base().filter(p=>p.n===n);
+    const r = recordOf(mine);
+    const s = streaks(mine);
+    const close = mine.filter(p=>p.d<=6 && isDecided(p));
+    const cw = close.filter(p=>p.r==="W").length;
+    const fav = recordOf(mine.filter(p=>p.t==="Favorite"));
+    const dim = state.player!=="all" && state.player!==n ? " dim":"";
+    return `<div class="card${dim}" style="--c:${COLOR[n]}">
+      <div class="nm">${n}</div>
+      <div class="rec">${r.w}–${r.l}${r.p?"–"+r.p:""}</div>
+      <div class="pct">${fmtPct(r.pct,r.n)} against the number</div>
+      <div class="mini">
+        <div><span>Best run</span><b>${s.best>0?s.best+" straight":"—"}</b></div>
+        <div><span>Ended on</span><b>${s.cur===0?"—":(s.cur>0? s.cur+" W":Math.abs(s.cur)+" L")}</b></div>
+        <div><span>Decided by ≤6</span><b>${close.length? cw+"–"+(close.length-cw):"—"}</b></div>
+        <div><span>Laying points</span><b>${fav.n? fav.w+"–"+fav.l:"—"}</b></div>
+      </div></div>`;
+  }).join("");
+}
+
+/* ============================ running % chart ============================ */
+function renderChart(){
+  const host=document.getElementById("chart");
+  const W = Math.max(340, host.clientWidth||900), H = Math.min(420, Math.max(260, W*0.42));
+  const m={t:16,r:16,b:30,l:40};
+  const series = PLAYERS.map(n=>{
+    const mine = base().filter(p=>p.n===n).sort((a,b)=>a.y-b.y||a.w-b.w);
+    let w=0,l=0; const pts=[];
+    mine.forEach((p,i)=>{ if(p.r==="W")w++; else if(p.r==="L")l++; else return;
+      if(w+l>=5) pts.push({x:w+l, y:w/(w+l)}); });
+    return {n,pts,color:COLOR[n]};
+  });
+  const maxX = Math.max(1,...series.map(s=>s.pts.length? s.pts[s.pts.length-1].x:0));
+  const X = v => m.l + (v-5)/Math.max(1,maxX-5)*(W-m.l-m.r);
+  const Y = v => m.t + (1-(v-0.15)/0.7)*(H-m.t-m.b);
+  const clamp = v => Math.max(0.15,Math.min(0.85,v));
+  let g="";
+  [0.2,0.3,0.4,0.5,0.6,0.7,0.8].forEach(v=>{
+    const y=Y(v), major = v===0.5;
+    g+=`<line x1="${m.l}" x2="${W-m.r}" y1="${y}" y2="${y}" stroke="${major?"#3B5449":"#1E2F28"}"
+      stroke-width="1" ${major?'stroke-dasharray="3 3"':""}/>
+      <text x="${m.l-8}" y="${y+3.5}" text-anchor="end" fill="#68806F"
+      font-family="DM Mono, monospace" font-size="10">${Math.round(v*100)}%</text>`;
+  });
+  for(let x=10;x<=maxX;x+=10){
+    g+=`<text x="${X(x)}" y="${H-10}" text-anchor="middle" fill="#68806F"
+      font-family="DM Mono, monospace" font-size="10">${x}</text>`;
+  }
+  g+=`<text x="${W-m.r}" y="${H-10}" text-anchor="end" fill="#68806F"
+      font-family="DM Mono, monospace" font-size="10">picks →</text>`;
+  series.forEach(s=>{
+    if(!s.pts.length) return;
+    const hidden = state.hidden.has(s.n);
+    const faded = (state.player!=="all" && state.player!==s.n);
+    const d = s.pts.map((p,i)=>(i?"L":"M")+X(p.x).toFixed(1)+" "+Y(clamp(p.y)).toFixed(1)).join(" ");
+    const last = s.pts[s.pts.length-1];
+    g+=`<path d="${d}" fill="none" stroke="${s.color}" stroke-width="${faded?1.2:2}"
+      stroke-linejoin="round" opacity="${hidden?0:(faded?.3:1)}"/>`;
+    if(!hidden) g+=`<circle cx="${X(last.x)}" cy="${Y(clamp(last.y))}" r="${faded?2:3.2}"
+      fill="${s.color}" opacity="${faded?.35:1}"/>`;
+  });
+  host.innerHTML=`<svg viewBox="0 0 ${W} ${H}" role="img"
+     aria-label="Running win percentage by pick for each picker">${g}</svg>`;
+  document.getElementById("chartlegend").innerHTML = PLAYERS.map(n=>{
+    const r=recordOf(base().filter(p=>p.n===n));
+    return `<button class="${state.hidden.has(n)?"":"on"}" data-n="${n}" style="color:${COLOR[n]}">
+      <i></i>${n} <span style="color:var(--ink3)">${fmtPct(r.pct,r.n)}</span></button>`;
+  }).join("");
+  document.querySelectorAll("#chartlegend button").forEach(b=>b.addEventListener("click",()=>{
+    const n=b.dataset.n; state.hidden.has(n)?state.hidden.delete(n):state.hidden.add(n);
+    renderChart();
+  }));
+}
+
+/* ============================ matrices ============================ */
+function matrix(title, rows, note){
+  let h=`<div class="mat"><h3>${title}</h3><table><thead><tr><th>${note||""}</th>`+
+    PLAYERS.map(n=>`<th class="${state.player!=="all"&&state.player!==n?"dimcol":""}"
+      style="color:${state.player===n?COLOR[n]:""}">${n}</th>`).join("")+`<th>All</th></tr></thead><tbody>`;
+  for(const [label,fn] of rows){
+    h+=`<tr><td>${label}</td>`;
+    PLAYERS.concat(["All"]).forEach(n=>{
+      const list = fn(n==="All"? base() : base().filter(p=>p.n===n));
+      const r=recordOf(list);
+      const dim = n!=="All" && state.player!=="all" && state.player!==n ? " dimcol":"";
+      if(!r.n){ h+=`<td class="${dim}">—</td>`; return; }
+      const w = Math.round(r.pct*100);
+      const col = r.pct>=.5 ? "#EFB53F" : "#B3706B";
+      h+=`<td class="cell${dim} ${n==="All"?"hi":""}" style="color:${col}">
+        <span class="fill" style="width:${w}%"></span>
+        <span>${w}%<span style="color:var(--ink3)"> ${r.w}-${r.l}</span></span></td>`;
+    });
+    h+=`</tr>`;
+  }
+  return h+`</tbody></table></div>`;
+}
+function renderMats(){
+  const byType = TYPES.map(t=>[t==="Dog"?"Underdog":t, l=>l.filter(p=>p.t===t)]);
+  const spread = [
+    ["0 – 6.5",  l=>l.filter(p=>(p.t==="Favorite"||p.t==="Dog") && p.pts<7)],
+    ["7 – 13.5", l=>l.filter(p=>(p.t==="Favorite"||p.t==="Dog") && p.pts>=7 && p.pts<14)],
+    ["14+",      l=>l.filter(p=>(p.t==="Favorite"||p.t==="Dog") && p.pts>=14)],
+  ];
+  const totals = [
+    ["Under 50",  l=>l.filter(p=>(p.t==="Over"||p.t==="Under") && p.pts<50)],
+    ["50 – 59.5", l=>l.filter(p=>(p.t==="Over"||p.t==="Under") && p.pts>=50 && p.pts<60)],
+    ["60+",       l=>l.filter(p=>(p.t==="Over"||p.t==="Under") && p.pts>=60)],
+  ];
+  const swing = [
+    ["Within 6",   l=>l.filter(p=>p.d<=6)],
+    ["7 – 13",     l=>l.filter(p=>p.d>6&&p.d<14)],
+    ["14+",        l=>l.filter(p=>p.d>=14)],
+  ];
+  document.getElementById("mats").innerHTML =
+    matrix("Bet type", byType, "") +
+    matrix("Spread size", spread, "points") +
+    matrix("Total posted", totals, "points") +
+    matrix("How close it landed", swing, "margin");
+}
+function renderSeasonMat(){
+  const years=[...new Set(PICKS.map(p=>p.y))].sort();
+  const rows = years.map(y=>[String(y), l=>l.filter(p=>p.y===y)]);
+  const saved = state.year; state.year="all";
+  document.getElementById("seasonmat").innerHTML = `<div class="mats">${matrix("Win % by season", rows, "season")}</div>`;
+  state.year = saved;
+}
+
+/* ============================ teams ============================ */
+function teamRows(){
+  const list = scoped();
+  const m=new Map();
+  for(const p of list){
+    if(!isDecided(p)) continue;
+    for(const t of p.tm){
+      const e=m.get(t)||{t,n:0,w:0,by:{}};
+      e.n++; if(p.r==="W")e.w++;
+      e.by[p.n]=e.by[p.n]||[0,0]; e.by[p.n][0]++; if(p.r==="W")e.by[p.n][1]++;
+      m.set(t,e);
+    }
+  }
+  let rows=[...m.values()];
+  if(state.teamQ) rows=rows.filter(r=>r.t.toLowerCase().includes(state.teamQ));
+  rows.sort((a,b)=> b.n-a.n || (b.w/b.n)-(a.w/a.n) || a.t.localeCompare(b.t));
+  if(state.teamSort) rows.sort(state.teamSort);
+  return rows;
+}
+let teamSortKey="n", teamSortDir=-1;
+function renderTeams(){
+  let rows=teamRows();
+  const keyfn={t:r=>r.t.toLowerCase(),n:r=>r.n,w:r=>r.w,l:r=>r.n-r.w,p:r=>r.w/r.n};
+  rows.sort((a,b)=>{
+    const x=keyfn[teamSortKey](a),y=keyfn[teamSortKey](b);
+    if(x<y) return -teamSortDir; if(x>y) return teamSortDir; return a.t.localeCompare(b.t);
+  });
+  const shown = state.teamAll? rows : rows.slice(0,18);
+  const arw=k=> teamSortKey===k? `<span class="arw">${teamSortDir>0?"▲":"▼"}</span>`:"";
+  const cols=[["t","School"],["n","Bets"],["w","W"],["l","L"],["p","Win %"]];
+  let h=`<thead><tr>`+cols.map(c=>`<th class="sortable" data-k="${c[0]}">${c[1]} ${arw(c[0])}</th>`).join("")
+    + (state.player==="all"? PLAYERS.map(n=>`<th style="color:${COLOR[n]}">${n}</th>`).join(""):"")
+    + `</tr></thead><tbody>`;
+  if(!shown.length) h+=`<tr><td colspan="9" style="color:var(--ink3)">Nothing matches that filter.</td></tr>`;
+  for(const r of shown){
+    const pc=r.w/r.n;
+    h+=`<tr><td>${r.t}</td><td>${r.n}</td><td>${r.w}</td><td>${r.n-r.w}</td>
+      <td class="cell" style="color:${pc>=.5?"#EFB53F":"#B3706B"}">
+      <span class="fill" style="width:${Math.round(pc*100)}%"></span>
+      <span>${(pc*100).toFixed(0)}%</span></td>`;
+    if(state.player==="all") h+=PLAYERS.map(n=>{
+      const b=r.by[n]; return `<td>${b? b[1]+"-"+(b[0]-b[1]) : "·"}</td>`;
+    }).join("");
+    h+=`</tr>`;
+  }
+  document.getElementById("teamtable").innerHTML=h+`</tbody>`;
+  document.getElementById("teamcount").textContent =
+    `${rows.length} schools · showing ${shown.length}`;
+  document.getElementById("teammore").textContent = state.teamAll? "Show top 18":"Show all";
+  document.querySelectorAll("#teamtable th.sortable").forEach(th=>th.addEventListener("click",()=>{
+    const k=th.dataset.k;
+    if(teamSortKey===k) teamSortDir*=-1; else {teamSortKey=k; teamSortDir = k==="t"? 1 : -1;}
+    renderTeams();
+  }));
+}
+
+/* ============================ oddities ============================ */
+function renderOdds(){
+  const list=scoped().filter(isDecided);
+  const el=document.getElementById("odds");
+  if(!list.length){el.innerHTML=`<div class="empty">No picks match this filter.</div>`;return;}
+  const cards=[];
+  const push=(lab,val,sub)=>cards.push(`<div class="odd"><div class="lab">${lab}</div>
+    <div class="val">${val}</div><div class="sub">${sub}</div></div>`);
+
+  const big=[...list].filter(p=>p.r==="W").sort((a,b)=>b.d-a.d)[0];
+  if(big) push("Never in doubt", big.team, `${big.n} · ${big.y} wk ${big.w} · covered by ${big.d}`);
+  const bad=[...list].filter(p=>p.r==="L").sort((a,b)=>b.d-a.d)[0];
+  if(bad) push("Dead on arrival", bad.team, `${bad.n} · ${bad.y} wk ${bad.w} · missed by ${bad.d}`);
+  const heart=[...list].filter(p=>p.r==="L").sort((a,b)=>a.d-b.d)[0];
+  if(heart) push("Closest miss", heart.team, `${heart.n} · ${heart.y} wk ${heart.w} · short by ${heart.d}`);
+
+  const counts=new Map();
+  for(const p of list) for(const t of p.tm){
+    const e=counts.get(t)||[0,0]; e[0]++; if(p.r==="W")e[1]++; counts.set(t,e);
+  }
+  const arr=[...counts.entries()];
+  const most=arr.sort((a,b)=>b[1][0]-a[1][0])[0];
+  if(most) push("Most backed", most[0], `${most[1][0]} bets · ${most[1][1]}-${most[1][0]-most[1][1]}`);
+  const money=arr.filter(e=>e[1][0]>=4).sort((a,b)=>(b[1][1]/b[1][0])-(a[1][1]/a[1][0]))[0];
+  if(money) push("Prints money", money[0], `${money[1][1]}-${money[1][0]-money[1][1]} · ${Math.round(money[1][1]/money[1][0]*100)}%`);
+  const curse=arr.filter(e=>e[1][0]>=4).sort((a,b)=>(a[1][1]/a[1][0])-(b[1][1]/b[1][0]))[0];
+  if(curse) push("Do not touch", curse[0], `${curse[1][1]}-${curse[1][0]-curse[1][1]} · ${Math.round(curse[1][1]/curse[1][0]*100)}%`);
+
+  const close=list.filter(p=>p.d<=6);
+  const cw=close.filter(p=>p.r==="W").length;
+  push("One score away", `${cw}–${close.length-cw}`,
+    `${Math.round(close.length/list.length*100)}% of these bets landed within 6 of the number`);
+
+  if(state.player!=="all"){
+    const s = streaks(scoped());
+    push("Longest run", s.best+" straight", `${state.player}, consecutive covers`);
+  }
+
+  el.innerHTML=cards.join("");
+}
+
+/* ============================ ledger ============================ */
+let logSortKey="date", logSortDir=-1;
+function renderLog(){
+  let rows=scoped();
+  if(state.logQ){
+    const q=state.logQ;
+    rows=rows.filter(p=>(p.team+" "+p.n+" "+p.y+" "+p.t).toLowerCase().includes(q));
+  }
+  const keyfn={date:p=>p.y*100+p.w,n:p=>p.n,t:p=>p.t,team:p=>p.team.toLowerCase(),
+    pts:p=>p.pts,r:p=>p.r,d:p=>p.d};
+  rows=[...rows].sort((a,b)=>{
+    const x=keyfn[logSortKey](a),y=keyfn[logSortKey](b);
+    if(x<y) return -logSortDir; if(x>y) return logSortDir;
+    return (b.y*100+b.w)-(a.y*100+a.w);
+  });
+  const shown=rows.slice(0,state.logN);
+  const arw=k=> logSortKey===k? `<span class="arw">${logSortDir>0?"▲":"▼"}</span>`:"";
+  const cols=[["date","Week"],["n","Picker"],["t","Bet"],["team","Side"],["pts","Number"],["r","Result"],["d","Margin"]];
+  let h=`<thead><tr>`+cols.map(c=>`<th class="sortable" data-k="${c[0]}">${c[1]} ${arw(c[0])}</th>`).join("")+`</tr></thead><tbody>`;
+  if(!shown.length) h+=`<tr><td colspan="7" style="color:var(--ink3)">Nothing matches that filter.</td></tr>`;
+  for(const p of shown){
+    const sign=p.t==="Favorite"?"−":p.t==="Dog"?"+":p.t==="Over"?"o":"u";
+    h+=`<tr><td>${p.y} · ${p.w}</td>
+      <td style="color:${COLOR[p.n]}">${p.n}</td>
+      <td>${p.t==="Dog"?"Underdog":p.t}</td>
+      <td>${p.team}</td>
+      <td>${sign}${p.pts}</td>
+      <td class="res ${p.r}">${p.r==="W"?"Cover":p.r==="P"?"Push":"Miss"}</td>
+      <td>${p.d}</td></tr>`;
+  }
+  document.getElementById("logtable").innerHTML=h+`</tbody>`;
+  document.getElementById("logcount").textContent=`${rows.length} picks · showing ${shown.length}`;
+  document.getElementById("logmore").style.display = shown.length<rows.length? "":"none";
+  document.querySelectorAll("#logtable th.sortable").forEach(th=>th.addEventListener("click",()=>{
+    const k=th.dataset.k;
+    if(logSortKey===k) logSortDir*=-1; else {logSortKey=k; logSortDir = (k==="team"||k==="n"||k==="t")?1:-1;}
+    renderLog();
+  }));
+}
+
+/* ============================ boot ============================ */
+function renderAll(){
+  const g=renderGrid();
+  renderWeekCard();
+  renderHero(g);
+  renderFilters();
+  renderCards();
+  renderChart();
+  renderMats();
+  renderSeasonMat();
+  renderTeams();
+  renderOdds();
+  renderLog();
+}
+function wire(){
+  document.getElementById("teamsearch").addEventListener("input",e=>{
+    state.teamQ=e.target.value.trim().toLowerCase(); renderTeams();});
+  document.getElementById("logsearch").addEventListener("input",e=>{
+    state.logQ=e.target.value.trim().toLowerCase(); state.logN=60; renderLog();});
+  document.getElementById("teammore").addEventListener("click",()=>{
+    state.teamAll=!state.teamAll; renderTeams();});
+  document.getElementById("logmore").addEventListener("click",()=>{
+    state.logN+=100; renderLog();});
+  let t; window.addEventListener("resize",()=>{clearTimeout(t);t=setTimeout(renderChart,150);});
+}
+async function tryCSV(url,label){
+  const res = await fetch(url,{cache:"no-store"});
+  if(!res.ok) throw new Error(label+" returned "+res.status);
+  const rows = parseCSV(await res.text());
+  if(rows.length<20) throw new Error(label+" only had "+rows.length+" usable rows");
+  return rows;
+}
+async function boot(){
+  let rows=EMBEDDED, src="Built-in snapshot · 364 picks through 2025";
+  const sources = [];
+  if(SHEET_CSV_URL) sources.push([SHEET_CSV_URL,"Live from the Google Sheet"]);
+  sources.push(["picks.csv","Synced from the sheet"]);
+  for(const [url,label] of sources){
+    try{
+      rows = await tryCSV(url,label);
+      src = label + " · " + rows.length + " picks";
+      break;
+    }catch(e){ console.warn("Data source skipped:", e.message); }
+  }
+  PICKS=fromRows(rows);
+  wire();
+  renderAll();
+  setSource(src);
+}
+boot();
+</script>
+</body>
+</html>
