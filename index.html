@@ -7,7 +7,7 @@
 <meta name="description" content="Six seasons of weekly college football parlay picks, records and trends for Ross, Adam, AJ and Kev.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@400;700;900&family=Space+Grotesk:wght@400;500;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Big+Shoulders+Display:wght@400;700;900&family=Space+Grotesk:wght@400;500;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root{
   --ground:#0D1714;
@@ -25,6 +25,7 @@
   --kev:#8FD1B0;
   --loss:#7E3B37;
   --display:'Big Shoulders Display',Impact,'Haettenschweiler','Arial Narrow',sans-serif;
+  --wordmark:'Archivo Black','Arial Black',Impact,sans-serif;
   --body:'Space Grotesk',ui-sans-serif,system-ui,-apple-system,'Segoe UI',sans-serif;
   --mono:'DM Mono',ui-monospace,'SF Mono',Menlo,Consolas,monospace;
 }
@@ -50,12 +51,48 @@ button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
 .kicker{font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;
   color:var(--ink3);margin-bottom:18px}
 h1{
-  font-family:var(--display);font-weight:900;
-  font-size:clamp(38px,7.2vw,86px);line-height:.88;letter-spacing:-.01em;
-  text-transform:uppercase;margin:0;max-width:16ch;color:var(--bone);
+  font-family:var(--wordmark);font-weight:400;
+  font-size:clamp(58px,13vw,148px);line-height:.86;letter-spacing:-.015em;
+  text-transform:uppercase;margin:0;color:var(--bone);
 }
-h1 em{font-style:normal;color:var(--adam)}
-.dek{margin:20px 0 0;max-width:56ch;color:var(--ink2);font-size:15px}
+.expand{font-family:var(--wordmark);font-weight:400;line-height:1.05;
+  font-size:clamp(14px,2.5vw,27px);text-transform:uppercase;letter-spacing:.02em;
+  color:var(--adam);margin-top:12px}
+.statline{font-family:var(--mono);font-size:clamp(12px,1.5vw,14.5px);letter-spacing:.05em;
+  color:var(--ink2);margin-top:22px;display:flex;gap:6px 20px;flex-wrap:wrap;align-items:baseline}
+.statline b{color:var(--bone);font-weight:500}
+.statline .sep{color:var(--ink3)}
+.dek{margin:16px 0 0;max-width:58ch;color:var(--ink3);font-size:14px}
+
+/* last result */
+.lastwrap{border-top:1px solid var(--line);margin-top:34px;padding:24px 0 4px}
+.lasthead{font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--ink3);margin-bottom:14px}
+.lasthead b{color:var(--bone);font-weight:400}
+.lasthead .cashed{color:var(--adam)}
+.lastrow{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(210px,1fr))}
+.mugcard{display:flex;gap:13px;align-items:center;border:1px solid var(--line);
+  background:var(--panel);padding:12px 14px 12px 17px;position:relative}
+.mugcard::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--c)}
+.mugcard.lost{opacity:.6}
+.mugbox{position:relative;width:54px;height:54px;flex:0 0 54px;border-radius:50%;
+  background:var(--panel2);border:2px solid var(--c);overflow:hidden;
+  display:flex;align-items:center;justify-content:center}
+.mugbox .ini{font-family:var(--display);font-weight:900;font-size:21px;color:var(--c);
+  letter-spacing:.02em}
+.mugbox img{position:absolute;left:0;top:0;width:100%;height:100%;object-fit:cover}
+.mugcard .who{font-family:var(--display);font-weight:900;font-size:23px;line-height:1;
+  text-transform:uppercase;color:var(--c)}
+.mugcard .who .wl{font-size:17px;letter-spacing:.03em}
+.mugcard.won .who .wl{color:var(--adam)}
+.mugcard.lost .who .wl{color:#B3706B}
+.mugcard.pushed .who .wl{color:var(--ink3)}
+.mugcard .pick{font-family:var(--mono);font-size:11.5px;color:var(--ink2);margin-top:5px}
+.mugcard .verdict{font-family:var(--mono);font-size:10px;letter-spacing:.16em;
+  text-transform:uppercase;margin-top:5px}
+.mugcard.won .verdict{color:var(--adam)}
+.mugcard.lost .verdict{color:#B3706B}
+.mugcard.pushed .verdict{color:var(--ink3)}
 
 /* ---------- the grid ---------- */
 .gridwrap{padding:8px 0 40px}
@@ -78,11 +115,15 @@ h1 em{font-style:normal;color:var(--adam)}
 .gcol{display:flex;flex-direction:column;gap:2px;position:relative;
   background:none;padding:0;cursor:pointer;border-radius:1px}
 .gcol:focus-visible{outline:2px solid var(--bone);outline-offset:2px}
-.gcell{width:11px;height:20px;border:1px solid var(--line2);border-radius:1px}
+.gcell{width:11px;height:20px;border:1px solid var(--line2);border-radius:1px;position:relative}
 .gcell.w{border-color:transparent}
 .gcell.p{opacity:.55}
-.gcol.sweep::before{content:"";position:absolute;left:-2px;right:-2px;top:-5px;bottom:-3px;
-  background:rgba(243,236,216,.10);border-top:2px solid var(--bone);border-radius:2px}
+.gcol.sweep::before{content:"";position:absolute;left:-2px;right:-2px;top:-6px;bottom:-3px;
+  background:rgba(243,236,216,.14);border:1px solid rgba(243,236,216,.5);
+  border-top:3px solid var(--bone);border-radius:2px;
+  box-shadow:0 0 10px rgba(243,236,216,.18)}
+.cash{display:block;position:relative;text-align:center;line-height:14px;
+  font-family:var(--mono);font-weight:500;font-size:11px;color:var(--bone)}
 .gcol.sel::after{content:"";position:absolute;left:-2px;right:-2px;top:-5px;bottom:-3px;
   border:1px solid var(--bone);border-radius:2px}
 .gcol:hover .gcell{filter:brightness(1.25)}
@@ -132,7 +173,8 @@ h2{font-family:var(--display);font-weight:700;text-transform:uppercase;
 .card::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--c)}
 .card.dim{opacity:.42}
 .card .nm{font-family:var(--display);font-size:30px;font-weight:900;text-transform:uppercase;
-  line-height:1;color:var(--c);letter-spacing:.01em}
+  line-height:1;color:var(--c);letter-spacing:.01em;display:flex;align-items:baseline;gap:9px}
+.card .nm .rank{font-family:var(--mono);font-size:11px;font-weight:400;color:var(--ink3)}
 .card .rec{font-family:var(--mono);font-size:23px;margin-top:8px;color:var(--ink)}
 .card .pct{font-family:var(--mono);font-size:12px;color:var(--ink2);margin-top:2px}
 .mini{margin-top:12px;border-top:1px solid var(--line);padding-top:10px;display:grid;gap:5px}
@@ -142,6 +184,18 @@ h2{font-family:var(--display);font-weight:700;text-transform:uppercase;
 /* chart */
 .chartbox{border:1px solid var(--line);background:var(--panel);padding:18px 8px 8px}
 .chartbox svg{display:block;width:100%;height:auto}
+.scrub{display:flex;align-items:center;gap:14px;padding:6px 12px 2px}
+.scrub input[type=range]{flex:1;-webkit-appearance:none;appearance:none;height:3px;
+  background:var(--line2);border-radius:2px;outline:none}
+.scrub input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:15px;height:15px;
+  border-radius:50%;background:var(--bone);cursor:pointer;border:none}
+.scrub input[type=range]::-moz-range-thumb{width:15px;height:15px;border-radius:50%;
+  background:var(--bone);cursor:pointer;border:none}
+.scrub input[type=range]:focus-visible{outline:2px solid var(--bone);outline-offset:3px}
+.scrubval{font-family:var(--mono);font-size:11.5px;color:var(--ink2);min-width:104px;text-align:right}
+#scrubplay{font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;
+  border:1px solid var(--line2);padding:5px 12px;color:var(--ink2);border-radius:2px}
+#scrubplay:hover{border-color:var(--ink3);color:var(--ink)}
 .chartlegend{display:flex;gap:18px;flex-wrap:wrap;padding:10px 12px 6px;
   font-family:var(--mono);font-size:11.5px;color:var(--ink2)}
 .chartlegend button{display:flex;align-items:center;gap:7px;opacity:.45;transition:.12s}
@@ -149,7 +203,11 @@ h2{font-family:var(--display);font-weight:700;text-transform:uppercase;
 .chartlegend i{width:14px;height:3px;display:block;background:currentColor}
 
 /* matrices */
-.mats{display:grid;gap:28px;grid-template-columns:repeat(auto-fit,minmax(280px,1fr))}
+.mats{display:grid;gap:28px 26px;grid-template-columns:repeat(auto-fit,minmax(330px,1fr))}
+.mat{min-width:0;overflow-x:auto}
+.mat table{font-size:11.5px}
+.mat th,.mat td{padding:6px 5px}
+.mat th:first-child,.mat td:first-child{padding-left:2px}
 .mat h3{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;
   color:var(--ink2);font-weight:400;margin:0 0 10px}
 table{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:12px}
@@ -163,6 +221,8 @@ tbody tr:hover td{background:rgba(255,255,255,.025)}
 .cell{position:relative}
 .cell .fill{position:absolute;left:0;top:0;bottom:0;background:currentColor;opacity:.16}
 .cell span{position:relative}
+.mat .cell .pc{display:block;line-height:1.25}
+.mat .cell .wl{display:block;font-size:10px;line-height:1.25;color:var(--ink3);letter-spacing:.01em}
 .hi{color:var(--bone)}
 .dimcol{opacity:.4}
 
@@ -186,7 +246,7 @@ input[type=search]{font-family:var(--mono);font-size:12.5px;background:var(--pan
 input[type=search]:focus{outline:2px solid var(--bone);outline-offset:1px}
 .count{font-family:var(--mono);font-size:11.5px;color:var(--ink3)}
 .tablescroll{overflow-x:auto;border:1px solid var(--line)}
-.tablescroll table{min-width:640px}
+.tablescroll table{min-width:700px}
 .tablescroll th{background:var(--panel2);position:sticky;top:0}
 .res{font-weight:500}
 .res.W{color:var(--adam)}
@@ -197,6 +257,28 @@ input[type=search]:focus{outline:2px solid var(--bone);outline-offset:1px}
   border:1px solid var(--line2);padding:8px 16px;color:var(--ink2)}
 .more button:hover{border-color:var(--ink3);color:var(--ink)}
 
+.conf{font-size:11px;color:var(--ink3);text-align:left!important}
+#conffilter{flex-wrap:wrap}
+.dist{display:grid;gap:7px;max-width:660px;margin-bottom:34px}
+.drow{display:grid;grid-template-columns:168px 1fr 92px;gap:14px;align-items:center;
+  font-family:var(--mono);font-size:12px;color:var(--ink2)}
+.drow .lab{white-space:nowrap}
+.dbar{height:15px;background:var(--panel2);position:relative;border-radius:1px}
+.dbar i{position:absolute;left:0;top:0;bottom:0;background:var(--ink3);border-radius:1px}
+.dbar i.gold{background:var(--adam)}
+.drow .n{text-align:right;color:var(--ink3);font-size:11px}
+.combolabel{display:flex;gap:8px}
+.combolabel span{font-size:11px;letter-spacing:.03em}
+.combolabel span.off{color:#33443A}
+@media (max-width:520px){.drow{grid-template-columns:150px 1fr 74px;gap:9px}}
+.tlogo{width:22px;height:22px;flex:0 0 22px;border-radius:50%;object-fit:contain;
+  background:#EFEFE9;padding:2px;vertical-align:-6px;box-shadow:inset 0 0 0 1px rgba(13,23,20,.18)}
+.tlogo.sm{width:18px;height:18px;flex:0 0 18px;padding:1.5px;vertical-align:-4px}
+.tname{display:flex;align-items:center;gap:8px;min-width:0}
+.tname .txt{overflow:hidden;text-overflow:ellipsis}
+.tstack{display:inline-flex;gap:4px;margin-right:7px;vertical-align:-4px}
+.oddlogo{width:34px;height:34px;border-radius:50%;object-fit:contain;background:#EFEFE9;
+  padding:3px;float:right;margin:-2px 0 0 10px;box-shadow:inset 0 0 0 1px rgba(13,23,20,.18)}
 .empty{padding:30px 4px;color:var(--ink3);font-family:var(--mono);font-size:12.5px}
 
 footer{padding:32px 0 60px;color:var(--ink3);font-family:var(--mono);font-size:11px;
@@ -223,8 +305,15 @@ footer{padding:32px 0 60px;color:var(--ink3);font-family:var(--mono);font-size:1
   </div>
   <div class="wrap hero">
     <div class="kicker">Ross · Adam · AJ · Kev — one pick each, every week since 2020</div>
-    <h1 id="heroline">Six seasons.<br>91 Saturdays.<br>The parlay cashed <em>—</em>.</h1>
+    <h1>RBWR</h1>
+    <div class="expand">Right Bet, Wrong Result</div>
+    <div class="statline" id="statline"></div>
     <p class="dek" id="herodek"></p>
+  </div>
+
+  <div class="wrap lastwrap">
+    <div class="lasthead" id="lasthead"></div>
+    <div class="lastrow" id="lastrow"></div>
   </div>
 
   <div class="wrap gridwrap">
@@ -255,51 +344,64 @@ footer{padding:32px 0 60px;color:var(--ink3);font-family:var(--mono);font-size:1
 
   <section>
     <div class="shead"><span class="snum">01</span><h2>Standings</h2></div>
-    <p class="snote">Win percentage leaves pushes out of the denominator, so a 46&#8209;44&#8209;1 line reads as 51.1%. Streaks count consecutive weeks, ignoring pushes.</p>
+    <p class="snote">Record against the spread for each picker, ordered by win percentage. Pushes are excluded from the percentage.</p>
     <div class="cards" id="cards"></div>
   </section>
 
   <section>
     <div class="shead"><span class="snum">02</span><h2>The long haul</h2></div>
-    <p class="snote">Running win percentage after each pick. Early swings are noise — the interesting part is where the lines separate and stay separated.</p>
+    <p class="snote">Cumulative win percentage after every pick, plotted from the fifth pick onward.</p>
     <div class="chartbox">
       <div id="chart"></div>
+      <div class="scrub">
+        <input type="range" id="scrub" min="5" max="91" value="91" step="1" aria-label="Show picks up to">
+        <span class="scrubval" id="scrubval"></span>
+        <button id="scrubplay" aria-label="Play through the picks">Play</button>
+      </div>
       <div class="chartlegend" id="chartlegend"></div>
     </div>
   </section>
 
   <section>
     <div class="shead"><span class="snum">03</span><h2>What works for who</h2></div>
-    <p class="snote">Win percentage by pick shape. Cell shading tracks the rate; the small figures are the raw record. Thin samples lie, so the count is always shown.</p>
+    <p class="snote">Win percentage and record broken out by bet type, spread size, posted total, and how far the result landed from the number.</p>
     <div class="mats" id="mats"></div>
   </section>
 
   <section>
     <div class="shead"><span class="snum">04</span><h2>Season by season</h2></div>
-    <p class="snote">Every man's year, side by side.</p>
+    <p class="snote">Win percentage and record for each picker by season.</p>
     <div id="seasonmat"></div>
   </section>
 
   <section>
-    <div class="shead"><span class="snum">05</span><h2>Teams</h2></div>
-    <p class="snote">Every school anyone has laid money on. Totals count for both teams in the game. Sort any column.</p>
+    <div class="shead"><span class="snum">05</span><h2>Who cashes together</h2></div>
+    <p class="snote">Every week lands on one of sixteen possible outcomes. A push keeps a leg alive rather than killing it, so those three weeks count the pusher as surviving — the same way the spreadsheet has always labelled them.</p>
+    <div class="dist" id="legdist"></div>
+    <div class="dist" id="combos"></div>
+  </section>
+
+  <section>
+    <div class="shead"><span class="snum">06</span><h2>Teams</h2></div>
+    <p class="snote">Every school bet on, with conference, total bets and record. Over/under bets count toward both teams in the game. Conferences reflect the 2025 alignment. Any column sorts.</p>
     <div class="logtools">
       <input type="search" id="teamsearch" placeholder="Find a school" aria-label="Find a school">
       <span class="count" id="teamcount"></span>
     </div>
+    <div class="fgroup" id="conffilter" style="margin:-4px 0 14px"></div>
     <div class="tablescroll"><table id="teamtable"></table></div>
     <div class="more"><button id="teammore">Show all</button></div>
   </section>
 
   <section>
-    <div class="shead"><span class="snum">06</span><h2>Notes for the group chat</h2></div>
-    <p class="snote">Whatever the current filter is pointed at.</p>
+    <div class="shead"><span class="snum">07</span><h2>Notes for the group chat</h2></div>
+    <p class="snote">Biggest covers, worst misses, and the teams with the best and worst records under the filters set above.</p>
     <div class="odds" id="odds"></div>
   </section>
 
   <section>
-    <div class="shead"><span class="snum">07</span><h2>The ledger</h2></div>
-    <p class="snote">Every pick on record. "Margin" is how far the result landed from the number.</p>
+    <div class="shead"><span class="snum">08</span><h2>The ledger</h2></div>
+    <p class="snote">Every pick on record. Margin is the distance between the final result and the number.</p>
     <div class="logtools">
       <input type="search" id="logsearch" placeholder="Search team, picker, season" aria-label="Search the ledger">
       <span class="count" id="logcount"></span>
@@ -314,6 +416,7 @@ footer{padding:32px 0 60px;color:var(--ink3);font-family:var(--mono);font-size:1
   <div>RBWR — weekly college football parlay, 2020 to present.</div>
   <div id="source">Loading…</div>
   <div>Data column order: year, week, name, type, team, points, result, diff.</div>
+  <div>Photos: a <b>photos</b> folder holding ross-win.jpg, ross-loss.jpg and so on. Extras are numbered ross-win-2.jpg.</div>
 </footer>
 
 <script>
@@ -337,6 +440,77 @@ const ALIAS = {"GA Tech":"Georgia Tech","GaTech":"Georgia Tech","Okie State":"Ok
 "UNC":"North Carolina"};
 
 let PICKS = [];
+
+const CONF = {"Air Force":"Group of 5","Alabama":"SEC","Appalachian State":"Group of 5","Arizona":"Big 12","Arizona State":"Big 12","Arkansas":"SEC","Army":"Group of 5","Auburn":"SEC","BYU":"Big 12","Baylor":"Big 12","Boise State":"Group of 5","Boston College":"ACC","Buffalo":"Group of 5","Charlotte":"Group of 5","Cincinnati":"Big 12","Clemson":"ACC","Coastal Carolina":"Group of 5","Colorado":"Big 12","Duke":"ACC","East Carolina":"Group of 5","FAU":"Group of 5","FIU":"Group of 5","Florida":"SEC","Florida State":"ACC","Fordham":"Independent / FCS","Fresno State":"Group of 5","Georgia":"SEC","Georgia Southern":"Group of 5","Georgia State":"Group of 5","Georgia Tech":"ACC","Hawaii":"Group of 5","Houston":"Big 12","Illinois":"Big Ten","Indiana":"Big Ten","Iowa":"Big Ten","Iowa State":"Big 12","Kansas":"Big 12","Kansas State":"Big 12","Kent State":"Group of 5","Kentucky":"SEC","LSU":"SEC","Liberty":"Group of 5","Louisiana":"Group of 5","Louisville":"ACC","Marshall":"Group of 5","Maryland":"Big Ten","Memphis":"Group of 5","Miami":"ACC","Michigan":"Big Ten","Michigan State":"Big Ten","Minnesota":"Big Ten","Mississippi State":"SEC","Missouri":"SEC","Monmouth":"Independent / FCS","Montana":"Independent / FCS","NC State":"ACC","Navy":"Group of 5","Nebraska":"Big Ten","Nevada":"Group of 5","New Mexico State":"Group of 5","North Carolina":"ACC","North Texas":"Group of 5","Northern Illinois":"Group of 5","Northwestern":"Big Ten","Notre Dame":"Independent / FCS","Ohio":"Group of 5","Ohio State":"Big Ten","Oklahoma":"SEC","Oklahoma State":"Big 12","Ole Miss":"SEC","Oregon":"Big Ten","Oregon State":"Independent / FCS","Penn State":"Big Ten","Pitt":"ACC","Purdue":"Big Ten","Rice":"Group of 5","Rutgers":"Big Ten","SMU":"ACC","Sam Houston State":"Group of 5","San Diego State":"Group of 5","San Jose State":"Group of 5","South Carolina":"SEC","South Florida":"Group of 5","Stanford":"ACC","Syracuse":"ACC","TCU":"Big 12","Temple":"Group of 5","Tennessee":"SEC","Texas":"SEC","Texas A&M":"SEC","Texas Tech":"Big 12","Toledo":"Group of 5","Troy":"Group of 5","Tulane":"Group of 5","Tulsa":"Group of 5","UCF":"Big 12","UCLA":"Big Ten","UConn":"Independent / FCS","UMass":"Group of 5","UNLV":"Group of 5","USC":"Big Ten","Utah":"Big 12","Vanderbilt":"SEC","Virginia":"ACC","Virginia Tech":"ACC","Wake Forest":"ACC","Washington":"Big Ten","Washington State":"Independent / FCS","West Virginia":"Big 12","Western Kentucky":"Group of 5","Wisconsin":"Big Ten","Wyoming":"Group of 5"};
+const CONF_FULL = {"Air Force":"Mountain West","Alabama":"SEC","Appalachian State":"Sun Belt","Arizona":"Big 12","Arizona State":"Big 12","Arkansas":"SEC","Army":"American Athletic","Auburn":"SEC","BYU":"Big 12","Baylor":"Big 12","Boise State":"Mountain West","Boston College":"ACC","Buffalo":"Mid-American","Charlotte":"American Athletic","Cincinnati":"Big 12","Clemson":"ACC","Coastal Carolina":"Sun Belt","Colorado":"Big 12","Duke":"ACC","East Carolina":"American Athletic","FAU":"American Athletic","FIU":"Conference USA","Florida":"SEC","Florida State":"ACC","Fordham":"Patriot","Fresno State":"Mountain West","Georgia":"SEC","Georgia Southern":"Sun Belt","Georgia State":"Sun Belt","Georgia Tech":"ACC","Hawaii":"Mountain West","Houston":"Big 12","Illinois":"Big Ten","Indiana":"Big Ten","Iowa":"Big Ten","Iowa State":"Big 12","Kansas":"Big 12","Kansas State":"Big 12","Kent State":"Mid-American","Kentucky":"SEC","LSU":"SEC","Liberty":"Conference USA","Louisiana":"Sun Belt","Louisville":"ACC","Marshall":"Sun Belt","Maryland":"Big Ten","Memphis":"American Athletic","Miami":"ACC","Michigan":"Big Ten","Michigan State":"Big Ten","Minnesota":"Big Ten","Mississippi State":"SEC","Missouri":"SEC","Monmouth":"CAA","Montana":"Big Sky","NC State":"ACC","Navy":"American Athletic","Nebraska":"Big Ten","Nevada":"Mountain West","New Mexico State":"Conference USA","North Carolina":"ACC","North Texas":"American Athletic","Northern Illinois":"Mid-American","Northwestern":"Big Ten","Notre Dame":"FBS Independents","Ohio":"Mid-American","Ohio State":"Big Ten","Oklahoma":"SEC","Oklahoma State":"Big 12","Ole Miss":"SEC","Oregon":"Big Ten","Oregon State":"Pac-12","Penn State":"Big Ten","Pitt":"ACC","Purdue":"Big Ten","Rice":"American Athletic","Rutgers":"Big Ten","SMU":"ACC","Sam Houston State":"Conference USA","San Diego State":"Mountain West","San Jose State":"Mountain West","South Carolina":"SEC","South Florida":"American Athletic","Stanford":"ACC","Syracuse":"ACC","TCU":"Big 12","Temple":"American Athletic","Tennessee":"SEC","Texas":"SEC","Texas A&M":"SEC","Texas Tech":"Big 12","Toledo":"Mid-American","Troy":"Sun Belt","Tulane":"American Athletic","Tulsa":"American Athletic","UCF":"Big 12","UCLA":"Big Ten","UConn":"FBS Independents","UMass":"Mid-American","UNLV":"Mountain West","USC":"Big Ten","Utah":"Big 12","Vanderbilt":"SEC","Virginia":"ACC","Virginia Tech":"ACC","Wake Forest":"ACC","Washington":"Big Ten","Washington State":"Pac-12","West Virginia":"Big 12","Western Kentucky":"Conference USA","Wisconsin":"Big Ten","Wyoming":"Mountain West"};
+
+const TEAM_ID = {"Air Force":"2005","Alabama":"333","Appalachian State":"2026","Arizona":"12","Arizona State":"9","Arkansas":"8","Army":"349","Auburn":"2","BYU":"252","Baylor":"239","Boise State":"68","Boston College":"103","Buffalo":"2084","Charlotte":"2429","Cincinnati":"2132","Clemson":"228","Coastal Carolina":"324","Colorado":"38","Duke":"150","East Carolina":"151","FAU":"2226","FIU":"2229","Florida":"57","Florida State":"52","Fordham":"2230","Fresno State":"278","Georgia":"61","Georgia Southern":"290","Georgia State":"2247","Georgia Tech":"59","Hawaii":"62","Houston":"248","Illinois":"356","Indiana":"84","Iowa":"2294","Iowa State":"66","Kansas":"2305","Kansas State":"2306","Kent State":"2309","Kentucky":"96","LSU":"99","Liberty":"2335","Louisiana":"309","Louisville":"97","Marshall":"276","Maryland":"120","Memphis":"235","Miami":"2390","Michigan":"130","Michigan State":"127","Minnesota":"135","Mississippi State":"344","Missouri":"142","Monmouth":"2405","Montana":"149","NC State":"152","Navy":"2426","Nebraska":"158","Nevada":"2440","New Mexico State":"166","North Carolina":"153","North Texas":"249","Northern Illinois":"2459","Northwestern":"77","Notre Dame":"87","Ohio":"195","Ohio State":"194","Oklahoma":"201","Oklahoma State":"197","Ole Miss":"145","Oregon":"2483","Oregon State":"204","Penn State":"213","Pitt":"221","Purdue":"2509","Rice":"242","Rutgers":"164","SMU":"2567","Sam Houston State":"2534","San Diego State":"21","San Jose State":"23","South Carolina":"2579","South Florida":"58","Stanford":"24","Syracuse":"183","TCU":"2628","Temple":"218","Tennessee":"2633","Texas":"251","Texas A&M":"245","Texas Tech":"2641","Toledo":"2649","Troy":"2653","Tulane":"2655","Tulsa":"202","UCF":"2116","UCLA":"26","UConn":"41","UMass":"113","UNLV":"2439","USC":"30","Utah":"254","Vanderbilt":"238","Virginia":"258","Virginia Tech":"259","Wake Forest":"154","Washington":"264","Washington State":"265","West Virginia":"277","Western Kentucky":"98","Wisconsin":"275","Wyoming":"2751"};
+function logoURL(team){
+  const id = TEAM_ID[team];
+  return id ? "https://a.espncdn.com/i/teamlogos/ncaa/500/"+id+".png" : null;
+}
+function logoIMG(team,cls){
+  const u = logoURL(team);
+  return u ? `<img class="tlogo ${cls||""}" alt="" loading="lazy" src="${u}"
+    onerror="this.style.visibility='hidden'">` : "";
+}
+function logoStack(teams,cls){
+  const imgs = teams.map(t=>logoIMG(t,cls)).filter(Boolean).join("");
+  return imgs ? `<span class="tstack">${imgs}</span>` : "";
+}
+
+/* ---------------------------------------------------------------
+   PHOTOS. Put them in a "photos" folder next to this file.
+
+   First photo:  ross-win.jpg      ross-loss.jpg
+   Extras:       ross-win-2.jpg    ross-win-3.jpg   (and so on)
+
+   Then set the counts below to match how many you actually have.
+   jpg, gif, jpeg, png and webp all work (animated gifs play).
+   Missing files fall back to
+   initials, so a wrong count shows a letter rather than a break.
+   The photo is picked from the week, not at random, so everyone
+   in the group sees the same one and it rotates week to week.
+   --------------------------------------------------------------- */
+const PHOTO_COUNT = {
+  Ross: {win:3, loss:3},
+  Adam: {win:3, loss:4},
+  AJ:   {win:3, loss:3},
+  Kev:  {win:3, loss:3}
+};
+
+const PHOTO_EXT = ["jpg","gif","jpeg","png","webp"];
+const INITIALS = {Ross:"R",Adam:"A",AJ:"AJ",Kev:"K"};
+function pickPhoto(name,state,y,w){
+  const n = (PHOTO_COUNT[name] && PHOTO_COUNT[name][state]) || 1;
+  if(n<=1) return 1;
+  let h=0; const key=name+state+y+"-"+w;
+  for(let i=0;i<key.length;i++) h=(h*31+key.charCodeAt(i))|0;
+  return (Math.abs(h)%n)+1;
+}
+function mugHTML(name,res,y,w){
+  const state = res==="L" ? "loss" : "win";
+  const slug = name.toLowerCase();
+  const idx = pickPhoto(name,state,y,w);
+  const stem = idx>1 ? `${slug}-${state}-${idx}` : `${slug}-${state}`;
+  return `<div class="mugbox" style="--c:${COLOR[name]}">
+    <span class="ini">${INITIALS[name]||name[0]}</span>
+    <img alt="" src="photos/${stem}.${PHOTO_EXT[0]}" data-stem="${stem}"
+      data-base="${slug}-${state}" data-i="0" onerror="mugFallback(this)"></div>`;
+}
+window.mugFallback = function(img){
+  const i = (+img.dataset.i)+1;
+  if(i < PHOTO_EXT.length){
+    img.dataset.i = i;
+    img.src = `photos/${img.dataset.stem}.${PHOTO_EXT[i]}`;
+  } else if(img.dataset.stem !== img.dataset.base){
+    img.dataset.stem = img.dataset.base;   // numbered file missing, try the first one
+    img.dataset.i = 0;
+    img.src = `photos/${img.dataset.base}.${PHOTO_EXT[0]}`;
+  } else {
+    img.remove();                          // initials show through
+  }
+};
 
 function fromRows(rows){
   return rows.map(r=>({y:r[0],w:r[1],n:r[2],t:r[3],team:r[4],pts:r[5],r:r[6],d:r[7],tm:r[8]}));
@@ -383,7 +557,7 @@ function setSource(txt){
 }
 
 /* ============================ state ============================ */
-const state = {year:"all", player:"all", type:"all", teamAll:false, logN:60,
+const state = {year:"all", player:"all", type:"all", conf:"all", teamAll:false, logN:60,
                teamQ:"", logQ:"", hidden:new Set(), week:null};
 
 const isDecided = p => p.r==="W" || p.r==="L";
@@ -441,7 +615,7 @@ function renderGrid(){
     const sel = state.week===y+"-"+w ? " sel":"";
     html += `<button class="gcol${sweep?" sweep":""}${yr?" yrstart":""}${sel}" data-k="${y}-${w}"
       aria-label="${y} week ${w}, ${wins} of ${legs.length} covered${sweep?", parlay cashed":""}">
-      <div class="gruler"></div>${cells}${mark}</button>`;
+      <div class="gruler">${sweep?'<span class="cash">$</span>':""}</div>${cells}${mark}</button>`;
   });
   document.getElementById("gcols").innerHTML = html;
   document.querySelectorAll(".gcol").forEach(b=>b.addEventListener("click",()=>{
@@ -492,35 +666,69 @@ function renderFilters(){
   }));
 }
 
-/* ============================ hero ============================ */
+/* ============================ hero + last result ============================ */
 function renderHero(g){
   const list = base();
   const rec = recordOf(list);
-  const word = ["never","once","twice",g.sweeps+" times"][Math.min(g.sweeps,3)];
-  document.getElementById("heroline").innerHTML =
-    `${g.weeks} Saturdays.<br>${list.length} picks.<br>The parlay cashed <em>${g.sweeps===0?"never":g.sweeps+"×"}</em>.`;
+  document.getElementById("statline").innerHTML =
+    `<span><b>${g.weeks}</b> Saturdays</span><span class="sep">·</span>` +
+    `<span><b>${list.length}</b> picks</span><span class="sep">·</span>` +
+    `<span>parlay cashed <b>${g.sweeps}×</b></span><span class="sep">·</span>` +
+    `<span><b>${fmtPct(rec.pct,rec.n)}</b> against the number</span>`;
   document.getElementById("herodek").textContent =
-    `Together they are ${rec.w}–${rec.l}${rec.p?"–"+rec.p:""} against the number, ${fmtPct(rec.pct,rec.n)} on the season` +
-    (state.year==="all"?"s":"") + `. All four legs have to survive for the ticket to pay, which has happened ${word} in ${g.weeks} weeks. Pushes void a leg rather than killing the ticket.`;
+    `Combined ${rec.w}–${rec.l}${rec.p?"–"+rec.p:""} across ` +
+    (state.year==="all" ? "six seasons" : state.year) +
+    `. A push voids that leg rather than ending the ticket.`;
   document.getElementById("stamp").textContent =
     (state.year==="all"?"2020–2025":state.year) + " · " + list.length + " picks";
+}
+function renderLast(){
+  if(!PICKS.length) return;
+  let ly=-1,lw=-1;
+  for(const p of PICKS){ if(p.y>ly||(p.y===ly&&p.w>lw)){ly=p.y;lw=p.w;} }
+  const legs = PICKS.filter(p=>p.y===ly&&p.w===lw);
+  const hit = legs.filter(p=>p.r==="W").length;
+  const cashed = legs.length===4 && legs.every(p=>p.r!=="L");
+  document.getElementById("lasthead").innerHTML =
+    `Most recent week — <b>${ly} · week ${lw}</b> — ${hit} of ${legs.length} covered` +
+    (cashed ? ` <span class="cashed">— ticket cashed</span>` : "");
+  document.getElementById("lastrow").innerHTML = PLAYERS.map(n=>{
+    const p = legs.find(x=>x.n===n);
+    if(!p) return "";
+    const cls = p.r==="W" ? "won" : p.r==="P" ? "pushed" : "lost";
+    const sign = p.t==="Favorite" ? "−" : p.t==="Dog" ? "+" : p.t==="Over" ? "o" : "u";
+    const word = p.r==="W" ? "Win" : p.r==="P" ? "Push" : "Loss";
+    const verdict = p.r==="W" ? "Covered by "+p.d : p.r==="P" ? "No action" : "Missed by "+p.d;
+    return `<div class="mugcard ${cls}" style="--c:${COLOR[n]}">
+      ${mugHTML(n,p.r,ly,lw)}
+      <div><div class="who">${n} <span class="wl">— ${word}</span></div>
+        <div class="pick">${p.team} ${sign}${p.pts}</div>
+        <div class="verdict">${verdict}</div></div></div>`;
+  }).join("");
 }
 
 /* ============================ standings ============================ */
 function streaks(list){
-  let best=0,cur=0,run=0,type=null;
+  let best=0,worst=0,run=0;
   const chron=[...list].sort((a,b)=>a.y-b.y||a.w-b.w);
   for(const p of chron){
     if(p.r==="P") continue;
     if(p.r==="W"){ run = run>0? run+1 : 1; } else { run = run<0? run-1 : -1; }
     if(run>best) best=run;
-    cur=run;
+    if(run<worst) worst=run;
   }
-  return {best, cur};
+  return {best, worst:Math.abs(worst)};
+}
+function orderedPlayers(){
+  return [...PLAYERS].sort((a,b)=>{
+    const ra=recordOf(base().filter(p=>p.n===a));
+    const rb=recordOf(base().filter(p=>p.n===b));
+    return rb.pct-ra.pct || rb.w-ra.w || a.localeCompare(b);
+  });
 }
 function renderCards(){
   const el=document.getElementById("cards");
-  el.innerHTML = PLAYERS.map(n=>{
+  el.innerHTML = orderedPlayers().map((n,rank)=>{
     const mine = base().filter(p=>p.n===n);
     const r = recordOf(mine);
     const s = streaks(mine);
@@ -529,12 +737,12 @@ function renderCards(){
     const fav = recordOf(mine.filter(p=>p.t==="Favorite"));
     const dim = state.player!=="all" && state.player!==n ? " dim":"";
     return `<div class="card${dim}" style="--c:${COLOR[n]}">
-      <div class="nm">${n}</div>
+      <div class="nm"><span class="rank">${rank+1}</span>${n}</div>
       <div class="rec">${r.w}–${r.l}${r.p?"–"+r.p:""}</div>
       <div class="pct">${fmtPct(r.pct,r.n)} against the number</div>
       <div class="mini">
-        <div><span>Best run</span><b>${s.best>0?s.best+" straight":"—"}</b></div>
-        <div><span>Ended on</span><b>${s.cur===0?"—":(s.cur>0? s.cur+" W":Math.abs(s.cur)+" L")}</b></div>
+        <div><span>Best streak</span><b>${s.best>0?s.best+" straight":"—"}</b></div>
+        <div><span>Worst streak</span><b>${s.worst>0?s.worst+" straight":"—"}</b></div>
         <div><span>Decided by ≤6</span><b>${close.length? cw+"–"+(close.length-cw):"—"}</b></div>
         <div><span>Laying points</span><b>${fav.n? fav.w+"–"+fav.l:"—"}</b></div>
       </div></div>`;
@@ -542,21 +750,46 @@ function renderCards(){
 }
 
 /* ============================ running % chart ============================ */
-function renderChart(){
-  const host=document.getElementById("chart");
-  const W = Math.max(340, host.clientWidth||900), H = Math.min(420, Math.max(260, W*0.42));
-  const m={t:16,r:16,b:30,l:40};
-  const series = PLAYERS.map(n=>{
+let CHART = null;
+function chartSeries(){
+  return PLAYERS.map(n=>{
     const mine = base().filter(p=>p.n===n).sort((a,b)=>a.y-b.y||a.w-b.w);
     let w=0,l=0; const pts=[];
-    mine.forEach((p,i)=>{ if(p.r==="W")w++; else if(p.r==="L")l++; else return;
-      if(w+l>=5) pts.push({x:w+l, y:w/(w+l)}); });
+    mine.forEach(p=>{ if(p.r==="W")w++; else if(p.r==="L")l++; else return;
+      if(w+l>=5) pts.push({x:w+l, y:w/(w+l), y0:p.y, w0:p.w}); });
     return {n,pts,color:COLOR[n]};
   });
-  const maxX = Math.max(1,...series.map(s=>s.pts.length? s.pts[s.pts.length-1].x:0));
+}
+function renderChart(){
+  const host=document.getElementById("chart");
+  const series = chartSeries();
+  const maxX = Math.max(5,...series.map(s=>s.pts.length? s.pts[s.pts.length-1].x:5));
+  const sc = document.getElementById("scrub");
+  if(sc){
+    sc.min=5; sc.max=maxX;
+    if(+sc.value>maxX || sc.dataset.full==="1"||!sc.dataset.touched) sc.value=maxX;
+  }
+  CHART={series,maxX};
+  drawChart(sc? +sc.value : maxX);
+  document.getElementById("chartlegend").innerHTML = PLAYERS.map(n=>{
+    const r=recordOf(base().filter(p=>p.n===n));
+    return `<button class="${state.hidden.has(n)?"":"on"}" data-n="${n}" style="color:${COLOR[n]}">
+      <i></i>${n} <span style="color:var(--ink3)">${fmtPct(r.pct,r.n)}</span></button>`;
+  }).join("");
+  document.querySelectorAll("#chartlegend button").forEach(b=>b.addEventListener("click",()=>{
+    const n=b.dataset.n; state.hidden.has(n)?state.hidden.delete(n):state.hidden.add(n);
+    drawChart(+document.getElementById("scrub").value);
+  }));
+}
+function drawChart(upto, hoverX){
+  const host=document.getElementById("chart");
+  if(!CHART) return;
+  const {series,maxX}=CHART;
+  const W = Math.max(340, host.clientWidth||900), H = Math.min(420, Math.max(260, W*0.42));
+  const m={t:16,r:16,b:30,l:40};
   const X = v => m.l + (v-5)/Math.max(1,maxX-5)*(W-m.l-m.r);
-  const Y = v => m.t + (1-(v-0.15)/0.7)*(H-m.t-m.b);
   const clamp = v => Math.max(0.15,Math.min(0.85,v));
+  const Y = v => m.t + (1-(clamp(v)-0.15)/0.7)*(H-m.t-m.b);
   let g="";
   [0.2,0.3,0.4,0.5,0.6,0.7,0.8].forEach(v=>{
     const y=Y(v), major = v===0.5;
@@ -565,34 +798,63 @@ function renderChart(){
       <text x="${m.l-8}" y="${y+3.5}" text-anchor="end" fill="#68806F"
       font-family="DM Mono, monospace" font-size="10">${Math.round(v*100)}%</text>`;
   });
-  for(let x=10;x<=maxX;x+=10){
+  for(let x=10;x<=maxX;x+=10)
     g+=`<text x="${X(x)}" y="${H-10}" text-anchor="middle" fill="#68806F"
       font-family="DM Mono, monospace" font-size="10">${x}</text>`;
-  }
-  g+=`<text x="${W-m.r}" y="${H-10}" text-anchor="end" fill="#68806F"
-      font-family="DM Mono, monospace" font-size="10">picks →</text>`;
+
+  const hx = hoverX!=null ? Math.max(5,Math.min(upto,hoverX)) : null;
+  if(hx!=null) g+=`<line x1="${X(hx)}" x2="${X(hx)}" y1="${m.t}" y2="${H-m.b}"
+     stroke="#F3ECD8" stroke-width="1" opacity=".45"/>`;
+
+  const readout=[];
   series.forEach(s=>{
-    if(!s.pts.length) return;
+    const pts=s.pts.filter(p=>p.x<=upto);
+    if(!pts.length) return;
     const hidden = state.hidden.has(s.n);
     const faded = (state.player!=="all" && state.player!==s.n);
-    const d = s.pts.map((p,i)=>(i?"L":"M")+X(p.x).toFixed(1)+" "+Y(clamp(p.y)).toFixed(1)).join(" ");
-    const last = s.pts[s.pts.length-1];
+    const d = pts.map((p,i)=>(i?"L":"M")+X(p.x).toFixed(1)+" "+Y(p.y).toFixed(1)).join(" ");
+    const last = pts[pts.length-1];
     g+=`<path d="${d}" fill="none" stroke="${s.color}" stroke-width="${faded?1.2:2}"
       stroke-linejoin="round" opacity="${hidden?0:(faded?.3:1)}"/>`;
-    if(!hidden) g+=`<circle cx="${X(last.x)}" cy="${Y(clamp(last.y))}" r="${faded?2:3.2}"
+    if(hidden) return;
+    g+=`<circle cx="${X(last.x)}" cy="${Y(last.y)}" r="${faded?2:3.2}"
       fill="${s.color}" opacity="${faded?.35:1}"/>`;
+    if(hx!=null){
+      let hp=null; for(const p of pts) if(p.x<=hx) hp=p;
+      if(hp){
+        g+=`<circle cx="${X(hp.x)}" cy="${Y(hp.y)}" r="4.2" fill="${s.color}"
+          stroke="#0D1714" stroke-width="1.5"/>`;
+        readout.push({n:s.n,color:s.color,pct:hp.y,y0:hp.y0,w0:hp.w0});
+      }
+    }
   });
-  host.innerHTML=`<svg viewBox="0 0 ${W} ${H}" role="img"
+  host.innerHTML=`<svg viewBox="0 0 ${W} ${H}" role="img" id="chartsvg"
      aria-label="Running win percentage by pick for each picker">${g}</svg>`;
-  document.getElementById("chartlegend").innerHTML = PLAYERS.map(n=>{
-    const r=recordOf(base().filter(p=>p.n===n));
-    return `<button class="${state.hidden.has(n)?"":"on"}" data-n="${n}" style="color:${COLOR[n]}">
-      <i></i>${n} <span style="color:var(--ink3)">${fmtPct(r.pct,r.n)}</span></button>`;
-  }).join("");
-  document.querySelectorAll("#chartlegend button").forEach(b=>b.addEventListener("click",()=>{
-    const n=b.dataset.n; state.hidden.has(n)?state.hidden.delete(n):state.hidden.add(n);
-    renderChart();
-  }));
+
+  const sv=document.getElementById("scrubval");
+  if(sv){
+    if(readout.length){
+      readout.sort((a,b)=>b.pct-a.pct);
+      sv.innerHTML = `<span style="color:var(--ink3)">${readout[0].y0} wk ${readout[0].w0}</span> ` +
+        readout.map(r=>`<span style="color:${r.color}">${r.n} ${(r.pct*100).toFixed(1)}%</span>`).join(" ");
+      sv.style.minWidth="0";
+    } else {
+      const at = series.map(s=>{const p=s.pts.filter(q=>q.x<=upto).pop(); return p;}).filter(Boolean);
+      const lbl = at.length? at[0].y0+" wk "+at[0].w0 : "";
+      sv.textContent = `pick ${upto} of ${maxX}` + (lbl? ` · ${lbl}` : "");
+      sv.style.minWidth="104px";
+    }
+  }
+  const svg=document.getElementById("chartsvg");
+  if(svg){
+    svg.addEventListener("mousemove",e=>{
+      const r=svg.getBoundingClientRect();
+      const px=(e.clientX-r.left)/r.width*W;
+      const v=Math.round(5+(px-m.l)/(W-m.l-m.r)*(maxX-5));
+      drawChart(upto, v);
+    });
+    svg.addEventListener("mouseleave",()=>drawChart(upto));
+  }
 }
 
 /* ============================ matrices ============================ */
@@ -611,7 +873,7 @@ function matrix(title, rows, note){
       const col = r.pct>=.5 ? "#EFB53F" : "#B3706B";
       h+=`<td class="cell${dim} ${n==="All"?"hi":""}" style="color:${col}">
         <span class="fill" style="width:${w}%"></span>
-        <span>${w}%<span style="color:var(--ink3)"> ${r.w}-${r.l}</span></span></td>`;
+        <span class="pc">${w}%</span><span class="wl">${r.w}-${r.l}</span></td>`;
     });
     h+=`</tr>`;
   }
@@ -648,6 +910,54 @@ function renderSeasonMat(){
   state.year = saved;
 }
 
+/* ============================ combinations ============================ */
+function weekSets(){
+  const rows = PICKS.filter(p=>state.year==="all"||p.y===+state.year);
+  const m=new Map();
+  for(const p of rows){
+    const k=p.y+"-"+p.w;
+    if(!m.has(k)) m.set(k,[]);
+    m.get(k).push(p);
+  }
+  return [...m.values()].filter(l=>l.length===4)
+    .map(l=>PLAYERS.filter(n=>{const p=l.find(x=>x.n===n);return p&&p.r!=="L";}));
+}
+function drow(label,count,total,gold){
+  const w = total? Math.round(count/total*100) : 0;
+  return `<div class="drow"><div class="lab">${label}</div>
+    <div class="dbar"><i class="${gold?"gold":""}" style="width:${w}%"></i></div>
+    <div class="n">${count} wk · ${w}%</div></div>`;
+}
+function renderCombos(){
+  const sets = weekSets();
+  const total = sets.length;
+  const dist=[0,0,0,0,0];
+  for(const s of sets) dist[s.length]++;
+  const words=["Nobody","One of them","Two of them","Three of them","All four"];
+  document.getElementById("legdist").innerHTML =
+    `<div class="drow" style="color:var(--ink3);font-size:10.5px;letter-spacing:.14em">
+      <div>HOW MANY SURVIVED</div><div></div><div class="n">${total} WEEKS</div></div>` +
+    [4,3,2,1,0].map(k=>drow(words[k],dist[k],total,k===4)).join("");
+
+  const m=new Map();
+  for(const s of sets){
+    const k=s.join("|");
+    m.set(k,(m.get(k)||0)+1);
+  }
+  const rows=[...m.entries()].map(([k,c])=>({set:k?k.split("|"):[],c}))
+    .sort((a,b)=>b.c-a.c || b.set.length-a.set.length || a.set.join().localeCompare(b.set.join()));
+  document.getElementById("combos").innerHTML =
+    `<div class="drow" style="color:var(--ink3);font-size:10.5px;letter-spacing:.14em">
+      <div>EXACT COMBINATION</div><div></div><div class="n">${rows.length} SEEN OF 16</div></div>` +
+    rows.map(r=>{
+      const label = `<div class="combolabel">` + PLAYERS.map(n=>{
+        const on = r.set.includes(n);
+        return `<span class="${on?"":"off"}" style="${on?"color:"+COLOR[n]:""}">${n}</span>`;
+      }).join("") + `</div>`;
+      return drow(label, r.c, total, r.set.length===4);
+    }).join("");
+}
+
 /* ============================ teams ============================ */
 function teamRows(){
   const list = scoped();
@@ -662,6 +972,7 @@ function teamRows(){
     }
   }
   let rows=[...m.values()];
+  if(state.conf!=="all") rows=rows.filter(r=>(CONF[r.t]||"Independent / FCS")===state.conf);
   if(state.teamQ) rows=rows.filter(r=>r.t.toLowerCase().includes(state.teamQ));
   rows.sort((a,b)=> b.n-a.n || (b.w/b.n)-(a.w/a.n) || a.t.localeCompare(b.t));
   if(state.teamSort) rows.sort(state.teamSort);
@@ -670,21 +981,30 @@ function teamRows(){
 let teamSortKey="n", teamSortDir=-1;
 function renderTeams(){
   let rows=teamRows();
-  const keyfn={t:r=>r.t.toLowerCase(),n:r=>r.n,w:r=>r.w,l:r=>r.n-r.w,p:r=>r.w/r.n};
+  const keyfn={t:r=>r.t.toLowerCase(),c:r=>(CONF_FULL[r.t]||"zz").toLowerCase(),n:r=>r.n,w:r=>r.w,l:r=>r.n-r.w,p:r=>r.w/r.n};
   rows.sort((a,b)=>{
     const x=keyfn[teamSortKey](a),y=keyfn[teamSortKey](b);
     if(x<y) return -teamSortDir; if(x>y) return teamSortDir; return a.t.localeCompare(b.t);
   });
   const shown = state.teamAll? rows : rows.slice(0,18);
   const arw=k=> teamSortKey===k? `<span class="arw">${teamSortDir>0?"▲":"▼"}</span>`:"";
-  const cols=[["t","School"],["n","Bets"],["w","W"],["l","L"],["p","Win %"]];
+  const cf=document.getElementById("conffilter");
+  const CONFS=["Big Ten","SEC","Big 12","ACC","Group of 5","Independent / FCS"];
+  cf.innerHTML = `<span class="flabel">Conference</span>` +
+    [["all","All"],...CONFS.map(c=>[c,c])].map(o=>
+      `<button class="chip" data-c="${o[0]}" aria-pressed="${state.conf===o[0]}">${o[1]}</button>`).join("");
+  cf.querySelectorAll(".chip").forEach(b=>b.addEventListener("click",()=>{
+    state.conf=b.dataset.c; renderTeams();
+  }));
+  const cols=[["t","School"],["c","Conf"],["n","Bets"],["w","W"],["l","L"],["p","Win %"]];
   let h=`<thead><tr>`+cols.map(c=>`<th class="sortable" data-k="${c[0]}">${c[1]} ${arw(c[0])}</th>`).join("")
     + (state.player==="all"? PLAYERS.map(n=>`<th style="color:${COLOR[n]}">${n}</th>`).join(""):"")
     + `</tr></thead><tbody>`;
-  if(!shown.length) h+=`<tr><td colspan="9" style="color:var(--ink3)">Nothing matches that filter.</td></tr>`;
+  if(!shown.length) h+=`<tr><td colspan="10" style="color:var(--ink3)">Nothing matches that filter.</td></tr>`;
   for(const r of shown){
     const pc=r.w/r.n;
-    h+=`<tr><td>${r.t}</td><td>${r.n}</td><td>${r.w}</td><td>${r.n-r.w}</td>
+    h+=`<tr><td><span class="tname">${logoIMG(r.t)}<span class="txt">${r.t}</span></span></td>
+      <td class="conf">${CONF_FULL[r.t]||"—"}</td><td>${r.n}</td><td>${r.w}</td><td>${r.n-r.w}</td>
       <td class="cell" style="color:${pc>=.5?"#EFB53F":"#B3706B"}">
       <span class="fill" style="width:${Math.round(pc*100)}%"></span>
       <span>${(pc*100).toFixed(0)}%</span></td>`;
@@ -710,15 +1030,17 @@ function renderOdds(){
   const el=document.getElementById("odds");
   if(!list.length){el.innerHTML=`<div class="empty">No picks match this filter.</div>`;return;}
   const cards=[];
-  const push=(lab,val,sub)=>cards.push(`<div class="odd"><div class="lab">${lab}</div>
+  const push=(lab,val,sub,team)=>cards.push(`<div class="odd">
+    ${team?logoIMG(team,"").replace("tlogo","oddlogo"):""}
+    <div class="lab">${lab}</div>
     <div class="val">${val}</div><div class="sub">${sub}</div></div>`);
 
   const big=[...list].filter(p=>p.r==="W").sort((a,b)=>b.d-a.d)[0];
-  if(big) push("Never in doubt", big.team, `${big.n} · ${big.y} wk ${big.w} · covered by ${big.d}`);
+  if(big) push("Never in doubt", big.team, `${big.n} · ${big.y} wk ${big.w} · covered by ${big.d}`, big.tm[0]);
   const bad=[...list].filter(p=>p.r==="L").sort((a,b)=>b.d-a.d)[0];
-  if(bad) push("Dead on arrival", bad.team, `${bad.n} · ${bad.y} wk ${bad.w} · missed by ${bad.d}`);
+  if(bad) push("Dead on arrival", bad.team, `${bad.n} · ${bad.y} wk ${bad.w} · missed by ${bad.d}`, bad.tm[0]);
   const heart=[...list].filter(p=>p.r==="L").sort((a,b)=>a.d-b.d)[0];
-  if(heart) push("Closest miss", heart.team, `${heart.n} · ${heart.y} wk ${heart.w} · short by ${heart.d}`);
+  if(heart) push("Closest miss", heart.team, `${heart.n} · ${heart.y} wk ${heart.w} · short by ${heart.d}`, heart.tm[0]);
 
   const counts=new Map();
   for(const p of list) for(const t of p.tm){
@@ -726,11 +1048,11 @@ function renderOdds(){
   }
   const arr=[...counts.entries()];
   const most=arr.sort((a,b)=>b[1][0]-a[1][0])[0];
-  if(most) push("Most backed", most[0], `${most[1][0]} bets · ${most[1][1]}-${most[1][0]-most[1][1]}`);
+  if(most) push("Most backed", most[0], `${most[1][0]} bets · ${most[1][1]}-${most[1][0]-most[1][1]}`, most[0]);
   const money=arr.filter(e=>e[1][0]>=4).sort((a,b)=>(b[1][1]/b[1][0])-(a[1][1]/a[1][0]))[0];
-  if(money) push("Prints money", money[0], `${money[1][1]}-${money[1][0]-money[1][1]} · ${Math.round(money[1][1]/money[1][0]*100)}%`);
+  if(money) push("Prints money", money[0], `${money[1][1]}-${money[1][0]-money[1][1]} · ${Math.round(money[1][1]/money[1][0]*100)}%`, money[0]);
   const curse=arr.filter(e=>e[1][0]>=4).sort((a,b)=>(a[1][1]/a[1][0])-(b[1][1]/b[1][0]))[0];
-  if(curse) push("Do not touch", curse[0], `${curse[1][1]}-${curse[1][0]-curse[1][1]} · ${Math.round(curse[1][1]/curse[1][0]*100)}%`);
+  if(curse) push("Do not touch", curse[0], `${curse[1][1]}-${curse[1][0]-curse[1][1]} · ${Math.round(curse[1][1]/curse[1][0]*100)}%`, curse[0]);
 
   const close=list.filter(p=>p.d<=6);
   const cw=close.filter(p=>p.r==="W").length;
@@ -770,9 +1092,9 @@ function renderLog(){
     h+=`<tr><td>${p.y} · ${p.w}</td>
       <td style="color:${COLOR[p.n]}">${p.n}</td>
       <td>${p.t==="Dog"?"Underdog":p.t}</td>
-      <td>${p.team}</td>
+      <td>${logoStack(p.tm,'sm')}${p.team}</td>
       <td>${sign}${p.pts}</td>
-      <td class="res ${p.r}">${p.r==="W"?"Cover":p.r==="P"?"Push":"Miss"}</td>
+      <td class="res ${p.r}">${p.r==="W"?"Win":p.r==="P"?"Push":"Loss"}</td>
       <td>${p.d}</td></tr>`;
   }
   document.getElementById("logtable").innerHTML=h+`</tbody>`;
@@ -790,11 +1112,13 @@ function renderAll(){
   const g=renderGrid();
   renderWeekCard();
   renderHero(g);
+  renderLast();
   renderFilters();
   renderCards();
   renderChart();
   renderMats();
   renderSeasonMat();
+  renderCombos();
   renderTeams();
   renderOdds();
   renderLog();
@@ -809,6 +1133,23 @@ function wire(){
   document.getElementById("logmore").addEventListener("click",()=>{
     state.logN+=100; renderLog();});
   let t; window.addEventListener("resize",()=>{clearTimeout(t);t=setTimeout(renderChart,150);});
+  const sc=document.getElementById("scrub"), pb=document.getElementById("scrubplay");
+  sc.addEventListener("input",()=>{
+    sc.dataset.touched="1";
+    sc.dataset.full = (+sc.value===+sc.max)?"1":"0";
+    drawChart(+sc.value);
+  });
+  let timer=null;
+  pb.addEventListener("click",()=>{
+    if(timer){ clearInterval(timer); timer=null; pb.textContent="Play"; return; }
+    pb.textContent="Stop";
+    sc.dataset.touched="1"; sc.value=sc.min; sc.dataset.full="0"; drawChart(+sc.value);
+    timer=setInterval(()=>{
+      if(+sc.value>=+sc.max){ clearInterval(timer); timer=null; pb.textContent="Play";
+        sc.dataset.full="1"; return; }
+      sc.value=+sc.value+1; drawChart(+sc.value);
+    }, 55);
+  });
 }
 async function tryCSV(url,label){
   const res = await fetch(url,{cache:"no-store"});
