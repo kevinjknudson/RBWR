@@ -40,7 +40,7 @@ year,week,name,type,team,points,result,diff
 2020,10,Adam,Favorite,Oregon,10,Win,4
 2020,10,Ross,Favorite,Rutgers,7,Loss,10
 2020,11,Adam,Favorite,Cincinnati,5.5,Loss,3
-2020,11,Ross,Favorite,Iowa State,11,Win,34
+2020,11,Ross,Favorite,ISU,11,Win,34
 2020,11,Kev,Over,Liberty/NC State,66,Loss,37
 2020,11,AJ,Over,Michigan/Rutgers,52.5,Win,47
 2020,12,AJ,Favorite,Alabama,24,Win,5
@@ -48,7 +48,7 @@ year,week,name,type,team,points,result,diff
 2020,12,Ross,Over,Michigan/Penn State,58,Loss,14
 2020,12,Adam,Favorite,Oregon,13,Loss,16
 2020,13,AJ,Favorite,Clemson (1H),11.5,Loss,5
-2020,13,Kev,Favorite,Iowa State,6.5,Win,29
+2020,13,Kev,Favorite,ISU,6.5,Win,29
 2020,13,Adam,Favorite,NC State,6.5,Win,4
 2020,13,Ross,Favorite,Okie State,1,Loss,8
 2020,14,Kev,Over,ASU/Arizona,55,Win,22
@@ -128,7 +128,7 @@ year,week,name,type,team,points,result,diff
 2022,1,Adam,Favorite,South Carolina,12.5,Win,8
 2022,1,Kev,Favorite,UNC,0.5,Win,1
 2022,2,Adam,Favorite,Arkansas,8.5,Win,5
-2022,2,AJ,Over,Iowa/Iowa State,40,Loss,23
+2022,2,AJ,Over,Iowa/ISU,40,Loss,23
 2022,2,Ross,Favorite,Mississippi State,11,Win,11
 2022,2,Kev,Favorite,USC,8.5,Win,4
 2022,3,Kev,Dog,Nevada,24,Loss,3
@@ -159,7 +159,7 @@ year,week,name,type,team,points,result,diff
 2022,9,Kev,Dog,Okie State,1.5,Loss,47
 2022,9,Adam,Favorite,Syracuse,0,Loss,18
 2022,9,Ross,Favorite,Wake Forest,3.5,Loss,31
-2022,10,AJ,Favorite,Iowa State,7.5,Win,9
+2022,10,AJ,Favorite,ISU,7.5,Win,9
 2022,10,Ross,Favorite,Texas,1.5,Win,5
 2022,10,Kev,Over,UCF/Memphis,58.5,Win,4
 2022,10,Adam,Over,UConn/UMass,40,Loss,3
@@ -191,7 +191,7 @@ year,week,name,type,team,points,result,diff
 2023,2,Kev,Over,Ohio/FAU,62.5,Loss,36
 2023,2,Ross,Favorite,Ole Miss,7,Win,10
 2023,2,AJ,Dog,Tulsa,35,Win,2
-2023,3,Adam,Over,Kstate/Missouri,47,Win,10
+2023,3,Adam,Over,KState/Missouri,47,Win,10
 2023,3,Ross,Favorite,LSU,9.5,Win,17
 2023,3,AJ,Over,LSU/Mississippi State,54.5,Win,1
 2023,3,Kev,Dog,Purdue,2.5,Loss,13
@@ -224,7 +224,7 @@ year,week,name,type,team,points,result,diff
 2023,10,AJ,Dog,Pitt,21.5,Win,4
 2023,10,Ross,Over,USC/Washington,76.5,Win,17
 2023,11,Adam,Favorite,Kansas,3.5,Loss,7
-2023,11,Kev,Favorite,Michigan,4.5,Win,4
+2023,11,Kev,Favorite,Michigan ,4.5,Win,4
 2023,11,Ross,Under,Northwestern/Wisconsin,42.5,Win,8
 2023,11,AJ,Favorite,UCLA,16.5,Loss,27
 2023,12,AJ,Favorite,Kstate,9.5,Loss,6
@@ -263,7 +263,7 @@ year,week,name,type,team,points,result,diff
 2024,6,Kev,Dog,Minnesota,9,Win,16
 2024,6,Ross,Favorite,Ohio State,19.5,Win,9
 2024,6,Adam,Over,TCU/Houston,51,Loss,2
-2024,7,AJ,Dog,Cincinnati,2.5,Win,9
+2024,7,AJ,Dog,Cincinnatti,2.5,Win,9
 2024,7,Adam,Favorite,Minnesota,3.5,Win,1
 2024,7,Ross,Favorite,Ohio State,3,Loss,4
 2024,7,Kev,Favorite,Pitt,2.5,Loss,1
@@ -331,7 +331,7 @@ year,week,name,type,team,points,result,diff
 2025,7,Ross,Favorite,Oregon,7,Loss,17
 2025,7,AJ,Over,Navy/Temple,52,Win,11
 2025,7,Adam,Favorite,Cincinnati,10.5,Loss,2
-2025,8,Ross,Dog,Purdue,3,Loss,16
+2025,8,Ross,Dog,Purdue ,3,Loss,16
 2025,8,Adam,Over,GaTech/Duke,60,Loss,15
 2025,8,AJ,Over,Army/Tulane,45,Loss,4
 2025,8,Kev,Dog,USC,10,Push,1
@@ -352,7 +352,7 @@ year,week,name,type,team,points,result,diff
 2025,12,Kev,Over,Notre Dame/Pitt,53.5,Loss,2
 2025,12,Ross,Favorite,USC,6.5,Loss,2
 2025,13,Ross,Dog,UCLA,10.5,Loss,24
-2025,13,AJ,Dog,Cincinnati,3,Loss,9
+2025,13,AJ,Dog,Cincinnati ,3,Loss,9
 2025,13,Kev,Under,Ohio State/Rutgers,55.5,Win,5
 2025,13,Adam,Dog,TCU,1,Win,4
 2025,14,Ross,Favorite,Indiana,28.5,Win,25
