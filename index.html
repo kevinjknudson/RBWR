@@ -36,17 +36,19 @@ html[data-theme="chalk"]{
 }
 html[data-theme="chalk"] .filters{background:rgba(237,241,230,.94)}
 html[data-theme="chalk"] .chip[aria-pressed="true"]{background:#20321C;border-color:#20321C;color:#EDF1E6}
-html[data-theme="chalk"] .res.W{color:#8A5C06}
-html[data-theme="chalk"] .res.L{color:#B44A34}
-html[data-theme="chalk"] .gcol.sweep::before{background:rgba(138,92,6,.13);
-  border-color:rgba(138,92,6,.55);border-top-color:#8A5C06;box-shadow:none}
-html[data-theme="chalk"] .cash{color:#8A5C06}
-html[data-theme="chalk"] .streak.w{background:rgba(183,122,11,.18);color:#8A5C06}
+html[data-theme="chalk"] .res.W{color:#1B6B45}
+html[data-theme="chalk"] .res.L{color:#A8321C}
+html[data-theme="chalk"] .gcol.sweep::before{background:rgba(27,107,69,.13);
+  border-color:rgba(27,107,69,.55);border-top-color:#1B6B45;box-shadow:none}
+html[data-theme="chalk"] .cash{color:#1B6B45}
+html[data-theme="chalk"] .streak.w{background:rgba(27,107,69,.16);color:#1B6B45}
+html[data-theme="chalk"] .streak.l{background:rgba(168,50,28,.14);color:#A8321C}
 html[data-theme="chalk"] .expand{color:#3E7A34}
 html[data-theme="chalk"] .tlogo,html[data-theme="chalk"] .oddlogo{background:#fff;
   box-shadow:inset 0 0 0 1px rgba(32,50,28,.15)}
 html[data-theme="chalk"] .mugbox{background:#E4EBDB}
-html[data-theme="chalk"] .dbar i.gold{background:#B77A0B}
+html[data-theme="chalk"] .dbar i.gold{background:#1B6B45}
+html[data-theme="chalk"] .dbar i{background:#93A88A}
 html[data-theme="chalk"] input[type=search]{background:#fff}
 .themebtn{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;
   border:1px solid var(--line2);padding:4px 10px;color:var(--ink2);border-radius:2px}
@@ -172,6 +174,15 @@ h1{
 .filters{position:sticky;top:0;z-index:20;background:rgba(13,23,20,.94);
   backdrop-filter:blur(8px);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
 .filterrow{display:flex;gap:26px;flex-wrap:wrap;padding:12px 0}
+.displaybar{position:sticky;top:0;z-index:30;background:rgba(13,23,20,.92);
+  backdrop-filter:blur(8px);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+html[data-theme="chalk"] .displaybar{background:rgba(237,241,230,.92)}
+.displaybar .wrap{display:flex;justify-content:flex-end;padding:7px 20px}
+.displaybar .fgroup{gap:6px}
+.secfilter{display:flex;gap:8px 22px;flex-wrap:wrap;align-items:center;margin:10px 0 22px}
+.secfilter .fgroup{gap:6px}
+section .secfilter{margin-top:12px}
+.gridwrap .secfilter{margin:0 0 18px}
 .fgroup{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 .flabel{font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;
   color:var(--ink3);margin-right:2px}
@@ -237,7 +248,13 @@ h2{font-family:var(--display);font-weight:700;text-transform:uppercase;
 .mat th,.mat td{padding:6px 5px}
 .mat th:first-child,.mat td:first-child{padding-left:2px}
 .mat h3{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;
-  color:var(--ink2);font-weight:400;margin:0 0 10px}
+  color:var(--ink2);font-weight:400;margin:0 0 10px;display:flex;align-items:center;
+  gap:10px;flex-wrap:wrap}
+.subtog{display:inline-flex;gap:3px;margin-left:auto}
+.subtog button{font-family:var(--mono);font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;
+  padding:2px 7px;border:1px solid var(--line2);color:var(--ink3);border-radius:2px}
+.subtog button:hover{color:var(--ink);border-color:var(--ink3)}
+.subtog button.on{background:var(--bone);border-color:var(--bone);color:var(--ground)}
 table{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:12px}
 th{font-weight:400;color:var(--ink3);text-align:right;padding:6px 8px;
   border-bottom:1px solid var(--line);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;
@@ -265,7 +282,7 @@ th .arw{opacity:.5;font-size:9px}
 .odd .lab{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3)}
 .odd .val{font-family:var(--display);font-weight:700;font-size:26px;line-height:1.05;
   text-transform:uppercase;color:var(--bone);margin-top:6px}
-.odd .sub{font-family:var(--mono);font-size:11.5px;color:var(--ink2);margin-top:4px}
+.odd .sub{font-family:var(--mono);font-size:11.5px;color:var(--ink2);margin-top:4px;line-height:1.5}
 
 /* log */
 .logtools{display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin-bottom:14px}
@@ -274,7 +291,7 @@ input[type=search]{font-family:var(--mono);font-size:12.5px;background:var(--pan
 input[type=search]:focus{outline:2px solid var(--bone);outline-offset:1px}
 .count{font-family:var(--mono);font-size:11.5px;color:var(--ink3)}
 .tablescroll{overflow-x:auto;border:1px solid var(--line)}
-.tablescroll table{min-width:700px}
+.tablescroll table{min-width:780px}
 .tablescroll th{background:var(--panel2);position:sticky;top:0}
 .res{font-weight:500}
 .res.W{color:var(--adam)}
@@ -286,6 +303,7 @@ input[type=search]:focus{outline:2px solid var(--bone);outline-offset:1px}
 .more button:hover{border-color:var(--ink3);color:var(--ink)}
 
 .conf{font-size:11px;color:var(--ink3);text-align:left!important}
+.opp{color:var(--ink2);text-align:left!important}
 #conffilter{flex-wrap:wrap}
 .dist{display:grid;gap:7px;max-width:660px;margin-bottom:34px}
 .drow{display:grid;grid-template-columns:168px 1fr 92px;gap:14px;align-items:center;
@@ -321,13 +339,15 @@ input[type=search]:focus{outline:2px solid var(--bone);outline-offset:1px}
   #logtable td:nth-child(1){grid-row:1;grid-column:1;color:var(--ink3);font-size:11px}
   #logtable td:nth-child(2){grid-row:1;grid-column:2;text-align:left}
   #logtable td:nth-child(3){display:none}
-  #logtable td:nth-child(4){grid-row:2;grid-column:1/4;text-align:left;
+  #logtable td:nth-child(4){grid-row:2;grid-column:1/3;text-align:left;
     color:var(--ink);white-space:normal;overflow:hidden;text-overflow:ellipsis}
   #logtable td:nth-child(5){grid-row:1;grid-column:3;text-align:right;color:var(--ink2)}
-  #logtable td:nth-child(6){grid-row:1;grid-column:4;text-align:right}
-  #logtable td:nth-child(7){grid-row:2;grid-column:4;text-align:right;
+  #logtable td:nth-child(6){grid-row:3;grid-column:1/5;text-align:left;
+    color:var(--ink3);font-size:11px;white-space:normal}
+  #logtable td:nth-child(7){grid-row:1;grid-column:4;text-align:right}
+  #logtable td:nth-child(8){grid-row:2;grid-column:4;text-align:right;
     color:var(--ink3);font-size:11px}
-  #logtable td:nth-child(7)::before{content:"by "}
+  #logtable td:nth-child(8)::before{content:"by "}
   /* teams: drop the per-bettor split, keep the record */
   #teamtable{min-width:0}
   #teamtable th,#teamtable td{padding:7px 5px;font-size:11.5px}
@@ -344,11 +364,13 @@ input[type=search]:focus{outline:2px solid var(--bone);outline-offset:1px}
 </head>
 <body>
 
+<div class="displaybar"><div class="wrap" id="f-display"></div></div>
+
 <div class="top">
   <div class="wrap">
     <div class="topbar">
       <b>RBWR</b>
-      <span style="display:flex;gap:14px;align-items:center"><span id="stamp">Weekly parlay ledger</span><button class="themebtn" id="themebtn" aria-label="Switch colour theme">Light Mode</button></span>
+      <span id="stamp">Weekly parlay ledger</span><span style="color:var(--line2)">build 13</span>
     </div>
   </div>
   <div class="wrap hero">
@@ -384,14 +406,11 @@ input[type=search]:focus{outline:2px solid var(--bone);outline-offset:1px}
   </div>
 </div>
 
-<div class="filters">
-  <div class="wrap filterrow" id="filters"></div>
-</div>
-
 <main class="wrap">
 
   <section>
     <div class="shead"><span class="snum">01</span><h2>Standings</h2></div>
+    <div class="secfilter" id="f-stand"></div>
     <p class="snote">All time record, ordered by win %</p>
     <div class="cards" id="cards"></div>
   </section>
@@ -412,18 +431,21 @@ input[type=search]:focus{outline:2px solid var(--bone);outline-offset:1px}
 
   <section>
     <div class="shead"><span class="snum">03</span><h2>Pick Outcome Breakdown</h2></div>
+    <div class="secfilter" id="f-break"></div>
     <p class="snote">Win percentage and record broken out by bet type, spread size, posted total, and how far the result landed from the number.</p>
     <div class="mats" id="mats"></div>
   </section>
 
   <section>
     <div class="shead"><span class="snum">04</span><h2>Performance by Year</h2></div>
+    <div class="secfilter" id="f-season"></div>
     <p class="snote">Win percentage and record for each bettor by season.</p>
     <div id="seasonmat"></div>
   </section>
 
   <section>
     <div class="shead"><span class="snum">05</span><h2>Parlay Outcomes</h2></div>
+    <div class="secfilter" id="f-parlay"></div>
     <p class="snote">Sixteen possible outcomes. Who busts the most?</p>
     <div class="dist" id="legdist"></div>
     <div class="dist" id="combos"></div>
@@ -431,6 +453,7 @@ input[type=search]:focus{outline:2px solid var(--bone);outline-offset:1px}
 
   <section>
     <div class="shead"><span class="snum">06</span><h2>Team Trends</h2></div>
+    <div class="secfilter" id="f-teams"></div>
     <p class="snote">Every school bet on, with total bets and record. Over/under bets count toward both teams in the game.</p>
     <div class="logtools">
       <input type="search" id="teamsearch" placeholder="Find a school" aria-label="Find a school">
@@ -443,14 +466,16 @@ input[type=search]:focus{outline:2px solid var(--bone);outline-offset:1px}
 
   <section>
     <div class="shead"><span class="snum">07</span><h2>Nuggets</h2></div>
+    <div class="secfilter" id="f-nug"></div>
     <div class="odds" id="odds"></div>
   </section>
 
   <section>
     <div class="shead"><span class="snum">08</span><h2>Pick Ledger</h2></div>
+    <div class="secfilter" id="f-ledger"></div>
     <p class="snote">Every pick on record. Margin represents the number of points needed to flip the outcome.</p>
     <div class="logtools">
-      <input type="search" id="logsearch" placeholder="Search team, bettor, season" aria-label="Search the ledger">
+      <input type="search" id="logsearch" placeholder="Search team, opponent, bettor, season" aria-label="Search the ledger">
       <span class="count" id="logcount"></span>
     </div>
     <div class="tablescroll"><table id="logtable"></table></div>
@@ -472,7 +497,7 @@ const THEMES = {
   dark: {Ross:"#63A7D4",Adam:"#EFB53F",AJ:"#E0705C",Kev:"#8FD1B0",
          pos:"#EFB53F",neg:"#B3706B",grid:"#1E2F28",mid:"#3B5449",axis:"#68806F",dot:"#0D1714"},
   chalk:{Ross:"#1F6FA8",Adam:"#B77A0B",AJ:"#B44A34",Kev:"#2E7D5B",
-         pos:"#8A5C06",neg:"#B44A34",grid:"#D9E1D0",mid:"#A9BC9E",axis:"#7C8F73",dot:"#EDF1E6"}
+         pos:"#1B6B45",neg:"#A8321C",grid:"#D9E1D0",mid:"#A9BC9E",axis:"#7C8F73",dot:"#EDF1E6"}
 };
 let THEME="dark";
 let COLOR=THEMES.dark;
@@ -487,6 +512,17 @@ const ALIAS = {"GA Tech":"Georgia Tech","GaTech":"Georgia Tech","Okie State":"Ok
 "UNC":"North Carolina"};
 
 let PICKS = [];
+
+/* Opponent for every spread pick, keyed year-week-bettor. Derived once from public
+   schedule data; totals have no single opponent. New seasons need this regenerated. */
+const OPP = {"2020-1-Adam":["at Florida State","Florida State"],"2020-1-Kev":["vs Coastal Carolina","Coastal Carolina"],"2020-1-AJ":["vs Duke","Duke"],"2020-1-Ross":["vs Austin Peay","Austin Peay"],"2020-2-Kev":["at Duke","Duke"],"2020-2-Adam":["vs UCF","UCF"],"2020-2-AJ":["vs Tulsa","Tulsa"],"2020-3-AJ":["at Missouri","Missouri"],"2020-3-Adam":["vs Kentucky","Kentucky"],"2020-3-Ross":["vs Florida International","FIU"],"2020-3-Kev":["at LSU","LSU"],"2020-4-Ross":["at Mississippi State","Mississippi State"],"2020-4-Adam":["at Kansas","Kansas"],"2020-4-AJ":["at Iowa State","Iowa State"],"2020-4-Kev":["vs Memphis","Memphis"],"2020-5-Ross":["at Texas A&M","Texas A&M"],"2020-5-Adam":["vs Tennessee","Tennessee"],"2020-5-Kev":["at Clemson","Clemson"],"2020-6-Adam":["vs Louisville","Louisville"],"2020-6-Ross":["at Memphis","Memphis"],"2020-7-AJ":["at Tennessee","Tennessee"],"2020-7-Kev":["at Michigan State","Michigan State"],"2020-7-Adam":["vs Georgia State","Georgia State"],"2020-7-Ross":["vs NC State","NC State"],"2020-8-AJ":["vs Boston College","Boston College"],"2020-8-Kev":["vs Texas","Texas"],"2020-8-Adam":["at Illinois","Illinois"],"2020-8-Ross":["at Virginia","Virginia"],"2020-9-Kev":["vs BYU","BYU"],"2020-9-Adam":["at Indiana","Indiana"],"2020-9-AJ":["vs Stanford","Stanford"],"2020-9-Ross":["vs Arizona State","Arizona State"],"2020-10-AJ":["vs USC","USC"],"2020-10-Adam":["at Washington State","Washington State"],"2020-10-Ross":["vs Illinois","Illinois"],"2020-11-Adam":["at UCF","UCF"],"2020-11-Ross":["vs Kansas State","Kansas State"],"2020-12-AJ":["vs Auburn","Auburn"],"2020-12-Adam":["at Oregon State","Oregon State"],"2020-13-AJ":["at Virginia Tech","Virginia Tech"],"2020-13-Kev":["vs West Virginia","West Virginia"],"2020-13-Adam":["vs Georgia Tech","Georgia Tech"],"2020-13-Ross":["at TCU","TCU"],"2020-14-Adam":["vs Auburn","Auburn"],"2020-14-Ross":["at Colorado","Colorado"],"2020-15-AJ":["at Florida","Florida"],"2020-15-Ross":["vs Clemson","Clemson"],"2020-15-Adam":["at Cincinnati","Cincinnati"],"2021-1-Kev":["vs UConn","UConn"],"2021-1-Adam":["vs Hawai'i","Hawaii"],"2021-2-Kev":["vs Indiana","Indiana"],"2021-2-Ross":["vs New Mexico State","New Mexico State"],"2021-2-Adam":["vs Penn State","Penn State"],"2021-3-AJ":["vs Kansas","Kansas"],"2021-3-Adam":["at Iowa State","Iowa State"],"2021-3-Kev":["at Syracuse","Syracuse"],"2021-3-Ross":["at Northern Illinois","Northern Illinois"],"2021-4-Ross":["vs Oklahoma State","Oklahoma State"],"2021-4-Adam":["at Indiana","Indiana"],"2021-4-Kev":["vs Purdue","Purdue"],"2021-4-AJ":["at Washington State","Washington State"],"2021-5-Adam":["vs Florida Atlantic","FAU"],"2021-5-Ross":["at Stanford","Stanford"],"2021-6-Adam":["at Clemson","Clemson"],"2021-6-Kev":["vs Cincinnati","Cincinnati"],"2021-6-Ross":["at Stanford","Stanford"],"2021-7-Adam":["vs Wyoming","Wyoming"],"2021-7-AJ":["vs Vanderbilt","Vanderbilt"],"2021-7-Ross":["at Illinois","Illinois"],"2021-8-Adam":["at Boise State","Boise State"],"2021-8-AJ":["at Mississippi State","Mississippi State"],"2021-8-Ross":["at LSU","LSU"],"2021-8-Kev":["at Indiana","Indiana"],"2021-9-Adam":["vs San Diego State","San Diego State"],"2021-9-AJ":["vs Tennessee","Tennessee"],"2021-9-Ross":["at Indiana","Indiana"],"2021-9-Kev":["vs Clemson","Clemson"],"2021-10-Ross":["at Wisconsin","Wisconsin"],"2021-10-AJ":["at Illinois","Illinois"],"2021-10-Adam":["vs Duke","Duke"],"2021-11-Adam":["vs Army","Army"],"2021-11-Ross":["vs Boise State","Boise State"],"2021-11-Kev":["at West Virginia","West Virginia"],"2021-12-Ross":["at Iowa","Iowa"],"2021-12-Kev":["at Alabama","Alabama"],"2021-12-AJ":["at Baylor","Baylor"],"2021-13-AJ":["vs Arkansas","Arkansas"],"2021-13-Ross":["vs East Carolina","East Carolina"],"2021-13-Kev":["at USC","USC"],"2021-14-Adam":["at USC","USC"],"2021-14-AJ":["vs Florida State","Florida State"],"2021-14-Ross":["at Stanford","Stanford"],"2021-14-Kev":["vs Oregon State","Oregon State"],"2021-15-Kev":["vs App State","App State"],"2021-15-AJ":["vs Eastern Washington","Eastern Washington"],"2021-15-Ross":["at Utah","Utah"],"2021-15-Adam":["at Wake Forest","Wake Forest"],"2022-0-Adam":["at Florida Atlantic","FAU"],"2022-0-AJ":["vs Vanderbilt","Vanderbilt"],"2022-0-Kev":["at Utah State","Utah State"],"2022-1-Ross":["at Florida State","Florida State"],"2022-1-Adam":["vs Georgia State","Georgia State"],"2022-1-Kev":["at App State","App State"],"2022-2-Adam":["vs South Carolina","South Carolina"],"2022-2-Ross":["at Arizona","Arizona"],"2022-2-Kev":["at Stanford","Stanford"],"2022-3-Kev":["at Iowa","Iowa"],"2022-3-Adam":["at Syracuse","Syracuse"],"2022-3-Ross":["at Indiana","Indiana"],"2022-4-Ross":["at Wake Forest","Wake Forest"],"2022-4-Adam":["at Oregon State","Oregon State"],"2022-5-Adam":["at Florida State","Florida State"],"2022-6-Kev":["at Bowling Green","Bowling Green"],"2022-6-Ross":["at UCLA","UCLA"],"2022-6-Adam":["at Northwestern","Northwestern"],"2022-7-Adam":["at BYU","BYU"],"2022-7-AJ":["at Florida State","Florida State"],"2022-7-Kev":["at Kentucky","Kentucky"],"2022-7-Ross":["vs Tulane","Tulane"],"2022-8-Kev":["at LSU","LSU"],"2022-8-AJ":["at Oklahoma State","Oklahoma State"],"2022-8-Ross":["at Oregon","Oregon"],"2022-9-AJ":["vs Northwestern","Northwestern"],"2022-9-Kev":["at Kansas State","Kansas State"],"2022-9-Adam":["vs Notre Dame","Notre Dame"],"2022-9-Ross":["at Louisville","Louisville"],"2022-10-AJ":["vs West Virginia","West Virginia"],"2022-10-Ross":["at Kansas State","Kansas State"],"2022-11-Adam":["at UConn","UConn"],"2022-11-AJ":["vs Iowa State","Iowa State"],"2022-12-Adam":["vs Louisiana","Louisiana"],"2022-12-AJ":["vs Indiana","Indiana"],"2022-12-Ross":["vs Illinois","Illinois"],"2022-12-Kev":["at Oklahoma","Oklahoma"],"2022-13-AJ":["vs South Carolina","South Carolina"],"2022-13-Ross":["vs Kansas","Kansas"],"2022-14-AJ":["vs Purdue","Purdue"],"2022-14-Ross":["vs Coastal Carolina","Coastal Carolina"],"2022-14-Kev":["vs Utah","Utah"],"2023-0-Kev":["vs Massachusetts","UMass"],"2023-0-AJ":["vs Navy","Navy"],"2023-0-Adam":["vs Hawai'i","Hawaii"],"2023-1-AJ":["vs Middle Tennessee","Middle Tennessee"],"2023-1-Ross":["vs Colorado","Colorado"],"2023-1-Adam":["at Colorado State","Colorado State"],"2023-1-Kev":["vs Texas Tech","Texas Tech"],"2023-2-Adam":["vs Texas","Texas"],"2023-2-Ross":["at Tulane","Tulane"],"2023-2-AJ":["at Washington","Washington"],"2023-3-Ross":["at Mississippi State","Mississippi State"],"2023-3-Kev":["vs Syracuse","Syracuse"],"2023-4-Kev":["at Clemson","Clemson"],"2023-4-AJ":["vs BYU","BYU"],"2023-4-Ross":["vs Auburn","Auburn"],"2023-5-Ross":["vs Coastal Carolina","Coastal Carolina"],"2023-5-Adam":["at Tennessee","Tennessee"],"2023-5-AJ":["at Colorado","Colorado"],"2023-6-Kev":["vs Kentucky","Kentucky"],"2023-6-Ross":["at Minnesota","Minnesota"],"2023-6-Adam":["at Iowa State","Iowa State"],"2023-7-Ross":["vs Auburn","Auburn"],"2023-7-AJ":["at Rutgers","Rutgers"],"2023-7-Adam":["vs Miami","Miami"],"2023-8-Ross":["vs Northwestern","Northwestern"],"2023-8-Adam":["vs UCF","UCF"],"2023-8-AJ":["vs Utah","Utah"],"2023-9-AJ":["vs Pittsburgh","Pitt"],"2023-9-Kev":["at Kansas","Kansas"],"2023-9-Adam":["at Arizona","Arizona"],"2023-10-Kev":["at Air Force","Air Force"],"2023-10-AJ":["vs Florida State","Florida State"],"2023-11-Adam":["vs Texas Tech","Texas Tech"],"2023-11-Kev":["at Penn State","Penn State"],"2023-11-AJ":["vs Arizona State","Arizona State"],"2023-12-AJ":["at Kansas","Kansas"],"2023-12-Kev":["at Miami","Miami"],"2023-12-Adam":["at Houston","Houston"],"2023-12-Ross":["at Air Force","Air Force"],"2023-13-Ross":["at Cincinnati","Cincinnati"],"2023-13-Adam":["vs San Jos\u00e9 State","San Jose State"],"2023-13-Kev":["vs Colorado","Colorado"],"2023-14-Ross":["vs Oklahoma State","Oklahoma State"],"2023-14-Kev":["vs Boise State","Boise State"],"2024-1-AJ":["vs Fresno State","Fresno State"],"2024-1-Ross":["vs TCU","TCU"],"2024-1-Adam":["at Vanderbilt","Vanderbilt"],"2024-2-Ross":["at Illinois","Illinois"],"2024-2-Kev":["vs Temple","Temple"],"2024-2-AJ":["vs Georgia Tech","Georgia Tech"],"2024-2-Adam":["vs Baylor","Baylor"],"2024-3-Ross":["at Wisconsin","Wisconsin"],"2024-3-Kev":["at Missouri","Missouri"],"2024-3-Adam":["at UCLA","UCLA"],"2024-3-AJ":["vs Nevada","Nevada"],"2024-4-Adam":["vs Memphis","Memphis"],"2024-4-Kev":["vs Utah","Utah"],"2024-4-Ross":["at Oklahoma","Oklahoma"],"2024-5-Ross":["at Michigan State","Michigan State"],"2024-5-Adam":["vs Kentucky","Kentucky"],"2024-5-AJ":["vs Buffalo","Buffalo"],"2024-6-Kev":["vs USC","USC"],"2024-6-Ross":["vs Iowa","Iowa"],"2024-7-AJ":["at UCF","UCF"],"2024-7-Adam":["at UCLA","UCLA"],"2024-7-Ross":["at Oregon","Oregon"],"2024-7-Kev":["vs California","California"],"2024-8-Ross":["at Michigan State","Michigan State"],"2024-8-AJ":["vs USC","USC"],"2024-8-Adam":["at Northwestern","Northwestern"],"2024-9-AJ":["at Navy","Navy"],"2024-9-Kev":["vs Michigan State","Michigan State"],"2024-9-Ross":["at UNLV","UNLV"],"2024-10-Adam":["at Georgia","Georgia"],"2024-10-AJ":["at Illinois","Illinois"],"2024-10-Kev":["at Rice","Rice"],"2024-11-AJ":["vs Oklahoma State","Oklahoma State"],"2024-11-Ross":["at Missouri","Missouri"],"2024-12-AJ":["at Illinois","Illinois"],"2024-12-Ross":["at Wisconsin","Wisconsin"],"2024-13-AJ":["vs Indiana","Indiana"],"2024-13-Adam":["at Oklahoma","Oklahoma"],"2024-13-Kev":["at Kansas","Kansas"],"2024-13-Ross":["vs Army","Army"],"2024-14-AJ":["vs Kansas","Kansas"],"2024-14-Adam":["vs Miami","Miami"],"2024-14-Kev":["at Arizona","Arizona"],"2024-14-Ross":["at Clemson","Clemson"],"2024-15-AJ":["at Oregon","Oregon"],"2024-15-Kev":["vs Iowa State","Iowa State"],"2024-15-Ross":["at SMU","SMU"],"2025-0-Adam":["vs Fresno State","Fresno State"],"2025-0-Kev":["vs Iowa State","Iowa State"],"2025-1-Kev":["vs Auburn","Auburn"],"2025-1-AJ":["vs Nevada","Nevada"],"2025-1-Ross":["at Colorado","Colorado"],"2025-1-Adam":["at Kentucky","Kentucky"],"2025-2-Ross":["at Toledo","Toledo"],"2025-2-AJ":["at Iowa State","Iowa State"],"2025-2-Kev":["vs UConn","UConn"],"2025-3-Adam":["at Bowling Green","Bowling Green"],"2025-3-Ross":["vs Colorado","Colorado"],"2025-3-AJ":["at Ole Miss","Ole Miss"],"2025-3-Kev":["at Tennessee","Tennessee"],"2025-4-Adam":["vs Texas Tech","Texas Tech"],"2025-4-AJ":["vs Delaware","Delaware"],"2025-4-Ross":["vs Maryland","Maryland"],"2025-4-Kev":["vs Troy","Troy"],"2025-5-Adam":["vs Oregon","Oregon"],"2025-5-AJ":["at Northwestern","Northwestern"],"2025-5-Kev":["at Iowa","Iowa"],"2025-6-AJ":["at Florida","Florida"],"2025-6-Adam":["vs Kansas State","Kansas State"],"2025-6-Ross":["vs Vanderbilt","Vanderbilt"],"2025-6-Kev":["vs Boise State","Boise State"],"2025-7-Kev":["vs Northwestern","Northwestern"],"2025-7-Ross":["vs Indiana","Indiana"],"2025-7-Adam":["vs UCF","UCF"],"2025-8-Ross":["at Northwestern","Northwestern"],"2025-8-Kev":["at Notre Dame","Notre Dame"],"2025-9-Adam":["vs BYU","BYU"],"2025-9-AJ":["vs Stanford","Stanford"],"2025-9-Ross":["vs Temple","Temple"],"2025-9-Kev":["vs California","California"],"2025-10-Adam":["vs Memphis","Memphis"],"2025-10-Ross":["vs Oklahoma","Oklahoma"],"2025-10-AJ":["vs Mississippi State","Mississippi State"],"2025-11-Kev":["vs BYU","BYU"],"2025-11-Ross":["at Penn State","Penn State"],"2025-11-Adam":["at UCF","UCF"],"2025-11-AJ":["at Vanderbilt","Vanderbilt"],"2025-12-Adam":["vs Texas","Texas"],"2025-12-AJ":["at Louisville","Louisville"],"2025-12-Ross":["vs Iowa","Iowa"],"2025-13-Ross":["vs Washington","Washington"],"2025-13-AJ":["vs BYU","BYU"],"2025-13-Adam":["at Houston","Houston"],"2025-14-Ross":["at Purdue","Purdue"],"2025-14-AJ":["at Pittsburgh","Pitt"],"2025-14-Adam":["vs UCF","UCF"],"2025-15-Ross":["at Tulane","Tulane"],"2025-15-AJ":["vs Indiana","Indiana"]};
+const oppOf = p => {
+  if(p.opp && p.opp.trim() && p.opp.trim()!=="-"){
+    const v=p.opp.trim();
+    return [v, v.replace(/^(vs\.?|at)\s+/i,"")];
+  }
+  return (p.t==="Over"||p.t==="Under") ? null : (OPP[p.y+"-"+p.w+"-"+p.n]||null);
+};
 
 const CONF = {"Air Force":"Group of 5","Alabama":"SEC","Appalachian State":"Group of 5","Arizona":"Big 12","Arizona State":"Big 12","Arkansas":"SEC","Army":"Group of 5","Auburn":"SEC","BYU":"Big 12","Baylor":"Big 12","Boise State":"Group of 5","Boston College":"ACC","Buffalo":"Group of 5","Charlotte":"Group of 5","Cincinnati":"Big 12","Clemson":"ACC","Coastal Carolina":"Group of 5","Colorado":"Big 12","Duke":"ACC","East Carolina":"Group of 5","FAU":"Group of 5","FIU":"Group of 5","Florida":"SEC","Florida State":"ACC","Fordham":"Independent / FCS","Fresno State":"Group of 5","Georgia":"SEC","Georgia Southern":"Group of 5","Georgia State":"Group of 5","Georgia Tech":"ACC","Hawaii":"Group of 5","Houston":"Big 12","Illinois":"Big Ten","Indiana":"Big Ten","Iowa":"Big Ten","Iowa State":"Big 12","Kansas":"Big 12","Kansas State":"Big 12","Kent State":"Group of 5","Kentucky":"SEC","LSU":"SEC","Liberty":"Group of 5","Louisiana":"Group of 5","Louisville":"ACC","Marshall":"Group of 5","Maryland":"Big Ten","Memphis":"Group of 5","Miami":"ACC","Michigan":"Big Ten","Michigan State":"Big Ten","Minnesota":"Big Ten","Mississippi State":"SEC","Missouri":"SEC","Monmouth":"Independent / FCS","Montana":"Independent / FCS","NC State":"ACC","Navy":"Group of 5","Nebraska":"Big Ten","Nevada":"Group of 5","New Mexico State":"Group of 5","North Carolina":"ACC","North Texas":"Group of 5","Northern Illinois":"Group of 5","Northwestern":"Big Ten","Notre Dame":"Independent / FCS","Ohio":"Group of 5","Ohio State":"Big Ten","Oklahoma":"SEC","Oklahoma State":"Big 12","Ole Miss":"SEC","Oregon":"Big Ten","Oregon State":"Independent / FCS","Penn State":"Big Ten","Pitt":"ACC","Purdue":"Big Ten","Rice":"Group of 5","Rutgers":"Big Ten","SMU":"ACC","Sam Houston State":"Group of 5","San Diego State":"Group of 5","San Jose State":"Group of 5","South Carolina":"SEC","South Florida":"Group of 5","Stanford":"ACC","Syracuse":"ACC","TCU":"Big 12","Temple":"Group of 5","Tennessee":"SEC","Texas":"SEC","Texas A&M":"SEC","Texas Tech":"Big 12","Toledo":"Group of 5","Troy":"Group of 5","Tulane":"Group of 5","Tulsa":"Group of 5","UCF":"Big 12","UCLA":"Big Ten","UConn":"Independent / FCS","UMass":"Group of 5","UNLV":"Group of 5","USC":"Big Ten","Utah":"Big 12","Vanderbilt":"SEC","Virginia":"ACC","Virginia Tech":"ACC","Wake Forest":"ACC","Washington":"Big Ten","Washington State":"Independent / FCS","West Virginia":"Big 12","Western Kentucky":"Group of 5","Wisconsin":"Big Ten","Wyoming":"Group of 5"};
 const CONF_FULL = {"Air Force":"Mountain West","Alabama":"SEC","Appalachian State":"Sun Belt","Arizona":"Big 12","Arizona State":"Big 12","Arkansas":"SEC","Army":"American Athletic","Auburn":"SEC","BYU":"Big 12","Baylor":"Big 12","Boise State":"Mountain West","Boston College":"ACC","Buffalo":"Mid-American","Charlotte":"American Athletic","Cincinnati":"Big 12","Clemson":"ACC","Coastal Carolina":"Sun Belt","Colorado":"Big 12","Duke":"ACC","East Carolina":"American Athletic","FAU":"American Athletic","FIU":"Conference USA","Florida":"SEC","Florida State":"ACC","Fordham":"Patriot","Fresno State":"Mountain West","Georgia":"SEC","Georgia Southern":"Sun Belt","Georgia State":"Sun Belt","Georgia Tech":"ACC","Hawaii":"Mountain West","Houston":"Big 12","Illinois":"Big Ten","Indiana":"Big Ten","Iowa":"Big Ten","Iowa State":"Big 12","Kansas":"Big 12","Kansas State":"Big 12","Kent State":"Mid-American","Kentucky":"SEC","LSU":"SEC","Liberty":"Conference USA","Louisiana":"Sun Belt","Louisville":"ACC","Marshall":"Sun Belt","Maryland":"Big Ten","Memphis":"American Athletic","Miami":"ACC","Michigan":"Big Ten","Michigan State":"Big Ten","Minnesota":"Big Ten","Mississippi State":"SEC","Missouri":"SEC","Monmouth":"CAA","Montana":"Big Sky","NC State":"ACC","Navy":"American Athletic","Nebraska":"Big Ten","Nevada":"Mountain West","New Mexico State":"Conference USA","North Carolina":"ACC","North Texas":"American Athletic","Northern Illinois":"Mid-American","Northwestern":"Big Ten","Notre Dame":"FBS Independents","Ohio":"Mid-American","Ohio State":"Big Ten","Oklahoma":"SEC","Oklahoma State":"Big 12","Ole Miss":"SEC","Oregon":"Big Ten","Oregon State":"Pac-12","Penn State":"Big Ten","Pitt":"ACC","Purdue":"Big Ten","Rice":"American Athletic","Rutgers":"Big Ten","SMU":"ACC","Sam Houston State":"Conference USA","San Diego State":"Mountain West","San Jose State":"Mountain West","South Carolina":"SEC","South Florida":"American Athletic","Stanford":"ACC","Syracuse":"ACC","TCU":"Big 12","Temple":"American Athletic","Tennessee":"SEC","Texas":"SEC","Texas A&M":"SEC","Texas Tech":"Big 12","Toledo":"Mid-American","Troy":"Sun Belt","Tulane":"American Athletic","Tulsa":"American Athletic","UCF":"Big 12","UCLA":"Big Ten","UConn":"FBS Independents","UMass":"Mid-American","UNLV":"Mountain West","USC":"Big Ten","Utah":"Big 12","Vanderbilt":"SEC","Virginia":"ACC","Virginia Tech":"ACC","Wake Forest":"ACC","Washington":"Big Ten","Washington State":"Pac-12","West Virginia":"Big 12","Western Kentucky":"Conference USA","Wisconsin":"Big Ten","Wyoming":"Mountain West"};
@@ -560,7 +596,7 @@ window.mugFallback = function(img){
 };
 
 function fromRows(rows){
-  return rows.map(r=>({y:r[0],w:r[1],n:r[2],t:r[3],team:r[4],pts:r[5],r:r[6],d:r[7],tm:r[8]}));
+  return rows.map(r=>({y:r[0],w:r[1],n:r[2],t:r[3],team:r[4],pts:r[5],r:r[6],d:r[7],tm:r[8],opp:r[9]||""}));
 }
 
 /* --- CSV handling (quoted fields, BOM, CRLF, blank rows) --- */
@@ -593,8 +629,9 @@ function parseCSV(text){
     const res=(c[ix("result")]||"").trim().charAt(0).toUpperCase();
     if(!"WLP".includes(res)) continue;
     const d=parseInt(c[ix("diff")],10);
+    const oi=ix("opponent");
     out.push([y,w,nm,c[ix("type")]||"",tm.join(" / "),
-      parseFloat(c[ix("points")])||0,res,isNaN(d)?0:d,tm]);
+      parseFloat(c[ix("points")])||0,res,isNaN(d)?0:d,tm, oi>=0?(c[oi]||""):""]);
   }
   return out;
 }
@@ -605,21 +642,30 @@ function setSource(txt){
 }
 
 /* ============================ state ============================ */
-const state = {year:"all", player:"all", type:"all", conf:"all", teamAll:false, logN:60,
+const S = {
+  stand:  {year:"all", type:"all"},
+  brk:    {year:"all", spreadSide:"all", totalSide:"all"},
+  season: {type:"all"},
+  parlay: {year:"all"},
+  teams:  {year:"all", player:"all", type:"all"},
+  nug:    {player:"all"},
+  ledger: {year:"all", player:"all"}
+};
+const state = {conf:"all", teamAll:false, logN:60,
                teamQ:"", logQ:"", hidden:new Set(), week:null};
+
+function sel(sc){
+  return PICKS.filter(p =>
+    (!sc.year   || sc.year==="all"   || p.y===+sc.year) &&
+    (!sc.type   || sc.type==="all"   || p.t===sc.type) &&
+    (!sc.player || sc.player==="all" || p.n===sc.player));
+}
 
 const isDecided = p => p.r==="W" || p.r==="L";
 function pct(w,l){const n=w+l;return n? w/n : 0;}
 function fmtPct(v,n){return n? (v*100).toFixed(1)+"%" : "—";}
 
-function base(){ // year + type filter (used almost everywhere)
-  return PICKS.filter(p =>
-    (state.year==="all" || p.y===+state.year) &&
-    (state.type==="all" || p.t===state.type));
-}
-function scoped(){ // + player
-  return base().filter(p => state.player==="all" || p.n===state.player);
-}
+
 function recordOf(list){
   let w=0,l=0,ps=0;
   for(const p of list){ if(p.r==="W")w++; else if(p.r==="L")l++; else ps++; }
@@ -634,7 +680,7 @@ function weekKeys(list){
   return out;
 }
 function renderGrid(){
-  const list = base();
+  const list = PICKS;
   const keys = weekKeys(list);
   const byWeek = new Map();
   for(const p of list){const k=p.y+"-"+p.w;(byWeek.get(k)||byWeek.set(k,[]).get(k)).push(p);}
@@ -671,16 +717,16 @@ function renderGrid(){
     renderGrid(); renderWeekCard();
   }));
 
-  const label = state.year==="all" ? "2020 – 2025" : state.year;
+  const label = "2020 – 2025";
   document.getElementById("gridtitle").textContent =
-    `${keys.length} weeks · ${label}` + (state.type!=="all"? ` · ${state.type.toLowerCase()} picks only` : "");
+    `${keys.length} weeks · ${label}` + "";
   return {weeks:keys.length, sweeps};
 }
 function renderWeekCard(){
   const el = document.getElementById("weekcard");
   if(!state.week){el.className="weekcard";el.innerHTML="";return;}
   const [y,w] = state.week.split("-").map(Number);
-  const legs = base().filter(p=>p.y===y&&p.w===w);
+  const legs = PICKS.filter(p=>p.y===y&&p.w===w);
   if(!legs.length){el.className="weekcard";return;}
   const hit = legs.filter(p=>p.r==="W").length;
   el.className="weekcard show";
@@ -698,36 +744,64 @@ function renderWeekCard(){
 }
 
 /* ============================ filters ============================ */
-function renderFilters(){
-  const years = [...new Set(PICKS.map(p=>p.y))].sort();
-  const group = (label,key,opts) => `<div class="fgroup"><span class="flabel">${label}</span>` +
-    opts.map(o=>`<button class="chip" data-k="${key}" data-v="${o[0]}"
-      aria-pressed="${state[key]===o[0]}">${o[1]}</button>`).join("") + `</div>`;
-  document.getElementById("filters").innerHTML =
-    group("Season","year",[["all","All"],...years.map(y=>[String(y),y])]) +
-    group("Bettor","player",[["all","Everyone"],...PLAYERS.map(n=>[n,n])]) +
-    group("Bet Type","type",[["all","All"],...TYPES.map(t=>[t,t==="Dog"?"Underdog":t])]);
-  document.querySelectorAll("#filters .chip").forEach(b=>b.addEventListener("click",()=>{
-    const v=b.dataset.v; state[b.dataset.k] = (v==="all"?"all":(b.dataset.k==="year"?v:v));
-    state.week=null; state.logN=60;
-    renderAll();
+const YEARS = () => [...new Set(PICKS.map(p=>p.y))].sort();
+const FIELDS = {
+  year:  {label:"Season",   opts:()=>[["all","All"],...YEARS().map(y=>[String(y),y])]},
+  player:{label:"Bettor",   opts:()=>[["all","Everyone"],...PLAYERS.map(n=>[n,n])]},
+  type:  {label:"Bet Type", opts:()=>[["all","All"],...TYPES.map(t=>[t,t==="Dog"?"Underdog":t])]}
+};
+function filterRow(hostId, sc, fields, after){
+  const host=document.getElementById(hostId);
+  if(!host) return;
+  host.innerHTML = fields.map(f=>{
+    const F=FIELDS[f];
+    return `<div class="fgroup"><span class="flabel">${F.label}</span>` +
+      F.opts().map(o=>`<button class="chip" data-f="${f}" data-v="${o[0]}"
+        aria-pressed="${sc[f]===o[0]}">${o[1]}</button>`).join("") + `</div>`;
+  }).join("");
+  host.querySelectorAll(".chip[data-f]").forEach(b=>b.addEventListener("click",()=>{
+    sc[b.dataset.f]=b.dataset.v;
+    if(hostId==="f-ledger") state.logN=60;
+    after();
+    filterRow(hostId, sc, fields, after);
   }));
+
+}
+function themeChips(){
+  return `<div class="fgroup"><span class="flabel">Display</span>` +
+    [["dark","Dark Mode"],["chalk","Light Mode"]].map(o=>
+      `<button class="chip" data-th="${o[0]}" aria-pressed="${THEME===o[0]}">${o[1]}</button>`).join("") +
+    `</div>`;
+}
+function renderDisplay(){
+  const host=document.getElementById("f-display");
+  host.innerHTML = themeChips();
+  wireThemeChips(host);
+}
+function renderFilters(){
+  filterRow("f-stand",  S.stand,  ["year","type"],           renderCards);
+  filterRow("f-break",  S.brk,    ["year"],                  renderMats);
+  filterRow("f-season", S.season, ["type"],                  renderSeasonMat);
+  filterRow("f-parlay", S.parlay, ["year"],                  renderCombos);
+  filterRow("f-teams",  S.teams,  ["year","player","type"],  renderTeams);
+  filterRow("f-nug",    S.nug,    ["player"],                renderOdds);
+  filterRow("f-ledger", S.ledger, ["year","player"],         renderLog);
 }
 
 /* ============================ hero + last result ============================ */
 function renderHero(g){
-  const list = base();
+  const list = PICKS;
   const rec = recordOf(list);
   document.getElementById("statline").innerHTML =
     `<span><b>${g.weeks}</b> Saturdays</span><span class="sep">·</span>` +
     `<span><b>${list.length}</b> picks</span><span class="sep">·</span>` +
     `<span><b>${g.sweeps}</b> winners</span><span class="sep">·</span>` +
-    `<span><b>${fmtPct(rec.pct,rec.n)}</b> against the number ${state.year==="all"?"all time":"in "+state.year}</span>`;
+    `<span><b>${fmtPct(rec.pct,rec.n)}</b> against the number all time</span>`;
   document.getElementById("herodek").textContent =
     `Combined ${rec.w}–${rec.l}${rec.p?"–"+rec.p:""} across ` +
-    (state.year==="all" ? "six seasons" : state.year) + `.`;
+    "six seasons" + `.`;
   document.getElementById("stamp").textContent =
-    (state.year==="all"?"2020–2025":state.year) + " · " + list.length + " picks";
+    "2020–2025 · " + list.length + " picks";
 }
 function renderLast(){
   if(!PICKS.length) return;
@@ -768,30 +842,30 @@ function streaks(list){
 }
 function orderedPlayers(){
   return [...PLAYERS].sort((a,b)=>{
-    const ra=recordOf(base().filter(p=>p.n===a));
-    const rb=recordOf(base().filter(p=>p.n===b));
+    const ra=recordOf(sel(S.stand).filter(p=>p.n===a));
+    const rb=recordOf(sel(S.stand).filter(p=>p.n===b));
     return rb.pct-ra.pct || rb.w-ra.w || a.localeCompare(b);
   });
 }
 function renderCards(){
   const el=document.getElementById("cards");
   el.innerHTML = orderedPlayers().map((n,rank)=>{
-    const mine = base().filter(p=>p.n===n);
+    const mine = sel(S.stand).filter(p=>p.n===n);
     const r = recordOf(mine);
     const s = streaks(mine);
     const close = mine.filter(p=>p.d<=6 && isDecided(p));
     const cw = close.filter(p=>p.r==="W").length;
-    const fav = recordOf(mine.filter(p=>p.t==="Favorite"));
-    const dim = state.player!=="all" && state.player!==n ? " dim":"";
+    const blow = recordOf(mine.filter(p=>p.d>=14 && isDecided(p)));
+    const dim = "";
     return `<div class="card${dim}" style="--c:${COLOR[n]}">
       <div class="nm"><span class="rank">${rank+1}</span>${n}</div>
       <div class="rec">${r.w}–${r.l}${r.p?"–"+r.p:""}${s.cur? `<span class="streak ${s.cur>0?"w":"l"}">${s.cur>0?"W":"L"}${Math.abs(s.cur)}</span>`:""}</div>
       <div class="pct">${fmtPct(r.pct,r.n)} against the number</div>
       <div class="mini">
-        <div><span>Best streak</span><b>${s.best>0?s.best+" straight":"—"}</b></div>
-        <div><span>Worst streak</span><b>${s.worst>0?s.worst+" straight":"—"}</b></div>
+        <div><span>Best streak</span><b>${s.best>0?s.best+" W":"—"}</b></div>
+        <div><span>Worst streak</span><b>${s.worst>0?s.worst+" L":"—"}</b></div>
         <div><span>Decided by ≤6</span><b>${close.length? cw+"–"+(close.length-cw):"—"}</b></div>
-        <div><span>Laying points</span><b>${fav.n? fav.w+"–"+fav.l:"—"}</b></div>
+        <div><span>Decided by 14+</span><b>${blow.n? blow.w+"–"+blow.l:"—"}</b></div>
       </div></div>`;
   }).join("");
 }
@@ -800,7 +874,7 @@ function renderCards(){
 let CHART = null;
 function chartSeries(){
   return PLAYERS.map(n=>{
-    const mine = base().filter(p=>p.n===n).sort((a,b)=>a.y-b.y||a.w-b.w);
+    const mine = PICKS.filter(p=>p.n===n).sort((a,b)=>a.y-b.y||a.w-b.w);
     let w=0,l=0; const pts=[];
     mine.forEach(p=>{ if(p.r==="W")w++; else if(p.r==="L")l++; else return;
       if(w+l>=5) pts.push({x:w+l, y:w/(w+l), y0:p.y, w0:p.w}); });
@@ -821,7 +895,7 @@ function renderChart(){
   if(rd) rd.textContent="The Road to Pick "+maxX;
   drawChart(sc? +sc.value : maxX);
   document.getElementById("chartlegend").innerHTML = PLAYERS.map(n=>{
-    const r=recordOf(base().filter(p=>p.n===n));
+    const r=recordOf(PICKS.filter(p=>p.n===n));
     return `<button class="${state.hidden.has(n)?"":"on"}" data-n="${n}" style="color:${COLOR[n]}">
       <i></i>${n} <span style="color:var(--ink3)">${fmtPct(r.pct,r.n)}</span></button>`;
   }).join("");
@@ -860,7 +934,7 @@ function drawChart(upto, hoverX){
     const pts=s.pts.filter(p=>p.x<=upto);
     if(!pts.length) return;
     const hidden = state.hidden.has(s.n);
-    const faded = (state.player!=="all" && state.player!==s.n);
+    const faded = false;
     const d = pts.map((p,i)=>(i?"L":"M")+X(p.x).toFixed(1)+" "+Y(p.y).toFixed(1)).join(" ");
     const last = pts[pts.length-1];
     g+=`<path d="${d}" fill="none" stroke="${s.color}" stroke-width="${faded?1.2:2}"
@@ -917,16 +991,21 @@ function drawChart(upto, hoverX){
 }
 
 /* ============================ matrices ============================ */
-function matrix(title, rows, note){
-  let h=`<div class="mat"><h3>${title}</h3><table><thead><tr><th>${note||""}</th>`+
-    PLAYERS.map(n=>`<th class="${state.player!=="all"&&state.player!==n?"dimcol":""}"
-      style="color:${state.player===n?COLOR[n]:""}">${n}</th>`).join("")+`<th>All</th></tr></thead><tbody>`;
+let MSRC = ()=>PICKS;
+function subTog(key,opts){
+  return `<span class="subtog">` + opts.map(o=>
+    `<button data-k="${key}" data-v="${o[0]}" class="${S.brk[key]===o[0]?"on":""}">${o[1]}</button>`
+  ).join("") + `</span>`;
+}
+function matrix(title, rows, note, tools){
+  let h=`<div class="mat"><h3>${title}${tools||""}</h3><table><thead><tr><th>${note||""}</th>`+
+    PLAYERS.map(n=>`<th style="color:${COLOR[n]}">${n}</th>`).join("")+`<th>All</th></tr></thead><tbody>`;
   for(const [label,fn] of rows){
     h+=`<tr><td>${label}</td>`;
     PLAYERS.concat(["All"]).forEach(n=>{
-      const list = fn(n==="All"? base() : base().filter(p=>p.n===n));
+      const list = fn(n==="All"? MSRC() : MSRC().filter(p=>p.n===n));
       const r=recordOf(list);
-      const dim = n!=="All" && state.player!=="all" && state.player!==n ? " dimcol":"";
+      const dim = "";
       if(!r.n){ h+=`<td class="${dim}">—</td>`; return; }
       const w = Math.round(r.pct*100);
       const col = r.pct>=.5 ? COLOR.pos : COLOR.neg;
@@ -939,16 +1018,20 @@ function matrix(title, rows, note){
   return h+`</tbody></table></div>`;
 }
 function renderMats(){
+  MSRC = ()=>sel(S.brk);
   const byType = TYPES.map(t=>[t==="Dog"?"Underdog":t, l=>l.filter(p=>p.t===t)]);
+  const sSide = S.brk.spreadSide, tSide = S.brk.totalSide;
+  const isSpread = p => sSide==="all" ? (p.t==="Favorite"||p.t==="Dog") : p.t===sSide;
+  const isTotal  = p => tSide==="all" ? (p.t==="Over"||p.t==="Under")   : p.t===tSide;
   const spread = [
-    ["0 – 6.5",  l=>l.filter(p=>(p.t==="Favorite"||p.t==="Dog") && p.pts<7)],
-    ["7 – 13.5", l=>l.filter(p=>(p.t==="Favorite"||p.t==="Dog") && p.pts>=7 && p.pts<14)],
-    ["14+",      l=>l.filter(p=>(p.t==="Favorite"||p.t==="Dog") && p.pts>=14)],
+    ["0 – 6.5",  l=>l.filter(p=>isSpread(p) && p.pts<7)],
+    ["7 – 13.5", l=>l.filter(p=>isSpread(p) && p.pts>=7 && p.pts<14)],
+    ["14+",      l=>l.filter(p=>isSpread(p) && p.pts>=14)],
   ];
   const totals = [
-    ["Under 50",  l=>l.filter(p=>(p.t==="Over"||p.t==="Under") && p.pts<50)],
-    ["50 – 59.5", l=>l.filter(p=>(p.t==="Over"||p.t==="Under") && p.pts>=50 && p.pts<60)],
-    ["60+",       l=>l.filter(p=>(p.t==="Over"||p.t==="Under") && p.pts>=60)],
+    ["Under 50",  l=>l.filter(p=>isTotal(p) && p.pts<50)],
+    ["50 – 59.5", l=>l.filter(p=>isTotal(p) && p.pts>=50 && p.pts<60)],
+    ["60+",       l=>l.filter(p=>isTotal(p) && p.pts>=60)],
   ];
   const swing = [
     ["Within 6",   l=>l.filter(p=>p.d<=6)],
@@ -957,21 +1040,23 @@ function renderMats(){
   ];
   document.getElementById("mats").innerHTML =
     matrix("Bet type", byType, "") +
-    matrix("Spread size", spread, "points") +
-    matrix("Total posted", totals, "points") +
+    matrix("Spread", spread, "points", subTog("spreadSide",[["all","All"],["Favorite","Favorite"],["Dog","Underdog"]])) +
+    matrix("Total", totals, "points", subTog("totalSide",[["all","All"],["Over","Over"],["Under","Under"]])) +
     matrix("How close it landed", swing, "margin");
+  document.querySelectorAll("#mats .subtog button").forEach(b=>b.addEventListener("click",()=>{
+    S.brk[b.dataset.k]=b.dataset.v; renderMats();
+  }));
 }
 function renderSeasonMat(){
   const years=[...new Set(PICKS.map(p=>p.y))].sort();
   const rows = years.map(y=>[String(y), l=>l.filter(p=>p.y===y)]);
-  const saved = state.year; state.year="all";
+  MSRC = ()=>sel(S.season);
   document.getElementById("seasonmat").innerHTML = `<div class="mats">${matrix("Win % by season", rows, "season")}</div>`;
-  state.year = saved;
 }
 
 /* ============================ combinations ============================ */
 function weekSets(){
-  const rows = PICKS.filter(p=>state.year==="all"||p.y===+state.year);
+  const rows = sel({year:S.parlay.year});
   const m=new Map();
   for(const p of rows){
     const k=p.y+"-"+p.w;
@@ -1019,7 +1104,7 @@ function renderCombos(){
 
 /* ============================ teams ============================ */
 function teamRows(){
-  const list = scoped();
+  const list = sel(S.teams);
   const m=new Map();
   for(const p of list){
     if(!isDecided(p)) continue;
@@ -1057,7 +1142,7 @@ function renderTeams(){
   }));
   const cols=[["t","School"],["n","Bets"],["w","W"],["l","L"],["p","Win %"]];
   let h=`<thead><tr>`+cols.map(c=>`<th class="sortable" data-k="${c[0]}">${c[1]} ${arw(c[0])}</th>`).join("")
-    + (state.player==="all"? PLAYERS.map(n=>`<th style="color:${COLOR[n]}">${n}</th>`).join(""):"")
+    + (S.teams.player==="all"? PLAYERS.map(n=>`<th style="color:${COLOR[n]}">${n}</th>`).join(""):"")
     + `</tr></thead><tbody>`;
   if(!shown.length) h+=`<tr><td colspan="10" style="color:var(--ink3)">Nothing matches that filter.</td></tr>`;
   for(const r of shown){
@@ -1066,7 +1151,7 @@ function renderTeams(){
       <td class="cell" style="color:${pc>=.5?COLOR.pos:COLOR.neg}">
       <span class="fill" style="width:${Math.round(pc*100)}%"></span>
       <span>${(pc*100).toFixed(0)}%</span></td>`;
-    if(state.player==="all") h+=PLAYERS.map(n=>{
+    if(S.teams.player==="all") h+=PLAYERS.map(n=>{
       const b=r.by[n]; return `<td>${b? b[1]+"-"+(b[0]-b[1]) : "·"}</td>`;
     }).join("");
     h+=`</tr>`;
@@ -1082,10 +1167,21 @@ function renderTeams(){
   }));
 }
 
-/* ============================ oddities ============================ */
+/* ============================ nuggets ============================ */
+function weekRows(){
+  const wk=new Map();
+  for(const p of PICKS){ const k=p.y+"-"+p.w; (wk.get(k)||wk.set(k,[]).get(k)).push(p); }
+  return [...wk.entries()].filter(([k,l])=>l.length===4).map(([k,l])=>{
+    const lost=l.filter(p=>p.r==="L");
+    return {k, l, lost,
+      total: l.reduce((a,p)=>a+p.d,0),
+      lostPts: lost.reduce((a,p)=>a+p.d,0)};
+  });
+}
 function renderOdds(){
-  const list=scoped().filter(isDecided);
   const el=document.getElementById("odds");
+  const solo = S.nug.player!=="all";
+  const list=sel(S.nug).filter(isDecided);
   if(!list.length){el.innerHTML=`<div class="empty">No picks match this filter.</div>`;return;}
   const cards=[];
   const push=(lab,val,sub,team)=>cards.push(`<div class="odd">
@@ -1093,77 +1189,120 @@ function renderOdds(){
     <div class="lab">${lab}</div>
     <div class="val">${val}</div><div class="sub">${sub}</div></div>`);
 
-  const big=[...list].filter(p=>p.r==="W").sort((a,b)=>b.d-a.d)[0];
-  if(big) push("Never in doubt", big.team, `${big.n} · ${big.y} wk ${big.w} · covered by ${big.d}`, big.tm[0]);
-  const bad=[...list].filter(p=>p.r==="L").sort((a,b)=>b.d-a.d)[0];
-  if(bad) push("Dead on arrival", bad.team, `${bad.n} · ${bad.y} wk ${bad.w} · missed by ${bad.d}`, bad.tm[0]);
-  const heart=[...list].filter(p=>p.r==="L").sort((a,b)=>a.d-b.d)[0];
-  if(heart) push("Closest miss", heart.team, `${heart.n} · ${heart.y} wk ${heart.w} · short by ${heart.d}`, heart.tm[0]);
+  if(!solo){
+    const weeks=weekRows();
+    const cashed=weeks.filter(w=>w.lost.length===0).sort((a,b)=>b.total-a.total)[0];
+    if(cashed){ const [y,n]=cashed.k.split("-");
+      push("Never in doubt", `+${cashed.total}`,
+        `${y} wk ${n} · the four legs cleared their numbers by a combined ${cashed.total} points`); }
+    const worst=weeks.filter(w=>w.lost.length>0).sort((a,b)=>b.lostPts-a.lostPts)[0];
+    if(worst){ const [y,n]=worst.k.split("-");
+      push("Dead on arrival", `−${worst.lostPts}`,
+        `${y} wk ${n} · ${worst.lost.length} legs missed by a combined ${worst.lostPts} points`); }
+    const near=weeks.filter(w=>w.lost.length>0)
+                    .sort((a,b)=>a.lostPts-b.lostPts||a.lost.length-b.lost.length)[0];
+    if(near){ const [y,n]=near.k.split("-");
+      push("Closest miss", `${near.lostPts} point${near.lostPts===1?"":"s"}`,
+        `${y} wk ${n} · ${near.lost.length} leg${near.lost.length===1?"":"s"} short · ${near.lost.map(p=>p.n).join(", ")}`); }
+  } else {
+    const big=[...list].filter(p=>p.r==="W").sort((a,b)=>b.d-a.d)[0];
+    if(big) push("Never in doubt", big.team, `${big.y} wk ${big.w} · covered by ${big.d}`, big.tm[0]);
+    const bad=[...list].filter(p=>p.r==="L").sort((a,b)=>b.d-a.d)[0];
+    if(bad) push("Dead on arrival", bad.team, `${bad.y} wk ${bad.w} · missed by ${bad.d}`, bad.tm[0]);
+    const heart=[...list].filter(p=>p.r==="L").sort((a,b)=>a.d-b.d)[0];
+    if(heart) push("Closest miss", heart.team, `${heart.y} wk ${heart.w} · short by ${heart.d}`, heart.tm[0]);
+  }
+
+  // most common play — team and bet type together
+  const plays=new Map();
+  for(const p of list){
+    const k=p.team+"|"+p.t;
+    const e=plays.get(k)||{team:p.team,t:p.t,n:0,w:0,tm:p.tm};
+    e.n++; if(p.r==="W")e.w++; plays.set(k,e);
+  }
+  const play=[...plays.values()].sort((a,b)=>b.n-a.n||b.w-a.w||a.team.localeCompare(b.team))[0];
+  if(play && play.n>1){
+    push("Most common play", `${play.team} – ${play.t==="Dog"?"Underdog":play.t}`,
+      `${play.n} times · ${play.w}-${play.n-play.w}`, play.tm[0]);
+  }
 
   const counts=new Map();
   for(const p of list) for(const t of p.tm){
     const e=counts.get(t)||[0,0]; e[0]++; if(p.r==="W")e[1]++; counts.set(t,e);
   }
   const arr=[...counts.entries()];
-  const most=arr.sort((a,b)=>b[1][0]-a[1][0])[0];
+  const most=arr.slice().sort((a,b)=>b[1][0]-a[1][0])[0];
   if(most) push("Most backed", most[0], `${most[1][0]} bets · ${most[1][1]}-${most[1][0]-most[1][1]}`, most[0]);
-  const money=arr.filter(e=>e[1][0]>=4).sort((a,b)=>(b[1][1]/b[1][0])-(a[1][1]/a[1][0]))[0];
-  if(money) push("Prints money", money[0], `${money[1][1]}-${money[1][0]-money[1][1]} · ${Math.round(money[1][1]/money[1][0]*100)}%`, money[0]);
-  const curse=arr.filter(e=>e[1][0]>=4).sort((a,b)=>(a[1][1]/a[1][0])-(b[1][1]/b[1][0]))[0];
-  if(curse) push("Do not touch", curse[0], `${curse[1][1]}-${curse[1][0]-curse[1][1]} · ${Math.round(curse[1][1]/curse[1][0]*100)}%`, curse[0]);
+  const money=arr.filter(e=>e[1][0]>=4).sort((a,b)=>(b[1][1]/b[1][0])-(a[1][1]/a[1][0])||b[1][0]-a[1][0])[0];
+  if(money) push("Tried and true", money[0],
+    `${money[1][1]}-${money[1][0]-money[1][1]} · ${Math.round(money[1][1]/money[1][0]*100)}%<br>highest win % (min. 4 picks)`, money[0]);
+  const curse=arr.filter(e=>e[1][0]>=4).sort((a,b)=>(a[1][1]/a[1][0])-(b[1][1]/b[1][0])||b[1][0]-a[1][0])[0];
+  if(curse) push("Stay away", curse[0],
+    `${curse[1][1]}-${curse[1][0]-curse[1][1]} · ${Math.round(curse[1][1]/curse[1][0]*100)}%<br>worst win % (min. 4 picks)`, curse[0]);
 
-  // Superdog — underdogs of 10 or more
+  // Conference backed most often, on the 2025 alignment
+  const confs=new Map();
+  for(const p of list) for(const t of p.tm){
+    const c=CONF_FULL[t]; if(!c) continue;
+    confs.set(c,(confs.get(c)||0)+1);
+  }
+  const confTotal=[...confs.values()].reduce((a,b)=>a+b,0);
+  const topConf=[...confs.entries()].sort((a,b)=>b[1]-a[1]||a[0].localeCompare(b[0]))[0];
+  if(topConf) push("Conference of choice", topConf[0],
+    `${topConf[1]} of ${confTotal} teams selected · ${Math.round(topConf[1]/confTotal*100)}% · 2025 alignment`);
+
+  // Team turning up most often, picked or opposed
+  const tv=new Map();
+  for(const p of list){
+    for(const t of p.tm) tv.set(t,(tv.get(t)||0)+1);
+    const o=oppOf(p); if(o) tv.set(o[1],(tv.get(o[1])||0)+1);
+  }
+  const onTv=[...tv.entries()].sort((a,b)=>b[1]-a[1]||a[0].localeCompare(b[0]))[0];
+  if(onTv) push("Always on your TV", onTv[0],
+    `in ${onTv[1]} of your games · picked or played against`, onTv[0]);
+
+  // Has your number — the opponent responsible for the most losses
+  const nem=new Map();
+  for(const p of list){
+    if(p.r!=="L") continue;
+    const o=oppOf(p); if(!o) continue;
+    nem.set(o[1],(nem.get(o[1])||0)+1);
+  }
+  const nemesis=[...nem.entries()].sort((a,b)=>b[1]-a[1]||a[0].localeCompare(b[0]))[0];
+  if(nemesis && nemesis[1]>1) push("Has your number", nemesis[0],
+    `${nemesis[1]} losses against them · more than any other opponent`, nemesis[0]);
+
   const sd=list.filter(p=>p.t==="Dog" && p.pts>=10);
   const sdw=sd.filter(p=>p.r==="W").length;
   if(sd.length) push("Superdog", `${sdw}–${sd.length-sdw}`,
     `taking a dog of 10+ · ${Math.round(sdw/sd.length*100)}% · ${sd.length} bets`);
 
-  const close=list.filter(p=>p.d<=6);
-  const cw=close.filter(p=>p.r==="W").length;
-  push("One score away", `${cw}–${close.length-cw}`,
-    `${Math.round(close.length/list.length*100)}% of these bets landed within 6 of the number`);
+  // longest run of wins within a single bet type, other bet types ignored
+  const streakOf = who => {
+    let best=null;
+    for(const t of TYPES){
+      const seq=PICKS.filter(p=>p.n===who&&p.t===t&&p.r!=="P").sort((a,b)=>a.y-b.y||a.w-b.w);
+      let run=0,from=null;
+      for(const p of seq){
+        if(p.r==="W"){ if(!run) from=p; run++;
+          if(!best||run>best.n) best={n:run,t,who,from,to:p};
+        } else run=0;
+      }
+    }
+    return best;
+  };
+  if(solo){
+    const b=streakOf(S.nug.player);
+    if(b) push("Hot hand \u{1F525}",
+      `${b.n} consecutive ${b.t==="Dog"?"underdog":b.t.toLowerCase()} wins`,
+      `${b.from.y} wk ${b.from.w} to ${b.to.y} wk ${b.to.w}`);
+  }
 
-  // If every one-score game had gone the other way
   const flipW = list.filter(p=>p.r==="L" && p.d<=6).length + list.filter(p=>p.r==="W" && p.d>6).length;
   const flipL = list.filter(p=>p.r==="W" && p.d<=6).length + list.filter(p=>p.r==="L" && p.d>6).length;
-  const base_ = recordOf(list);
-  const delta = flipW - base_.w;
+  const delta = flipW - recordOf(list).w;
   push("In another world", `${flipW}–${flipL}`,
-    `if every one-score game flipped · ${delta>=0?"+":""}${delta} wins · ${(flipW/(flipW+flipL)*100).toFixed(1)}%`);
-
-  // Closest parlay miss
-  const wk=new Map();
-  for(const p of base()){ const k=p.y+"-"+p.w; (wk.get(k)||wk.set(k,[]).get(k)).push(p); }
-  const weeks=[...wk.entries()].filter(([k,l])=>l.length===4);
-  if(state.player==="all"){
-    const busted=weeks.map(([k,l])=>({k,l,lost:l.filter(p=>p.r==="L")}))
-                      .filter(o=>o.lost.length>0)
-                      .map(o=>({...o,pts:o.lost.reduce((a,p)=>a+p.d,0)}))
-                      .sort((a,b)=>a.pts-b.pts || a.lost.length-b.lost.length);
-    if(busted.length){
-      const b=busted[0], [by,bw]=b.k.split("-");
-      push("So close", `${b.pts} point${b.pts===1?"":"s"}`,
-        `${by} wk ${bw} · ${b.lost.length} leg${b.lost.length===1?"":"s"} short of a winner` +
-        ` · ${b.lost.map(p=>p.n).join(", ")}`);
-    }
-  } else {
-    const solo = weeks.map(([k,l])=>({k,lost:l.filter(p=>p.r==="L")}))
-                      .filter(o=>o.lost.length===1 && o.lost[0].n===state.player)
-                      .sort((a,b)=>a.lost[0].d-b.lost[0].d);
-    if(solo.length){
-      const b=solo[0], [by,bw]=b.k.split("-"), p=b.lost[0];
-      push("Cost everyone", `${p.d} point${p.d===1?"":"s"}`,
-        `${by} wk ${bw} · ${p.team} · ${state.player} busted it alone`, p.tm[0]);
-    } else {
-      push("Cost everyone", "Never",
-        `${state.player} has never been the only leg to miss`);
-    }
-  }
-
-  if(state.player!=="all"){
-    const s = streaks(scoped());
-    push("Longest run", s.best+" straight", `${state.player}, consecutive covers`);
-  }
+    `if every one-score game flipped · ${delta>=0?"+":""}${delta} win${Math.abs(delta)===1?"":"s"} · ${(flipW/(flipW+flipL)*100).toFixed(1)}%`);
 
   el.innerHTML=cards.join("");
 }
@@ -1171,13 +1310,13 @@ function renderOdds(){
 /* ============================ ledger ============================ */
 let logSortKey="date", logSortDir=-1;
 function renderLog(){
-  let rows=scoped();
+  let rows=sel(S.ledger);
   if(state.logQ){
     const q=state.logQ;
-    rows=rows.filter(p=>(p.team+" "+p.n+" "+p.y+" "+p.t).toLowerCase().includes(q));
+    rows=rows.filter(p=>(p.team+" "+p.n+" "+p.y+" "+p.t+" "+(oppOf(p)?oppOf(p)[1]:"")).toLowerCase().includes(q));
   }
   const keyfn={date:p=>p.y*100+p.w,n:p=>p.n,t:p=>p.t,team:p=>p.team.toLowerCase(),
-    pts:p=>p.pts,r:p=>p.r,d:p=>p.d};
+    pts:p=>p.pts,opp:p=>(oppOf(p)?oppOf(p)[1]:"zzz").toLowerCase(),r:p=>p.r,d:p=>p.d};
   rows=[...rows].sort((a,b)=>{
     const x=keyfn[logSortKey](a),y=keyfn[logSortKey](b);
     if(x<y) return -logSortDir; if(x>y) return logSortDir;
@@ -1185,9 +1324,9 @@ function renderLog(){
   });
   const shown=rows.slice(0,state.logN);
   const arw=k=> logSortKey===k? `<span class="arw">${logSortDir>0?"▲":"▼"}</span>`:"";
-  const cols=[["date","Week"],["n","Bettor"],["t","Bet"],["team","Side"],["pts","Number"],["r","Result"],["d","Margin"]];
+  const cols=[["date","Week"],["n","Bettor"],["t","Bet"],["team","Side"],["pts","Number"],["opp","Opponent"],["r","Result"],["d","Margin"]];
   let h=`<thead><tr>`+cols.map(c=>`<th class="sortable" data-k="${c[0]}">${c[1]} ${arw(c[0])}</th>`).join("")+`</tr></thead><tbody>`;
-  if(!shown.length) h+=`<tr><td colspan="7" style="color:var(--ink3)">Nothing matches that filter.</td></tr>`;
+  if(!shown.length) h+=`<tr><td colspan="8" style="color:var(--ink3)">Nothing matches that filter.</td></tr>`;
   for(const p of shown){
     const sign=p.t==="Favorite"?"−":p.t==="Dog"?"+":p.t==="Over"?"o":"u";
     h+=`<tr><td>${p.y} · ${p.w}</td>
@@ -1195,8 +1334,9 @@ function renderLog(){
       <td>${p.t==="Dog"?"Underdog":p.t}</td>
       <td>${logoStack(p.tm,'sm')}${p.team}</td>
       <td>${sign}${p.pts}</td>
+      <td class="opp">${oppOf(p)? oppOf(p)[0] : "N/A"}</td>
       <td class="res ${p.r}">${p.r==="W"?"Win":p.r==="P"?"Push":"Loss"}</td>
-      <td>${p.d}</td></tr>`;
+      <td>${p.r==="P"?"—":p.d}</td></tr>`;
   }
   document.getElementById("logtable").innerHTML=h+`</tbody>`;
   document.getElementById("logcount").textContent=`${rows.length} picks · showing ${shown.length}`;
@@ -1209,11 +1349,23 @@ function renderLog(){
 }
 
 /* ============================ boot ============================ */
+function applyTheme(t){
+  THEME=t; COLOR=THEMES[t];
+  document.documentElement.setAttribute("data-theme", t);
+  try{ localStorage.setItem("rbwr-theme",t); }catch(e){}
+  renderAll();
+}
+function wireThemeChips(host){
+  host.querySelectorAll(".chip[data-th]").forEach(b=>b.addEventListener("click",()=>{
+    if(b.dataset.th!==THEME) applyTheme(b.dataset.th);
+  }));
+}
 function renderAll(){
   const g=renderGrid();
   renderWeekCard();
   renderHero(g);
   renderLast();
+  renderDisplay();
   renderFilters();
   renderCards();
   renderChart();
@@ -1233,17 +1385,8 @@ function wire(){
     state.teamAll=!state.teamAll; renderTeams();});
   document.getElementById("logmore").addEventListener("click",()=>{
     state.logN+=100; renderLog();});
-  const tb=document.getElementById("themebtn");
-  const applyTheme=(t)=>{
-    THEME=t; COLOR=THEMES[t];
-    document.documentElement.setAttribute("data-theme", t);
-    tb.textContent = t==="chalk" ? "Dark Mode" : "Light Mode";
-    try{ localStorage.setItem("rbwr-theme",t); }catch(e){}
-    renderAll();
-  };
   let saved=null; try{ saved=localStorage.getItem("rbwr-theme"); }catch(e){}
   if(saved==="chalk") applyTheme("chalk");
-  tb.addEventListener("click",()=>applyTheme(THEME==="chalk"?"dark":"chalk"));
 
   let t; window.addEventListener("resize",()=>{clearTimeout(t);t=setTimeout(renderChart,150);});
   const sc=document.getElementById("scrub"), pb=document.getElementById("scrubplay");
