@@ -295,8 +295,17 @@ th.sortable:hover{color:var(--ink)}
 th .arw{opacity:.5;font-size:9px}
 
 /* oddities */
-.odds{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(230px,1fr))}
-.odd{border:1px solid var(--line);background:var(--panel);padding:14px 15px}
+.odds{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+  align-items:stretch}
+.odds .odd{min-height:132px}
+.shelfbar{display:flex;align-items:center;gap:14px;margin-top:18px}
+#shuffle{font-family:var(--mono);font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;
+  border:1px solid var(--line2);padding:9px 18px;color:var(--ink2);border-radius:2px}
+#shuffle:hover{border-color:var(--ink3);color:var(--ink)}
+.odd{border:1px solid var(--line);background:var(--panel);padding:24px 15px 15px;position:relative}
+.odd .tag{position:absolute;top:-9px;left:50%;transform:translateX(-50%);
+  background:var(--panel);padding:0 10px;font-family:var(--wordmark);font-size:13.5px;
+  letter-spacing:.05em;white-space:nowrap}
 .odd .lab{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3)}
 .odd .val{font-family:var(--display);font-weight:700;font-size:26px;line-height:1.05;
   text-transform:uppercase;color:var(--bone);margin-top:6px}
@@ -389,7 +398,7 @@ input[type=search]:focus{outline:2px solid var(--bone);outline-offset:1px}
   <div class="wrap">
     <div class="topbar">
       <b>RBWR</b>
-      <span id="stamp">Weekly parlay ledger</span><span style="color:var(--line2)">build 18</span>
+      <span id="stamp">Weekly parlay ledger</span><span style="color:var(--line2)">build 22</span>
     </div>
   </div>
   <div class="wrap hero">
@@ -487,6 +496,8 @@ input[type=search]:focus{outline:2px solid var(--bone);outline-offset:1px}
     <div class="shead"><span class="snum">07</span><h2>Nuggets</h2></div>
     <div class="secfilter" id="f-nug"></div>
     <div class="odds" id="odds"></div>
+    <div class="shelfbar"><button id="shuffle">Shuffle Nugs</button>
+      <span class="count" id="poolcount"></span></div>
   </section>
 
   <section>
@@ -534,7 +545,7 @@ let PICKS = [];
 
 /* Opponent for every spread pick, keyed year-week-bettor. Derived once from public
    schedule data; totals have no single opponent. New seasons need this regenerated. */
-const OPP = {"2020-1-Adam":["at Florida State","Florida State"],"2020-1-Kev":["vs Coastal Carolina","Coastal Carolina"],"2020-1-AJ":["vs Duke","Duke"],"2020-1-Ross":["vs Austin Peay","Austin Peay"],"2020-2-Kev":["at Duke","Duke"],"2020-2-Adam":["vs UCF","UCF"],"2020-2-AJ":["vs Tulsa","Tulsa"],"2020-3-AJ":["at Missouri","Missouri"],"2020-3-Adam":["vs Kentucky","Kentucky"],"2020-3-Ross":["vs Florida International","FIU"],"2020-3-Kev":["at LSU","LSU"],"2020-4-Ross":["at Mississippi State","Mississippi State"],"2020-4-Adam":["at Kansas","Kansas"],"2020-4-AJ":["at Iowa State","Iowa State"],"2020-4-Kev":["vs Memphis","Memphis"],"2020-5-Ross":["at Texas A&M","Texas A&M"],"2020-5-Adam":["vs Tennessee","Tennessee"],"2020-5-Kev":["at Clemson","Clemson"],"2020-6-Adam":["vs Louisville","Louisville"],"2020-6-Ross":["at Memphis","Memphis"],"2020-7-AJ":["at Tennessee","Tennessee"],"2020-7-Kev":["at Michigan State","Michigan State"],"2020-7-Adam":["vs Georgia State","Georgia State"],"2020-7-Ross":["vs NC State","NC State"],"2020-8-AJ":["vs Boston College","Boston College"],"2020-8-Kev":["vs Texas","Texas"],"2020-8-Adam":["at Illinois","Illinois"],"2020-8-Ross":["at Virginia","Virginia"],"2020-9-Kev":["vs BYU","BYU"],"2020-9-Adam":["at Indiana","Indiana"],"2020-9-AJ":["vs Stanford","Stanford"],"2020-9-Ross":["vs Arizona State","Arizona State"],"2020-10-AJ":["vs USC","USC"],"2020-10-Adam":["at Washington State","Washington State"],"2020-10-Ross":["vs Illinois","Illinois"],"2020-11-Adam":["at UCF","UCF"],"2020-11-Ross":["vs Kansas State","Kansas State"],"2020-12-AJ":["vs Auburn","Auburn"],"2020-12-Adam":["at Oregon State","Oregon State"],"2020-13-AJ":["at Virginia Tech","Virginia Tech"],"2020-13-Kev":["vs West Virginia","West Virginia"],"2020-13-Adam":["vs Georgia Tech","Georgia Tech"],"2020-13-Ross":["at TCU","TCU"],"2020-14-Adam":["vs Auburn","Auburn"],"2020-14-Ross":["at Colorado","Colorado"],"2020-15-AJ":["at Florida","Florida"],"2020-15-Ross":["vs Clemson","Clemson"],"2020-15-Adam":["at Cincinnati","Cincinnati"],"2021-1-Kev":["vs UConn","UConn"],"2021-1-Adam":["vs Hawai'i","Hawaii"],"2021-2-Kev":["vs Indiana","Indiana"],"2021-2-Ross":["vs New Mexico State","New Mexico State"],"2021-2-Adam":["vs Penn State","Penn State"],"2021-3-AJ":["vs Kansas","Kansas"],"2021-3-Adam":["at Iowa State","Iowa State"],"2021-3-Kev":["at Syracuse","Syracuse"],"2021-3-Ross":["at Northern Illinois","Northern Illinois"],"2021-4-Ross":["vs Oklahoma State","Oklahoma State"],"2021-4-Adam":["at Indiana","Indiana"],"2021-4-Kev":["vs Purdue","Purdue"],"2021-4-AJ":["at Washington State","Washington State"],"2021-5-Adam":["vs Florida Atlantic","FAU"],"2021-5-Ross":["at Stanford","Stanford"],"2021-6-Adam":["at Clemson","Clemson"],"2021-6-Kev":["vs Cincinnati","Cincinnati"],"2021-6-Ross":["at Stanford","Stanford"],"2021-7-Adam":["vs Wyoming","Wyoming"],"2021-7-AJ":["vs Vanderbilt","Vanderbilt"],"2021-7-Ross":["at Illinois","Illinois"],"2021-8-Adam":["at Boise State","Boise State"],"2021-8-AJ":["at Mississippi State","Mississippi State"],"2021-8-Ross":["at LSU","LSU"],"2021-8-Kev":["at Indiana","Indiana"],"2021-9-Adam":["vs San Diego State","San Diego State"],"2021-9-AJ":["vs Tennessee","Tennessee"],"2021-9-Ross":["at Indiana","Indiana"],"2021-9-Kev":["vs Clemson","Clemson"],"2021-10-Ross":["at Wisconsin","Wisconsin"],"2021-10-AJ":["at Illinois","Illinois"],"2021-10-Adam":["vs Duke","Duke"],"2021-11-Adam":["vs Army","Army"],"2021-11-Ross":["vs Boise State","Boise State"],"2021-11-Kev":["at West Virginia","West Virginia"],"2021-12-Ross":["at Iowa","Iowa"],"2021-12-Kev":["at Alabama","Alabama"],"2021-12-AJ":["at Baylor","Baylor"],"2021-13-AJ":["vs Arkansas","Arkansas"],"2021-13-Ross":["vs East Carolina","East Carolina"],"2021-13-Kev":["at USC","USC"],"2021-14-Adam":["at USC","USC"],"2021-14-AJ":["vs Florida State","Florida State"],"2021-14-Ross":["at Stanford","Stanford"],"2021-14-Kev":["vs Oregon State","Oregon State"],"2021-15-Kev":["vs App State","App State"],"2021-15-AJ":["vs Eastern Washington","Eastern Washington"],"2021-15-Ross":["at Utah","Utah"],"2021-15-Adam":["at Wake Forest","Wake Forest"],"2022-0-Adam":["at Florida Atlantic","FAU"],"2022-0-AJ":["vs Vanderbilt","Vanderbilt"],"2022-0-Kev":["at Utah State","Utah State"],"2022-1-Ross":["at Florida State","Florida State"],"2022-1-Adam":["vs Georgia State","Georgia State"],"2022-1-Kev":["at App State","App State"],"2022-2-Adam":["vs South Carolina","South Carolina"],"2022-2-Ross":["at Arizona","Arizona"],"2022-2-Kev":["at Stanford","Stanford"],"2022-3-Kev":["at Iowa","Iowa"],"2022-3-Adam":["at Syracuse","Syracuse"],"2022-3-Ross":["at Indiana","Indiana"],"2022-4-Ross":["at Wake Forest","Wake Forest"],"2022-4-Adam":["at Oregon State","Oregon State"],"2022-5-Adam":["at Florida State","Florida State"],"2022-6-Kev":["at Bowling Green","Bowling Green"],"2022-6-Ross":["at UCLA","UCLA"],"2022-6-Adam":["at Northwestern","Northwestern"],"2022-7-Adam":["at BYU","BYU"],"2022-7-AJ":["at Florida State","Florida State"],"2022-7-Kev":["at Kentucky","Kentucky"],"2022-7-Ross":["vs Tulane","Tulane"],"2022-8-Kev":["at LSU","LSU"],"2022-8-AJ":["at Oklahoma State","Oklahoma State"],"2022-8-Ross":["at Oregon","Oregon"],"2022-9-AJ":["vs Northwestern","Northwestern"],"2022-9-Kev":["at Kansas State","Kansas State"],"2022-9-Adam":["vs Notre Dame","Notre Dame"],"2022-9-Ross":["at Louisville","Louisville"],"2022-10-AJ":["vs West Virginia","West Virginia"],"2022-10-Ross":["at Kansas State","Kansas State"],"2022-11-Adam":["at UConn","UConn"],"2022-11-AJ":["vs Iowa State","Iowa State"],"2022-12-Adam":["vs Louisiana","Louisiana"],"2022-12-AJ":["vs Indiana","Indiana"],"2022-12-Ross":["vs Illinois","Illinois"],"2022-12-Kev":["at Oklahoma","Oklahoma"],"2022-13-AJ":["vs South Carolina","South Carolina"],"2022-13-Ross":["vs Kansas","Kansas"],"2022-14-AJ":["vs Purdue","Purdue"],"2022-14-Ross":["vs Coastal Carolina","Coastal Carolina"],"2022-14-Kev":["vs Utah","Utah"],"2023-0-Kev":["vs Massachusetts","UMass"],"2023-0-AJ":["vs Navy","Navy"],"2023-0-Adam":["vs Hawai'i","Hawaii"],"2023-1-AJ":["vs Middle Tennessee","Middle Tennessee"],"2023-1-Ross":["vs Colorado","Colorado"],"2023-1-Adam":["at Colorado State","Colorado State"],"2023-1-Kev":["vs Texas Tech","Texas Tech"],"2023-2-Adam":["vs Texas","Texas"],"2023-2-Ross":["at Tulane","Tulane"],"2023-2-AJ":["at Washington","Washington"],"2023-3-Ross":["at Mississippi State","Mississippi State"],"2023-3-Kev":["vs Syracuse","Syracuse"],"2023-4-Kev":["at Clemson","Clemson"],"2023-4-AJ":["vs BYU","BYU"],"2023-4-Ross":["vs Auburn","Auburn"],"2023-5-Ross":["vs Coastal Carolina","Coastal Carolina"],"2023-5-Adam":["at Tennessee","Tennessee"],"2023-5-AJ":["at Colorado","Colorado"],"2023-6-Kev":["vs Kentucky","Kentucky"],"2023-6-Ross":["at Minnesota","Minnesota"],"2023-6-Adam":["at Iowa State","Iowa State"],"2023-7-Ross":["vs Auburn","Auburn"],"2023-7-AJ":["at Rutgers","Rutgers"],"2023-7-Adam":["vs Miami","Miami"],"2023-8-Ross":["vs Northwestern","Northwestern"],"2023-8-Adam":["vs UCF","UCF"],"2023-8-AJ":["vs Utah","Utah"],"2023-9-AJ":["vs Pittsburgh","Pitt"],"2023-9-Kev":["at Kansas","Kansas"],"2023-9-Adam":["at Arizona","Arizona"],"2023-10-Kev":["at Air Force","Air Force"],"2023-10-AJ":["vs Florida State","Florida State"],"2023-11-Adam":["vs Texas Tech","Texas Tech"],"2023-11-Kev":["at Penn State","Penn State"],"2023-11-AJ":["vs Arizona State","Arizona State"],"2023-12-AJ":["at Kansas","Kansas"],"2023-12-Kev":["at Miami","Miami"],"2023-12-Adam":["at Houston","Houston"],"2023-12-Ross":["at Air Force","Air Force"],"2023-13-Ross":["at Cincinnati","Cincinnati"],"2023-13-Adam":["vs San Jos\u00e9 State","San Jose State"],"2023-13-Kev":["vs Colorado","Colorado"],"2023-14-Ross":["vs Oklahoma State","Oklahoma State"],"2023-14-Kev":["vs Boise State","Boise State"],"2024-1-AJ":["vs Fresno State","Fresno State"],"2024-1-Ross":["vs TCU","TCU"],"2024-1-Adam":["at Vanderbilt","Vanderbilt"],"2024-2-Ross":["at Illinois","Illinois"],"2024-2-Kev":["vs Temple","Temple"],"2024-2-AJ":["vs Georgia Tech","Georgia Tech"],"2024-2-Adam":["vs Baylor","Baylor"],"2024-3-Ross":["at Wisconsin","Wisconsin"],"2024-3-Kev":["at Missouri","Missouri"],"2024-3-Adam":["at UCLA","UCLA"],"2024-3-AJ":["vs Nevada","Nevada"],"2024-4-Adam":["vs Memphis","Memphis"],"2024-4-Kev":["vs Utah","Utah"],"2024-4-Ross":["at Oklahoma","Oklahoma"],"2024-5-Ross":["at Michigan State","Michigan State"],"2024-5-Adam":["vs Kentucky","Kentucky"],"2024-5-AJ":["vs Buffalo","Buffalo"],"2024-6-Kev":["vs USC","USC"],"2024-6-Ross":["vs Iowa","Iowa"],"2024-7-AJ":["at UCF","UCF"],"2024-7-Adam":["at UCLA","UCLA"],"2024-7-Ross":["at Oregon","Oregon"],"2024-7-Kev":["vs California","California"],"2024-8-Ross":["at Michigan State","Michigan State"],"2024-8-AJ":["vs USC","USC"],"2024-8-Adam":["at Northwestern","Northwestern"],"2024-9-AJ":["at Navy","Navy"],"2024-9-Kev":["vs Michigan State","Michigan State"],"2024-9-Ross":["at UNLV","UNLV"],"2024-10-Adam":["at Georgia","Georgia"],"2024-10-AJ":["at Illinois","Illinois"],"2024-10-Kev":["at Rice","Rice"],"2024-11-AJ":["vs Oklahoma State","Oklahoma State"],"2024-11-Ross":["at Missouri","Missouri"],"2024-12-AJ":["at Illinois","Illinois"],"2024-12-Ross":["at Wisconsin","Wisconsin"],"2024-13-AJ":["vs Indiana","Indiana"],"2024-13-Adam":["at Oklahoma","Oklahoma"],"2024-13-Kev":["at Kansas","Kansas"],"2024-13-Ross":["vs Army","Army"],"2024-14-AJ":["vs Kansas","Kansas"],"2024-14-Adam":["vs Miami","Miami"],"2024-14-Kev":["at Arizona","Arizona"],"2024-14-Ross":["at Clemson","Clemson"],"2024-15-AJ":["at Oregon","Oregon"],"2024-15-Kev":["vs Iowa State","Iowa State"],"2024-15-Ross":["at SMU","SMU"],"2025-0-Adam":["vs Fresno State","Fresno State"],"2025-0-Kev":["vs Iowa State","Iowa State"],"2025-1-Kev":["vs Auburn","Auburn"],"2025-1-AJ":["vs Nevada","Nevada"],"2025-1-Ross":["at Colorado","Colorado"],"2025-1-Adam":["at Kentucky","Kentucky"],"2025-2-Ross":["at Toledo","Toledo"],"2025-2-AJ":["at Iowa State","Iowa State"],"2025-2-Kev":["vs UConn","UConn"],"2025-3-Adam":["at Bowling Green","Bowling Green"],"2025-3-Ross":["vs Colorado","Colorado"],"2025-3-AJ":["at Ole Miss","Ole Miss"],"2025-3-Kev":["at Tennessee","Tennessee"],"2025-4-Adam":["vs Texas Tech","Texas Tech"],"2025-4-AJ":["vs Delaware","Delaware"],"2025-4-Ross":["vs Maryland","Maryland"],"2025-4-Kev":["vs Troy","Troy"],"2025-5-Adam":["vs Oregon","Oregon"],"2025-5-AJ":["at Northwestern","Northwestern"],"2025-5-Kev":["at Iowa","Iowa"],"2025-6-AJ":["at Florida","Florida"],"2025-6-Adam":["vs Kansas State","Kansas State"],"2025-6-Ross":["vs Vanderbilt","Vanderbilt"],"2025-6-Kev":["vs Boise State","Boise State"],"2025-7-Kev":["vs Northwestern","Northwestern"],"2025-7-Ross":["vs Indiana","Indiana"],"2025-7-Adam":["vs UCF","UCF"],"2025-8-Ross":["at Northwestern","Northwestern"],"2025-8-Kev":["at Notre Dame","Notre Dame"],"2025-9-Adam":["vs BYU","BYU"],"2025-9-AJ":["vs Stanford","Stanford"],"2025-9-Ross":["vs Temple","Temple"],"2025-9-Kev":["vs California","California"],"2025-10-Adam":["vs Memphis","Memphis"],"2025-10-Ross":["vs Oklahoma","Oklahoma"],"2025-10-AJ":["vs Mississippi State","Mississippi State"],"2025-11-Kev":["vs BYU","BYU"],"2025-11-Ross":["at Penn State","Penn State"],"2025-11-Adam":["at UCF","UCF"],"2025-11-AJ":["at Vanderbilt","Vanderbilt"],"2025-12-Adam":["vs Texas","Texas"],"2025-12-AJ":["at Louisville","Louisville"],"2025-12-Ross":["vs Iowa","Iowa"],"2025-13-Ross":["vs Washington","Washington"],"2025-13-AJ":["vs BYU","BYU"],"2025-13-Adam":["at Houston","Houston"],"2025-14-Ross":["at Purdue","Purdue"],"2025-14-AJ":["at Pittsburgh","Pitt"],"2025-14-Adam":["vs UCF","UCF"],"2025-15-Ross":["at Tulane","Tulane"],"2025-15-AJ":["vs Indiana","Indiana"]};
+const GAME = {"2020-1-Adam":["at Florida State","Florida State",5,3],"2020-1-Kev":["vs Coastal Carolina","Coastal Carolina",6,-15],"2020-1-AJ":["vs Duke","Duke",5,14],"2020-1-Ross":["vs Austin Peay","Austin Peay",5,55],"2020-2-Ross":["","",5,null],"2020-2-Kev":["at Duke","Duke",5,20],"2020-2-Adam":["vs UCF","UCF",5,-28],"2020-2-AJ":["vs Tulsa","Tulsa",5,9],"2020-3-AJ":["at Missouri","Missouri",5,19],"2020-3-Adam":["vs Kentucky","Kentucky",5,16],"2020-3-Ross":["vs Florida International","Florida International",5,2],"2020-3-Kev":["at LSU","LSU",5,10],"2020-4-Ross":["at Mississippi State","Mississippi State",5,7],"2020-4-Adam":["at Kansas","Kansas",5,40],"2020-4-AJ":["at Iowa State","Iowa State",5,-7],"2020-4-Kev":["vs Memphis","Memphis",5,3],"2020-5-AJ":["","",5,null],"2020-5-Ross":["at Texas A&M","Texas A&M",5,-3],"2020-5-Adam":["vs Tennessee","Tennessee",5,23],"2020-5-Kev":["at Clemson","Clemson",5,-25],"2020-6-Kev":["","",5,null],"2020-6-Adam":["vs Louisville","Louisville",5,5],"2020-6-AJ":["","",5,null],"2020-6-Ross":["at Memphis","Memphis",5,-1],"2020-7-AJ":["at Tennessee","Tennessee",5,31],"2020-7-Kev":["at Michigan State","Michigan State",5,11],"2020-7-Adam":["vs Georgia State","Georgia State",5,-2],"2020-7-Ross":["vs NC State","NC State",5,27],"2020-8-AJ":["vs Boston College","Boston College",5,6],"2020-8-Kev":["vs Texas","Texas",5,-7],"2020-8-Adam":["at Illinois","Illinois",5,7],"2020-8-Ross":["at Virginia","Virginia",6,-3],"2020-9-Kev":["vs BYU","BYU",5,-34],"2020-9-Adam":["at Indiana","Indiana",5,-17],"2020-9-AJ":["vs Stanford","Stanford",6,21],"2020-9-Ross":["vs Arizona State","Arizona State",5,1],"2020-10-AJ":["vs USC","USC",5,-4],"2020-10-Kev":["","",5,null],"2020-10-Adam":["at Washington State","Washington State",6,14],"2020-10-Ross":["vs Illinois","Illinois",5,-3],"2020-11-Adam":["at UCF","UCF",5,3],"2020-11-Ross":["vs Kansas State","Kansas State",5,45],"2020-11-Kev":["","",6,null],"2020-11-AJ":["","",6,null],"2020-12-AJ":["vs Auburn","Auburn",5,29],"2020-12-Kev":["","",5,null],"2020-12-Ross":["","",5,null],"2020-12-Adam":["at Oregon State","Oregon State",5,-3],"2020-13-AJ":["at Virginia Tech","Virginia Tech",6,35],"2020-13-Kev":["vs West Virginia","West Virginia",5,36],"2020-13-Adam":["vs Georgia Tech","Georgia Tech",5,10],"2020-13-Ross":["at TCU","TCU",5,-7],"2020-14-Kev":["","",5,null],"2020-14-Adam":["vs Auburn","Auburn",6,-14],"2020-14-AJ":["","",5,null],"2020-14-Ross":["at Colorado","Colorado",5,17],"2020-15-AJ":["at Florida","Florida",6,6],"2020-15-Kev":["","",5,null],"2020-15-Ross":["vs Clemson","Clemson",5,-24],"2020-15-Adam":["at Cincinnati","Cincinnati",6,-3],"2021-1-Kev":["vs UConn","UConn",5,45],"2021-1-Ross":["","",5,null],"2021-1-Adam":["vs Hawai'i","Hawai'i",5,34],"2021-1-AJ":["","",5,null],"2021-2-Kev":["vs Indiana","Indiana",5,28],"2021-2-AJ":["","",6,null],"2021-2-Ross":["vs New Mexico State","New Mexico State",6,18],"2021-2-Adam":["vs Penn State","Penn State",5,-6],"2021-3-AJ":["vs Kansas","Kansas",4,27],"2021-3-Adam":["at Iowa State","Iowa State",5,10],"2021-3-Kev":["at Syracuse","Syracuse",5,10],"2021-3-Ross":["at Northern Illinois","Northern Illinois",5,7],"2021-4-Ross":["vs Oklahoma State","Oklahoma State",6,-1],"2021-4-Adam":["at Indiana","Indiana",5,14],"2021-4-Kev":["vs Purdue","Purdue",5,14],"2021-4-AJ":["at Washington State","Washington State",5,31],"2021-5-Adam":["vs Florida Atlantic","Florida Atlantic",6,24],"2021-5-AJ":["","",5,null],"2021-5-Kev":["","",5,null],"2021-5-Ross":["at Stanford","Stanford",5,11],"2021-6-Adam":["at Clemson","Clemson",5,-6],"2021-6-AJ":["","",5,null],"2021-6-Kev":["vs Cincinnati","Cincinnati",5,-11],"2021-6-Ross":["at Stanford","Stanford",5,-7],"2021-7-Adam":["vs Wyoming","Wyoming",5,10],"2021-7-AJ":["vs Vanderbilt","Vanderbilt",5,42],"2021-7-Kev":["","",5,null],"2021-7-Ross":["at Illinois","Illinois",5,24],"2021-8-Adam":["at Boise State","Boise State",6,7],"2021-8-AJ":["at Mississippi State","Mississippi State",5,40],"2021-8-Ross":["at LSU","LSU",5,-7],"2021-8-Kev":["at Indiana","Indiana",5,5],"2021-9-Adam":["vs San Diego State","San Diego State",5,-6],"2021-9-AJ":["vs Tennessee","Tennessee",5,28],"2021-9-Ross":["at Indiana","Indiana",5,47],"2021-9-Kev":["vs Clemson","Clemson",5,10],"2021-10-Kev":["","",5,null],"2021-10-Ross":["at Wisconsin","Wisconsin",5,-20],"2021-10-AJ":["at Illinois","Illinois",5,6],"2021-10-Adam":["vs Duke","Duke",5,38],"2021-11-Adam":["vs Army","Army",5,-7],"2021-11-Ross":["vs Boise State","Boise State",5,-26],"2021-11-Kev":["at West Virginia","West Virginia",5,21],"2021-11-AJ":["","",5,null],"2021-12-Adam":["","",5,null],"2021-12-Ross":["at Iowa","Iowa",5,-5],"2021-12-Kev":["at Alabama","Alabama",5,-56],"2021-12-AJ":["at Baylor","Baylor",5,-13],"2021-13-AJ":["vs Arkansas","Arkansas",5,7],"2021-13-Ross":["vs East Carolina","East Carolina",5,-3],"2021-13-Adam":["","",5,null],"2021-13-Kev":["at USC","USC",5,29],"2021-14-Adam":["at USC","USC",6,4],"2021-14-AJ":["vs Florida State","Florida State",5,3],"2021-14-Ross":["at Stanford","Stanford",6,31],"2021-14-Kev":["vs Oregon State","Oregon State",5,9],"2021-15-Kev":["vs App State","App State",5,8],"2021-15-AJ":["vs Eastern Washington","Eastern Washington",5,16],"2021-15-Ross":["at Utah","Utah",5,-28],"2021-15-Adam":["at Wake Forest","Wake Forest",6,24],"2022-0-Adam":["at Florida Atlantic","Florida Atlantic",5,-30],"2022-0-AJ":["vs Vanderbilt","Vanderbilt",6,-53],"2022-0-Ross":["","",5,null],"2022-0-Kev":["at Utah State","Utah State",5,-11],"2022-1-Ross":["at Florida State","Florida State",6,-1],"2022-1-AJ":["","",5,null],"2022-1-Adam":["vs Georgia State","Georgia State",5,21],"2022-1-Kev":["at App State","App State",5,2],"2022-2-Adam":["vs South Carolina","South Carolina",5,14],"2022-2-AJ":["","",5,null],"2022-2-Ross":["at Arizona","Arizona",6,22],"2022-2-Kev":["at Stanford","Stanford",5,13],"2022-3-Kev":["at Iowa","Iowa",5,-27],"2022-3-Adam":["at Syracuse","Syracuse",5,-3],"2022-3-AJ":["","",5,null],"2022-3-Ross":["at Indiana","Indiana",5,-3],"2022-4-Ross":["at Wake Forest","Wake Forest",5,6],"2022-4-Kev":["","",5,null],"2022-4-AJ":["","",5,null],"2022-4-Adam":["at Oregon State","Oregon State",6,3],"2022-5-AJ":["","",5,null],"2022-5-Ross":["","",5,null],"2022-5-Kev":["","",5,null],"2022-5-Adam":["at Florida State","Florida State",5,10],"2022-6-Kev":["at Bowling Green","Bowling Green",5,31],"2022-6-AJ":["","",5,null],"2022-6-Ross":["at UCLA","UCLA",5,-10],"2022-6-Adam":["at Northwestern","Northwestern",5,35],"2022-7-Adam":["at BYU","BYU",5,17],"2022-7-AJ":["at Florida State","Florida State",5,6],"2022-7-Kev":["at Kentucky","Kentucky",5,-10],"2022-7-Ross":["vs Tulane","Tulane",5,-14],"2022-8-Adam":["","",5,null],"2022-8-Kev":["at LSU","LSU",5,-25],"2022-8-AJ":["at Oklahoma State","Oklahoma State",5,-7],"2022-8-Ross":["at Oregon","Oregon",5,-15],"2022-9-AJ":["vs Northwestern","Northwestern",5,20],"2022-9-Kev":["at Kansas State","Kansas State",5,-48],"2022-9-Adam":["vs Notre Dame","Notre Dame",5,-17],"2022-9-Ross":["at Louisville","Louisville",5,-27],"2022-10-AJ":["vs West Virginia","West Virginia",5,17],"2022-10-Ross":["at Kansas State","Kansas State",5,7],"2022-10-Kev":["","",5,null],"2022-10-Adam":["","",4,null],"2022-11-Adam":["at UConn","UConn",5,-3],"2022-11-Kev":["","",5,null],"2022-11-AJ":["vs Iowa State","Iowa State",5,6],"2022-11-Ross":["","",5,null],"2022-12-Adam":["vs Louisiana","Louisiana",5,32],"2022-12-AJ":["vs Indiana","Indiana",5,-8],"2022-12-Ross":["vs Illinois","Illinois",5,2],"2022-12-Kev":["at Oklahoma","Oklahoma",6,-15],"2022-13-Kev":["","",4,null],"2022-13-Adam":["","",4,null],"2022-13-AJ":["vs South Carolina","South Carolina",5,-1],"2022-13-Ross":["vs Kansas","Kansas",6,20],"2022-14-AJ":["vs Purdue","Purdue",6,21],"2022-14-Ross":["vs Coastal Carolina","Coastal Carolina",5,19],"2022-14-Adam":["","",5,null],"2022-14-Kev":["vs Utah","Utah",5,-23],"2023-0-Kev":["vs Massachusetts","Massachusetts",5,-11],"2023-0-AJ":["vs Navy","Navy",5,39],"2023-0-Ross":["","",6,null],"2023-0-Adam":["vs Hawai'i","Hawai'i",5,7],"2023-1-AJ":["vs Middle Tennessee","Middle Tennessee",5,49],"2023-1-Ross":["vs Colorado","Colorado",5,-3],"2023-1-Adam":["at Colorado State","Colorado State",5,26],"2023-1-Kev":["vs Texas Tech","Texas Tech",5,2],"2023-2-Adam":["vs Texas","Texas",5,-10],"2023-2-Kev":["","",5,null],"2023-2-Ross":["at Tulane","Tulane",5,17],"2023-2-AJ":["at Washington","Washington",5,-33],"2023-3-Adam":["","",5,null],"2023-3-Ross":["at Mississippi State","Mississippi State",5,27],"2023-3-AJ":["","",5,null],"2023-3-Kev":["vs Syracuse","Syracuse",5,-15],"2023-4-Kev":["at Clemson","Clemson",5,7],"2023-4-AJ":["vs BYU","BYU",5,11],"2023-4-Adam":["","",5,null],"2023-4-Ross":["vs Auburn","Auburn",5,17],"2023-5-Ross":["vs Coastal Carolina","Coastal Carolina",5,10],"2023-5-Adam":["at Tennessee","Tennessee",5,-21],"2023-5-AJ":["at Colorado","Colorado",5,7],"2023-5-Kev":["","",5,null],"2023-6-Kev":["vs Kentucky","Kentucky",5,38],"2023-6-AJ":["","",5,null],"2023-6-Ross":["at Minnesota","Minnesota",5,42],"2023-6-Adam":["at Iowa State","Iowa State",6,-13],"2023-7-Kev":["","",5,null],"2023-7-Ross":["vs Auburn","Auburn",5,30],"2023-7-AJ":["at Rutgers","Rutgers",5,-3],"2023-7-Adam":["vs Miami","Miami",5,10],"2023-8-Kev":["","",5,null],"2023-8-Ross":["vs Northwestern","Northwestern",5,8],"2023-8-Adam":["vs UCF","UCF",5,2],"2023-8-AJ":["vs Utah","Utah",6,-2],"2023-9-AJ":["vs Pittsburgh","Pittsburgh",5,51],"2023-9-Kev":["at Kansas","Kansas",5,-5],"2023-9-Adam":["at Arizona","Arizona",6,-3],"2023-9-Ross":["","",5,null],"2023-10-Kev":["at Air Force","Air Force",5,20],"2023-10-Adam":["","",5,null],"2023-10-AJ":["vs Florida State","Florida State",5,-17],"2023-10-Ross":["","",5,null],"2023-11-Adam":["vs Texas Tech","Texas Tech",5,-3],"2023-11-Kev":["at Penn State","Penn State",5,9],"2023-11-Ross":["","",5,null],"2023-11-AJ":["vs Arizona State","Arizona State",6,-10],"2023-12-AJ":["at Kansas","Kansas",6,4],"2023-12-Kev":["at Miami","Miami",5,7],"2023-12-Adam":["at Houston","Houston",5,13],"2023-12-Ross":["at Air Force","Air Force",5,4],"2023-13-Ross":["at Cincinnati","Cincinnati",6,33],"2023-13-AJ":["","",4,null],"2023-13-Adam":["vs San Jos\u00e9 State","San Jos\u00e9 State",5,-6],"2023-13-Kev":["vs Colorado","Colorado",5,6],"2023-14-Adam":["","",6,null],"2023-14-AJ":["","",5,null],"2023-14-Ross":["vs Oklahoma State","Oklahoma State",5,28],"2023-14-Kev":["vs Boise State","Boise State",5,-24],"2024-1-AJ":["vs Fresno State","Fresno State",5,20],"2024-1-Kev":["","",5,null],"2024-1-Ross":["vs TCU","TCU",5,-7],"2024-1-Adam":["at Vanderbilt","Vanderbilt",5,-7],"2024-2-Ross":["at Illinois","Illinois",5,-6],"2024-2-Kev":["vs Temple","Temple",5,27],"2024-2-AJ":["vs Georgia Tech","Georgia Tech",5,3],"2024-2-Adam":["vs Baylor","Baylor",5,11],"2024-3-Ross":["at Wisconsin","Wisconsin",5,32],"2024-3-Kev":["at Missouri","Missouri",5,-6],"2024-3-Adam":["at UCLA","UCLA",5,29],"2024-3-AJ":["vs Nevada","Nevada",5,27],"2024-4-AJ":["","",5,null],"2024-4-Adam":["vs Memphis","Memphis",5,12],"2024-4-Kev":["vs Utah","Utah",5,-3],"2024-4-Ross":["at Oklahoma","Oklahoma",5,10],"2024-5-Kev":["","",5,null],"2024-5-Ross":["at Michigan State","Michigan State",5,31],"2024-5-Adam":["vs Kentucky","Kentucky",5,-3],"2024-5-AJ":["vs Buffalo","Buffalo",5,44],"2024-6-AJ":["","",5,null],"2024-6-Kev":["vs USC","USC",5,7],"2024-6-Ross":["vs Iowa","Iowa",5,28],"2024-6-Adam":["","",4,null],"2024-7-AJ":["at UCF","UCF",5,6],"2024-7-Adam":["at UCLA","UCLA",6,4],"2024-7-Ross":["at Oregon","Oregon",5,-1],"2024-7-Kev":["vs California","California",5,2],"2024-8-Ross":["at Michigan State","Michigan State",5,-12],"2024-8-AJ":["vs USC","USC",5,1],"2024-8-Kev":["","",5,null],"2024-8-Adam":["at Northwestern","Northwestern",5,20],"2024-9-Adam":["","",5,null],"2024-9-AJ":["at Navy","Navy",5,37],"2024-9-Kev":["vs Michigan State","Michigan State",5,7],"2024-9-Ross":["at UNLV","UNLV",5,5],"2024-10-Adam":["at Georgia","Georgia",5,-14],"2024-10-AJ":["at Illinois","Illinois",5,8],"2024-10-Kev":["at Rice","Rice",5,-14],"2024-10-Ross":["","",5,null],"2024-11-Adam":["","",5,null],"2024-11-AJ":["vs Oklahoma State","Oklahoma State",6,25],"2024-11-Kev":["","",5,null],"2024-11-Ross":["at Missouri","Missouri",6,-7],"2024-12-Adam":["","",6,null],"2024-12-AJ":["at Illinois","Illinois",5,-22],"2024-12-Kev":["","",5,null],"2024-12-Ross":["at Wisconsin","Wisconsin",6,3],"2024-13-AJ":["vs Indiana","Indiana",5,23],"2024-13-Adam":["at Oklahoma","Oklahoma",6,-21],"2024-13-Kev":["at Kansas","Kansas",5,-16],"2024-13-Ross":["vs Army","Army",6,35],"2024-14-AJ":["vs Kansas","Kansas",5,28],"2024-14-Adam":["vs Miami","Miami",5,4],"2024-14-Kev":["at Arizona","Arizona",5,42],"2024-14-Ross":["at Clemson","Clemson",5,3],"2024-15-AJ":["at Oregon","Oregon",6,-8],"2024-15-Adam":["","",6,null],"2024-15-Kev":["vs Iowa State","Iowa State",5,26],"2024-15-Ross":["at SMU","SMU",6,3],"2025-0-Adam":["vs Fresno State","Fresno State",5,24],"2025-0-AJ":["","",5,null],"2025-0-Kev":["vs Iowa State","Iowa State",5,-3],"2025-0-Ross":["","",5,null],"2025-1-Kev":["vs Auburn","Auburn",5,-14],"2025-1-AJ":["vs Nevada","Nevada",5,35],"2025-1-Ross":["at Colorado","Colorado",5,7],"2025-1-Adam":["at Kentucky","Kentucky",5,-8],"2025-2-Adam":["","",5,null],"2025-2-Ross":["at Toledo","Toledo",5,-24],"2025-2-AJ":["at Iowa State","Iowa State",5,-3],"2025-2-Kev":["vs UConn","UConn",5,7],"2025-3-Adam":["at Bowling Green","Bowling Green",5,-10],"2025-3-Ross":["vs Colorado","Colorado",4,16],"2025-3-AJ":["at Ole Miss","Ole Miss",5,-6],"2025-3-Kev":["at Tennessee","Tennessee",5,3],"2025-4-Adam":["vs Texas Tech","Texas Tech",5,-24],"2025-4-AJ":["vs Delaware","Delaware",5,-22],"2025-4-Ross":["vs Maryland","Maryland",5,-17],"2025-4-Kev":["vs Troy","Troy",5,-4],"2025-5-Ross":["","",5,null],"2025-5-Adam":["vs Oregon","Oregon",5,-6],"2025-5-AJ":["at Northwestern","Northwestern",5,-3],"2025-5-Kev":["at Iowa","Iowa",5,5],"2025-6-AJ":["at Florida","Florida",5,-8],"2025-6-Adam":["vs Kansas State","Kansas State",5,1],"2025-6-Ross":["vs Vanderbilt","Vanderbilt",5,16],"2025-6-Kev":["vs Boise State","Boise State",5,21],"2025-7-Kev":["vs Northwestern","Northwestern",5,-1],"2025-7-Ross":["vs Indiana","Indiana",5,-10],"2025-7-AJ":["","",5,null],"2025-7-Adam":["vs UCF","UCF",5,9],"2025-8-Ross":["at Northwestern","Northwestern",5,-19],"2025-8-Adam":["","",5,null],"2025-8-AJ":["","",5,null],"2025-8-Kev":["at Notre Dame","Notre Dame",5,-10],"2025-9-Adam":["vs BYU","BYU",5,-14],"2025-9-AJ":["vs Stanford","Stanford",5,35],"2025-9-Ross":["vs Temple","Temple",5,-1],"2025-9-Kev":["vs California","California",4,8],"2025-10-Kev":["","",5,null],"2025-10-Adam":["vs Memphis","Memphis",4,-24],"2025-10-Ross":["vs Oklahoma","Oklahoma",5,-6],"2025-10-AJ":["vs Mississippi State","Mississippi State",5,-3],"2025-11-Kev":["vs BYU","BYU",5,22],"2025-11-Ross":["at Penn State","Penn State",5,3],"2025-11-Adam":["at UCF","UCF",5,3],"2025-11-AJ":["at Vanderbilt","Vanderbilt",5,-7],"2025-12-Adam":["vs Texas","Texas",6,25],"2025-12-AJ":["at Louisville","Louisville",5,1],"2025-12-Kev":["","",5,null],"2025-12-Ross":["vs Iowa","Iowa",5,5],"2025-13-Ross":["vs Washington","Washington",6,-34],"2025-13-AJ":["vs BYU","BYU",6,-12],"2025-13-Kev":["","",5,null],"2025-13-Adam":["at Houston","Houston",5,3],"2025-14-Ross":["at Purdue","Purdue",5,53],"2025-14-AJ":["at Pittsburgh","Pittsburgh",5,31],"2025-14-Kev":["","",5,null],"2025-14-Adam":["vs UCF","UCF",5,20],"2025-15-Ross":["at Tulane","Tulane",5,-13],"2025-15-AJ":["vs Indiana","Indiana",6,-3],"2025-15-Kev":["","",5,null],"2025-15-Adam":["","",6,null]};
 /* ESPN conference logo ids. Unverified — a wrong id simply hides the image. */
 const CONF_ID = {"ACC":1,"Big 12":4,"Big Ten":5,"SEC":8,"Pac-12":9,"Conference USA":12,
   "Mid-American":15,"Mountain West":17,"FBS Independents":18,"American Athletic":151,
@@ -545,7 +556,26 @@ const ICON={
   heartbreak:`<path d="M16 27.6C3.2 19.2 3.6 12.2 3.6 11.2A6 6 0 0 1 16 9 6 6 0 0 1 28.4 11.2c0 1 .4 8-12.4 16.4z" fill="#E0705C"/><path d="M16 9 L12.4 13.6 L16.8 16.4 L12.6 20.4 L16 27.6" fill="none" stroke="var(--panel)" stroke-width="2.6" stroke-linejoin="round"/>`,
   dog:`<path d="M8.6 8.4C5 8.8 3.9 13.4 4.9 18.4c.6 3 2.9 4.4 4.4 3.4z" fill="#A76F45"/><path d="M23.4 8.4c3.6.4 4.7 5 3.7 10-.6 3-2.9 4.4-4.4 3.4z" fill="#A76F45"/><path d="M16 5.2c4.7 0 8 2.7 8 7.7v3.6c0 4.7-3.5 8-8 8s-8-3.3-8-8v-3.6c0-5 3.3-7.7 8-7.7z" fill="#C98A5B"/><circle cx="12.6" cy="13.6" r="1.7" fill="#1B2A24"/><circle cx="19.4" cy="13.6" r="1.7" fill="#1B2A24"/><ellipse cx="16" cy="20.2" rx="4.6" ry="3.5" fill="#E3C09A"/><path d="M16 17.8c1.3 0 2.1.7 2.1 1.5s-1 1.3-2.1 1.3-2.1-.5-2.1-1.3.8-1.5 2.1-1.5z" fill="#1B2A24"/><path d="M16 20.6v1.5M16 22.1c-1 .9-2.3.5-2.7-.4M16 22.1c1 .9 2.3.5 2.7-.4" fill="none" stroke="#1B2A24" stroke-width="1.2" stroke-linecap="round"/>`,
   flame:`<path d="M16 28.5c5.6 0 9-3.9 9-8.3 0-6.1-6.1-8.3-6.1-14.7 0 0-4.1 3-4.1 7.2 0 2.1-2 2.1-2 0 0-2 1-3.2 1-3.2S7 12.6 7 20.2c0 4.4 3.4 8.3 9 8.3z" fill="#EFB53F"/><path d="M16 28.5c2.9 0 4.7-2.2 4.7-4.6 0-3.4-3.3-4.7-3.3-8.2 0 0-3.6 2.6-3.6 5.6 0 1.4-1.4 1.1-1.4-.2 0 0-1.1 1.4-1.1 3.2 0 2.4 1.8 4.2 4.7 4.2z" fill="#E0705C"/>`,
-  ruler:`<g transform="rotate(-21 16 16)"><rect x="1" y="12" width="30" height="8.6" rx="1.2" fill="#F0C23C" stroke="#1B211C" stroke-width="1.3"/><path d="M3.6 12.4v4.2 M6.3 12.4v2.5 M9.0 12.4v4.2 M11.7 12.4v2.5 M14.4 12.4v4.2 M17.1 12.4v2.5 M19.8 12.4v4.2 M22.5 12.4v2.5 M25.2 12.4v4.2 M27.9 12.4v2.5" stroke="#1B211C" stroke-width="1.15"/></g>`
+  ruler:`<g transform="rotate(-21 16 16)"><rect x="1" y="12" width="30" height="8.6" rx="1.2" fill="#F0C23C" stroke="#1B211C" stroke-width="1.3"/><path d="M3.6 12.4v4.2 M6.3 12.4v2.5 M9.0 12.4v4.2 M11.7 12.4v2.5 M14.4 12.4v4.2 M17.1 12.4v2.5 M19.8 12.4v4.2 M22.5 12.4v2.5 M25.2 12.4v4.2 M27.9 12.4v2.5" stroke="#1B211C" stroke-width="1.15"/></g>`,
+  snow:`<g stroke="#9AD4E8" stroke-width="2.2" stroke-linecap="round"><path d="M16 4v24M6 10l20 12M26 10L6 22"/><path d="M16 9l-3-3M16 9l3-3M16 23l-3 3M16 23l3 3"/><path d="M10.4 13.2 6.3 12.6M10.4 13.2 9.8 9.1M21.6 18.8l4.1.6M21.6 18.8l.6 4.1"/><path d="M10.4 18.8 6.3 19.4M10.4 18.8 9.8 22.9M21.6 13.2l4.1-.6M21.6 13.2l.6-4.1"/></g>`,
+  road:`<path d="M11 28 6 4h20l-5 24z" fill="#9DB2A6"/><path d="M16 6v3.5M16 13v3.5M16 20v3.5" stroke="#F3ECD8" stroke-width="1.9" stroke-linecap="round"/>`,
+  hourglass:`<path d="M8 4h16v4.5L18 16l6 7.5V28H8v-4.5L14 16 8 8.5z" fill="#F3ECD8"/><path d="M11.4 7h9.2L16 13z" fill="#EFB53F"/><path d="M16 19l4.6 6h-9.2z" fill="#EFB53F"/><path d="M7 3.2h18M7 28.8h18" stroke="#1B2A24" stroke-width="2.4" stroke-linecap="round"/>`,
+  dice:`<rect x="5" y="5" width="22" height="22" rx="4.5" fill="#F3ECD8"/><circle cx="11.5" cy="11.5" r="2.1" fill="#1B2A24"/><circle cx="20.5" cy="11.5" r="2.1" fill="#1B2A24"/><circle cx="16" cy="16" r="2.1" fill="#E0705C"/><circle cx="11.5" cy="20.5" r="2.1" fill="#1B2A24"/><circle cx="20.5" cy="20.5" r="2.1" fill="#1B2A24"/>`,
+  chain:`<g fill="none" stroke="#63A7D4" stroke-width="3" stroke-linecap="round"><path d="M13 11.5 9.5 8A4.6 4.6 0 0 0 3 14.5l3.5 3.5"/></g><g fill="none" stroke="#8FD1B0" stroke-width="3" stroke-linecap="round"><path d="M19 20.5 22.5 24a4.6 4.6 0 0 0 6.5-6.5L25.5 14"/></g><path d="M11.5 20.5 20.5 11.5" stroke="#F3ECD8" stroke-width="3" stroke-linecap="round"/>`,
+  lights:`<rect x="14.4" y="13" width="3.2" height="16" rx="1" fill="#9DB2A6"/><path d="M6 4h20v6H6z" fill="#1B2A24" stroke="#9DB2A6" stroke-width="1.3"/><circle cx="10" cy="7" r="1.7" fill="#F0C23C"/><circle cx="16" cy="7" r="1.7" fill="#F0C23C"/><circle cx="22" cy="7" r="1.7" fill="#F0C23C"/><path d="M10 10.5 6 16M16 10.5v5M22 10.5 26 16" stroke="#F0C23C" stroke-width="1.3" opacity=".55"/>`,
+  bone:`<g transform="rotate(-28 16 16)"><path d="M9.5 12.5h13v7h-13z" fill="#F3ECD8"/><circle cx="8" cy="12.4" r="3.6" fill="#F3ECD8"/><circle cx="8" cy="19.6" r="3.6" fill="#F3ECD8"/><circle cx="24" cy="12.4" r="3.6" fill="#F3ECD8"/><circle cx="24" cy="19.6" r="3.6" fill="#F3ECD8"/></g>`,
+  crown:`<path d="M4 22 6 8l6.5 5L16 5l3.5 8L26 8l2 14z" fill="#F0C23C" stroke="#1B2A24" stroke-width="1.1" stroke-linejoin="round"/><rect x="4" y="22.5" width="24" height="4.5" rx="1.2" fill="#EFB53F" stroke="#1B2A24" stroke-width="1.1"/><circle cx="16" cy="17" r="1.6" fill="#E0705C"/>`,
+  peak:`<path d="M1.5 27 12 8.5 18.5 20.5 22.5 14 30.5 27z" fill="#7E9AA6"/>
+   <path d="M12 8.5 8.4 15l2.4-1.2 1.4 1.9 1.6-1.9 1.9 1.4z" fill="#F3ECD8"/>
+   <path d="M22.5 14 20 18.2l1.6-.7 1 1.2 1.1-1.2 1.5.9z" fill="#F3ECD8"/>
+   <path d="M1.5 27h29" stroke="#5A7480" stroke-width="1.6" stroke-linecap="round"/>`,
+  pig:`<ellipse cx="16" cy="17" rx="11" ry="9.5" fill="#E8A0A8"/>
+   <path d="M7.5 9.5 6 4.6l5 2.4zM24.5 9.5 26 4.6l-5 2.4z" fill="#D98891"/>
+   <circle cx="11.6" cy="14" r="1.6" fill="#1B2A24"/><circle cx="20.4" cy="14" r="1.6" fill="#1B2A24"/>
+   <ellipse cx="16" cy="20.5" rx="5" ry="3.9" fill="#D98891"/>
+   <ellipse cx="14.2" cy="20.5" rx="1.15" ry="1.7" fill="#1B2A24"/>
+   <ellipse cx="17.8" cy="20.5" rx="1.15" ry="1.7" fill="#1B2A24"/>`,
+  flag:`<path d="M8 4v25" stroke="#9DB2A6" stroke-width="2.4" stroke-linecap="round"/><path d="M9.5 5h16l-3.6 5.4 3.6 5.4h-16z" fill="#E0705C"/>`
 };
 function icon(k){
   return `<svg class="oddicon" viewBox="0 0 32 32" aria-hidden="true">${ICON[k]}</svg>`;
@@ -556,13 +586,18 @@ function confLogo(name){
     src="https://a.espncdn.com/i/teamlogos/ncaa_conf/500/${id}.png"
     onerror="this.style.display='none'">` : "";
 }
+const gameOf = p => GAME[p.y+"-"+p.w+"-"+p.n] || null;
 const oppOf = p => {
   if(p.opp && p.opp.trim() && p.opp.trim()!=="-"){
     const v=p.opp.trim();
     return [v, v.replace(/^(vs\.?|at)\s+/i,"")];
   }
-  return (p.t==="Over"||p.t==="Under") ? null : (OPP[p.y+"-"+p.w+"-"+p.n]||null);
+  const g=gameOf(p);
+  return (g && g[1]) ? [g[0],g[1]] : null;
 };
+const dowOf    = p => { const g=gameOf(p); return g? g[2] : null; };
+const marginOf = p => { const g=gameOf(p); return g? g[3] : null; };
+const isAway   = p => { const o=oppOf(p); return !!o && /^at\s/i.test(o[0]); };
 
 const CONF = {"Air Force":"Group of 5","Alabama":"SEC","Appalachian State":"Group of 5","Arizona":"Big 12","Arizona State":"Big 12","Arkansas":"SEC","Army":"Group of 5","Auburn":"SEC","BYU":"Big 12","Baylor":"Big 12","Boise State":"Group of 5","Boston College":"ACC","Buffalo":"Group of 5","Charlotte":"Group of 5","Cincinnati":"Big 12","Clemson":"ACC","Coastal Carolina":"Group of 5","Colorado":"Big 12","Duke":"ACC","East Carolina":"Group of 5","FAU":"Group of 5","FIU":"Group of 5","Florida":"SEC","Florida State":"ACC","Fordham":"Independent / FCS","Fresno State":"Group of 5","Georgia":"SEC","Georgia Southern":"Group of 5","Georgia State":"Group of 5","Georgia Tech":"ACC","Hawaii":"Group of 5","Houston":"Big 12","Illinois":"Big Ten","Indiana":"Big Ten","Iowa":"Big Ten","Iowa State":"Big 12","Kansas":"Big 12","Kansas State":"Big 12","Kent State":"Group of 5","Kentucky":"SEC","LSU":"SEC","Liberty":"Group of 5","Louisiana":"Group of 5","Louisville":"ACC","Marshall":"Group of 5","Maryland":"Big Ten","Memphis":"Group of 5","Miami":"ACC","Michigan":"Big Ten","Michigan State":"Big Ten","Minnesota":"Big Ten","Mississippi State":"SEC","Missouri":"SEC","Monmouth":"Independent / FCS","Montana":"Independent / FCS","NC State":"ACC","Navy":"Group of 5","Nebraska":"Big Ten","Nevada":"Group of 5","New Mexico State":"Group of 5","North Carolina":"ACC","North Texas":"Group of 5","Northern Illinois":"Group of 5","Northwestern":"Big Ten","Notre Dame":"Independent / FCS","Ohio":"Group of 5","Ohio State":"Big Ten","Oklahoma":"SEC","Oklahoma State":"Big 12","Ole Miss":"SEC","Oregon":"Big Ten","Oregon State":"Independent / FCS","Penn State":"Big Ten","Pitt":"ACC","Purdue":"Big Ten","Rice":"Group of 5","Rutgers":"Big Ten","SMU":"ACC","Sam Houston State":"Group of 5","San Diego State":"Group of 5","San Jose State":"Group of 5","South Carolina":"SEC","South Florida":"Group of 5","Stanford":"ACC","Syracuse":"ACC","TCU":"Big 12","Temple":"Group of 5","Tennessee":"SEC","Texas":"SEC","Texas A&M":"SEC","Texas Tech":"Big 12","Toledo":"Group of 5","Troy":"Group of 5","Tulane":"Group of 5","Tulsa":"Group of 5","UCF":"Big 12","UCLA":"Big Ten","UConn":"Independent / FCS","UMass":"Group of 5","UNLV":"Group of 5","USC":"Big Ten","Utah":"Big 12","Vanderbilt":"SEC","Virginia":"ACC","Virginia Tech":"ACC","Wake Forest":"ACC","Washington":"Big Ten","Washington State":"Independent / FCS","West Virginia":"Big 12","Western Kentucky":"Group of 5","Wisconsin":"Big Ten","Wyoming":"Group of 5"};
 const CONF_FULL = {"Air Force":"Mountain West","Alabama":"SEC","Appalachian State":"Sun Belt","Arizona":"Big 12","Arizona State":"Big 12","Arkansas":"SEC","Army":"American Athletic","Auburn":"SEC","BYU":"Big 12","Baylor":"Big 12","Boise State":"Mountain West","Boston College":"ACC","Buffalo":"Mid-American","Charlotte":"American Athletic","Cincinnati":"Big 12","Clemson":"ACC","Coastal Carolina":"Sun Belt","Colorado":"Big 12","Duke":"ACC","East Carolina":"American Athletic","FAU":"American Athletic","FIU":"Conference USA","Florida":"SEC","Florida State":"ACC","Fordham":"Patriot","Fresno State":"Mountain West","Georgia":"SEC","Georgia Southern":"Sun Belt","Georgia State":"Sun Belt","Georgia Tech":"ACC","Hawaii":"Mountain West","Houston":"Big 12","Illinois":"Big Ten","Indiana":"Big Ten","Iowa":"Big Ten","Iowa State":"Big 12","Kansas":"Big 12","Kansas State":"Big 12","Kent State":"Mid-American","Kentucky":"SEC","LSU":"SEC","Liberty":"Conference USA","Louisiana":"Sun Belt","Louisville":"ACC","Marshall":"Sun Belt","Maryland":"Big Ten","Memphis":"American Athletic","Miami":"ACC","Michigan":"Big Ten","Michigan State":"Big Ten","Minnesota":"Big Ten","Mississippi State":"SEC","Missouri":"SEC","Monmouth":"CAA","Montana":"Big Sky","NC State":"ACC","Navy":"American Athletic","Nebraska":"Big Ten","Nevada":"Mountain West","New Mexico State":"Conference USA","North Carolina":"ACC","North Texas":"American Athletic","Northern Illinois":"Mid-American","Northwestern":"Big Ten","Notre Dame":"FBS Independents","Ohio":"Mid-American","Ohio State":"Big Ten","Oklahoma":"SEC","Oklahoma State":"Big 12","Ole Miss":"SEC","Oregon":"Big Ten","Oregon State":"Pac-12","Penn State":"Big Ten","Pitt":"ACC","Purdue":"Big Ten","Rice":"American Athletic","Rutgers":"Big Ten","SMU":"ACC","Sam Houston State":"Conference USA","San Diego State":"Mountain West","San Jose State":"Mountain West","South Carolina":"SEC","South Florida":"American Athletic","Stanford":"ACC","Syracuse":"ACC","TCU":"Big 12","Temple":"American Athletic","Tennessee":"SEC","Texas":"SEC","Texas A&M":"SEC","Texas Tech":"Big 12","Toledo":"Mid-American","Troy":"Sun Belt","Tulane":"American Athletic","Tulsa":"American Athletic","UCF":"Big 12","UCLA":"Big Ten","UConn":"FBS Independents","UMass":"Mid-American","UNLV":"Mountain West","USC":"Big Ten","Utah":"Big 12","Vanderbilt":"SEC","Virginia":"ACC","Virginia Tech":"ACC","Wake Forest":"ACC","Washington":"Big Ten","Washington State":"Pac-12","West Virginia":"Big 12","Western Kentucky":"Conference USA","Wisconsin":"Big Ten","Wyoming":"Mountain West"};
@@ -1214,140 +1249,196 @@ function weekRows(){
   for(const p of PICKS){ const k=p.y+"-"+p.w; (wk.get(k)||wk.set(k,[]).get(k)).push(p); }
   return [...wk.entries()].filter(([k,l])=>l.length===4).map(([k,l])=>{
     const lost=l.filter(p=>p.r==="L");
-    return {k, l, lost,
-      total: l.reduce((a,p)=>a+p.d,0),
-      lostPts: lost.reduce((a,p)=>a+p.d,0)};
+    return {k,l,lost,total:l.reduce((a,p)=>a+p.d,0),lostPts:lost.reduce((a,p)=>a+p.d,0)};
   });
 }
-function renderOdds(){
-  const el=document.getElementById("odds");
-  const solo = S.nug.player!=="all";
-  const list=sel(S.nug).filter(isDecided);
-  if(!list.length){el.innerHTML=`<div class="empty">No picks match this filter.</div>`;return;}
-  const cards=[];
-  const push=(lab,val,sub,team,ic)=>cards.push(`<div class="odd">
-    ${team?logoIMG(team,"").replace("tlogo","oddlogo"):(ic?icon(ic):"")}
-    <div class="lab">${lab}</div>
-    <div class="val">${val}</div><div class="sub">${sub}</div></div>`);
+function rec(l){ const w=l.filter(p=>p.r==="W").length; return [w,l.length-w]; }
+function pctOf(l){ const [w,x]=rec(l); return l.length? Math.round(w/l.length*100) : 0; }
+function topOf(map){ return [...map.entries()].sort((a,b)=>b[1]-a[1]||String(a[0]).localeCompare(String(b[0])))[0]; }
 
-  if(!solo){
+/* every card the shelf can deal. who=null builds the group set. */
+function buildCards(who){
+  const tag  = who || "RBWR";
+  const list = (who? PICKS.filter(p=>p.n===who) : PICKS).filter(isDecided);
+  if(!list.length) return [];
+  const out=[];
+  const add=(lab,val,sub,team,ic)=>out.push({tag,lab,val,sub,team,ic,who});
+
+  if(!who){
     const weeks=weekRows();
     const cashed=weeks.filter(w=>w.lost.length===0).sort((a,b)=>b.total-a.total)[0];
-    if(cashed){ const [y,n]=cashed.k.split("-");
-      push("Never in doubt", `+${cashed.total}`,
-        `${y} wk ${n} · the four legs cleared their numbers by a combined ${cashed.total} points`, null, "locked"); }
+    if(cashed){const [y,n]=cashed.k.split("-");
+      add("Never in doubt",`+${cashed.total}`,`All 4 parlay legs cleared their numbers by a combined ${cashed.total} points. Wk${n} - ${y}`,null,"locked");}
     const worst=weeks.filter(w=>w.lost.length>0).sort((a,b)=>b.lostPts-a.lostPts)[0];
-    if(worst){ const [y,n]=worst.k.split("-");
-      push("Dead on arrival", `−${worst.lostPts}`,
-        `${y} wk ${n} · ${worst.lost.length} legs missed by a combined ${worst.lostPts} points`, null, "skull"); }
-    const near=weeks.filter(w=>w.lost.length>0)
-                    .sort((a,b)=>a.lostPts-b.lostPts||a.lost.length-b.lost.length)[0];
-    if(near){ const [y,n]=near.k.split("-");
-      push("Closest miss", `${near.lostPts} point${near.lostPts===1?"":"s"}`,
-        `${y} wk ${n} · ${near.lost.length} leg${near.lost.length===1?"":"s"} short · ${near.lost.map(p=>p.n).join(", ")}`, null, "heartbreak"); }
+    if(worst){const [y,n]=worst.k.split("-");
+      add("Dead on arrival",`\u2212${worst.lostPts}`,`${worst.lost.length} legs failed to cover by a combined ${worst.lostPts} points. Wk${n} - ${y}`,null,"skull");}
+    const hogs=list.filter(p=>p.tm.includes("Arkansas")||(oppOf(p)||["",""])[1]==="Arkansas");
+    if(hogs.length){
+      const aj=hogs.filter(p=>p.n==="AJ").length;
+      add("Hog watcher",`${hogs.length}`,
+        `Games that feature Arkansas · ${aj} selected by AJ`,null,"pig");
+    }
+    const near=weeks.filter(w=>w.lost.length>0).sort((a,b)=>a.lostPts-b.lostPts||a.lost.length-b.lost.length)[0];
+    if(near){const [y,n]=near.k.split("-");
+      add("Heartbreaker",`${near.lostPts} point${near.lostPts===1?"":"s"}`,`Amount the nearest non-winning parlay was from cashing. ${near.lost.map(p=>p.n).join(", ")} L. Wk${n} - ${y}`,null,"heartbreak");}
   } else {
     const big=[...list].filter(p=>p.r==="W").sort((a,b)=>b.d-a.d)[0];
-    if(big) push("Never in doubt", big.team, `${big.y} wk ${big.w} · covered by ${big.d}`, big.tm[0]);
+    if(big) add("Never in doubt",big.team,`Covered the # by ${big.d} points. Wk${big.w} - ${big.y}`,big.tm[0],null);
     const bad=[...list].filter(p=>p.r==="L").sort((a,b)=>b.d-a.d)[0];
-    if(bad) push("Dead on arrival", bad.team, `${bad.y} wk ${bad.w} · missed by ${bad.d}`, bad.tm[0]);
+    if(bad) add("Dead on arrival",bad.team,`Missed the number by ${bad.d} points. Wk${bad.w} - ${bad.y}`,bad.tm[0],null);
     const heart=[...list].filter(p=>p.r==="L").sort((a,b)=>a.d-b.d)[0];
-    if(heart) push("Closest miss", heart.team, `${heart.y} wk ${heart.w} · short by ${heart.d}`, heart.tm[0]);
+    if(heart) add("Heartbreaker",heart.team,`Missed the number by ${heart.d} point${heart.d===1?"":"s"}. Wk${heart.w} - ${heart.y}`,heart.tm[0],null);
   }
 
-  // most common play — team and bet type together
+  // most common play
   const plays=new Map();
-  for(const p of list){
-    const k=p.team+"|"+p.t;
-    const e=plays.get(k)||{team:p.team,t:p.t,n:0,w:0,tm:p.tm};
-    e.n++; if(p.r==="W")e.w++; plays.set(k,e);
-  }
+  for(const p of list){const k=p.team+"|"+p.t;
+    const e=plays.get(k)||{team:p.team,t:p.t,n:0,w:0,tm:p.tm}; e.n++; if(p.r==="W")e.w++; plays.set(k,e);}
   const play=[...plays.values()].sort((a,b)=>b.n-a.n||b.w-a.w||a.team.localeCompare(b.team))[0];
-  if(play && play.n>1){
-    push("Most common play", `${play.team} – ${play.t}`,
-      `${play.n} times · ${play.w}-${play.n-play.w}`, play.tm[0]);
-  }
+  if(play&&play.n>1) add("Most common play",`${play.team} \u2013 ${play.t}`,`Most common team + bet type combo · ${play.n} bets · ${play.w}-${play.n-play.w}`,play.tm[0],null);
 
+  // team tallies
   const counts=new Map();
-  for(const p of list) for(const t of p.tm){
-    const e=counts.get(t)||[0,0]; e[0]++; if(p.r==="W")e[1]++; counts.set(t,e);
-  }
+  for(const p of list) for(const t of p.tm){const e=counts.get(t)||[0,0];e[0]++;if(p.r==="W")e[1]++;counts.set(t,e);}
   const arr=[...counts.entries()];
   const most=arr.slice().sort((a,b)=>b[1][0]-a[1][0])[0];
-  if(most) push("Most backed", most[0], `${most[1][0]} bets · ${most[1][1]}-${most[1][0]-most[1][1]}`, most[0]);
+  if(most) add("Most backed",most[0],`${most[1][0]} bets · ${most[1][1]}-${most[1][0]-most[1][1]}`,most[0],null);
   const money=arr.filter(e=>e[1][0]>=4).sort((a,b)=>(b[1][1]/b[1][0])-(a[1][1]/a[1][0])||b[1][0]-a[1][0])[0];
-  if(money) push("Tried and true", money[0],
-    `${money[1][1]}-${money[1][0]-money[1][1]} · ${Math.round(money[1][1]/money[1][0]*100)}%<br>highest win % (min. 4 picks)`, money[0]);
+  if(money) add("Tried and true",money[0],`Team with the highest win % (min. 4 picks)<br>${money[1][1]}-${money[1][0]-money[1][1]} · ${Math.round(money[1][1]/money[1][0]*100)}%`,money[0],null);
   const curse=arr.filter(e=>e[1][0]>=4).sort((a,b)=>(a[1][1]/a[1][0])-(b[1][1]/b[1][0])||b[1][0]-a[1][0])[0];
-  if(curse) push("Stay away", curse[0],
-    `${curse[1][1]}-${curse[1][0]-curse[1][1]} · ${Math.round(curse[1][1]/curse[1][0]*100)}%<br>worst win % (min. 4 picks)`, curse[0]);
+  if(curse) add("Stay away",curse[0],`Team with the worst win % (min. 4 picks)<br>${curse[1][1]}-${curse[1][0]-curse[1][1]} · ${Math.round(curse[1][1]/curse[1][0]*100)}%`,curse[0],null);
 
-  // Conference backed most often, on the 2025 alignment
-  const confs=new Map();
-  for(const p of list) for(const t of p.tm){
-    const c=CONF_FULL[t]; if(!c) continue;
-    confs.set(c,(confs.get(c)||0)+1);
-  }
-  const confTotal=[...confs.values()].reduce((a,b)=>a+b,0);
-  const topConf=[...confs.entries()].sort((a,b)=>b[1]-a[1]||a[0].localeCompare(b[0]))[0];
-  if(topConf) cards.push(`<div class="odd">${confLogo(topConf[0])}
-    <div class="lab">Conference of choice</div>
-    <div class="val">${topConf[0]}</div>
-    <div class="sub">${topConf[1]} of ${confTotal} teams selected · ${Math.round(topConf[1]/confTotal*100)}% · 2025 alignment</div></div>`);
+  // conferences
+  const confs=new Map(), confW=new Map();
+  for(const p of list) for(const t of p.tm){const c=CONF_FULL[t]; if(!c) continue;
+    confs.set(c,(confs.get(c)||0)+1); if(p.r==="W") confW.set(c,(confW.get(c)||0)+1);}
+  const cTot=[...confs.values()].reduce((a,b)=>a+b,0);
+  const tc=topOf(confs);
+  if(tc) out.push({tag,lab:"Conference of choice",val:tc[0],
+    sub:`Most commonly picked conference · ${tc[1]} of ${cTot} teams · ${Math.round(tc[1]/cTot*100)}%`,conf:tc[0],who});
+  const crown=[...confs.entries()].filter(e=>e[1]>=6)
+    .map(([c,n])=>[c,(confW.get(c)||0)/n,n]).sort((a,b)=>b[1]-a[1]||b[2]-a[2])[0];
+  if(crown) out.push({tag,lab:"Conference crown",val:crown[0],
+    sub:`Conference with the highest win % · ${Math.round(crown[1]*100)}% on ${crown[2]} picks`,conf:crown[0],who});
 
-  // Team turning up most often, picked or opposed
+  // on tv / nemesis / punching bag
   const tv=new Map();
-  for(const p of list){
-    for(const t of p.tm) tv.set(t,(tv.get(t)||0)+1);
-    const o=oppOf(p); if(o) tv.set(o[1],(tv.get(o[1])||0)+1);
+  for(const p of list){ for(const t of p.tm) tv.set(t,(tv.get(t)||0)+1);
+    const o=oppOf(p); if(o) tv.set(o[1],(tv.get(o[1])||0)+1); }
+  const onTv=topOf(tv);
+  if(onTv) add("Always on your TV",onTv[0],`Most appearances of any team, picked or opponent · ${onTv[1]} games`,onTv[0],null);
+  const nem=new Map(), bag=new Map();
+  for(const p of list){ const o=oppOf(p); if(!o) continue;
+    if(p.r==="L") nem.set(o[1],(nem.get(o[1])||0)+1); else bag.set(o[1],(bag.get(o[1])||0)+1); }
+  const n1=topOf(nem); if(n1&&n1[1]>1) add("Has your number",n1[0],`${n1[1]} losses against · more than any other opponent`,n1[0],null);
+  const b1=topOf(bag); if(b1&&b1[1]>1) add("Punching bag",b1[0],`${b1[1]} wins against · more than any other opponent`,b1[0],null);
+
+  // bet-shape cards
+  const sd=list.filter(p=>p.t==="Dog"&&p.pts>=10);
+  if(sd.length>=3) add("Superdog",`${pctOf(sd)}%`,`Win % when taking a dog of 10+ points · ${rec(sd)[0]}\u2013${rec(sd)[1]}`,null,"dog");
+  const outright=list.filter(p=>p.t==="Dog"&&(marginOf(p)||-1)>0).sort((a,b)=>b.pts-a.pts)[0];
+  if(outright) add("Big dogs gotta eat",`${outright.team} +${outright.pts}`,`Largest dog to win outright. Wk${outright.w} - ${outright.y}`,outright.tm[0],null);
+  const bigFav=list.filter(p=>p.t==="Favorite"&&p.r==="W").sort((a,b)=>b.pts-a.pts)[0];
+  if(bigFav) add("Gimme the points",`${bigFav.team} \u2212${bigFav.pts}`,
+    `Largest favorite that covered the number. Wk${bigFav.w} - ${bigFav.y}`,bigFav.tm[0],null);
+
+  const away=list.filter(isAway);
+  if(away.length>=8) add("Road warrior",`${pctOf(away)}%`,`Win % when the pick is the visiting team · ${rec(away)[0]}\u2013${rec(away)[1]}`,null,"road");
+  const fri=list.filter(p=>dowOf(p)===4);
+  if(fri.length>=3) add("Friday night lights",`${pctOf(fri)}%`,`Win % for games played on a Friday night · ${rec(fri)[0]}\u2013${rec(fri)[1]}`,null,"lights");
+  const early=list.filter(p=>p.w<=7), late=list.filter(p=>p.w>=8);
+  if(early.length>=5&&late.length>=5){
+    const e1=pctOf(early), e2=pctOf(late);
+    add(e2>e1 ? "Slow starter" : "Peaked early", `${e1}% \u2192 ${e2}%`,
+      `Win % first half vs second half of the season · ${rec(early)[0]}\u2013${rec(early)[1]} then ${rec(late)[0]}\u2013${rec(late)[1]}`,null, e2>e1 ? "hourglass" : "peak");
   }
-  const onTv=[...tv.entries()].sort((a,b)=>b[1]-a[1]||a[0].localeCompare(b[0]))[0];
-  if(onTv) push("Always on your TV", onTv[0],
-    `in ${onTv[1]} of your games · picked or played against`, onTv[0]);
+  const nums=new Map();
+  for(const p of list){ if(p.t==="Over"||p.t==="Under") continue;
+    nums.set(p.pts,(nums.get(p.pts)||0)+1); }
+  const ln=topOf(nums);
+  if(ln&&ln[1]>2){ const at=list.filter(p=>p.pts===+ln[0]&&p.t!=="Over"&&p.t!=="Under");
+    add("Lucky number",`${ln[0]}`,`Most commonly played number · ${at.length} bets · ${rec(at)[0]}\u2013${rec(at)[1]}`,null,"dice"); }
 
-  // Has your number — the opponent responsible for the most losses
-  const nem=new Map();
-  for(const p of list){
-    if(p.r!=="L") continue;
-    const o=oppOf(p); if(!o) continue;
-    nem.set(o[1],(nem.get(o[1])||0)+1);
-  }
-  const nemesis=[...nem.entries()].sort((a,b)=>b[1]-a[1]||a[0].localeCompare(b[0]))[0];
-  if(nemesis && nemesis[1]>1) push("Has your number", nemesis[0],
-    `${nemesis[1]} losses against them · more than any other opponent`, nemesis[0]);
+  // flip
+  const fW=list.filter(p=>p.r==="L"&&p.d<=6).length + list.filter(p=>p.r==="W"&&p.d>6).length;
+  const fL=list.filter(p=>p.r==="W"&&p.d<=6).length + list.filter(p=>p.r==="L"&&p.d>6).length;
+  const dl=fW-rec(list)[0];
+  add("Game of inches",`${dl>=0?"+":"\u2212"}${Math.abs(dl)} win${Math.abs(dl)===1?"":"s"}`,
+    `Change in win count if every one-score game flipped outcomes · ${fW}\u2013${fL}`,null,"ruler");
 
-  const sd=list.filter(p=>p.t==="Dog" && p.pts>=10);
-  const sdw=sd.filter(p=>p.r==="W").length;
-  if(sd.length) push("Superdog", `${Math.round(sdw/sd.length*100)}%`,
-    `taking a dog of 10+ · ${sdw}–${sd.length-sdw}`, null, "dog");
-
-  // longest run of wins within a single bet type, other bet types ignored
-  const streakOf = who => {
-    let best=null;
-    for(const t of TYPES){
-      const seq=PICKS.filter(p=>p.n===who&&p.t===t&&p.r!=="P").sort((a,b)=>a.y-b.y||a.w-b.w);
-      let run=0,from=null;
-      for(const p of seq){
-        if(p.r==="W"){ if(!run) from=p; run++;
-          if(!best||run>best.n) best={n:run,t,who,from,to:p};
-        } else run=0;
+  if(who){
+    // streaks inside one bet type
+    const runs=(want)=>{ let best=null;
+      for(const t of TYPES){
+        const seq=PICKS.filter(p=>p.n===who&&p.t===t&&p.r!=="P").sort((a,b)=>a.y-b.y||a.w-b.w);
+        let run=0,from=null;
+        for(const p of seq){
+          if(p.r===want){ if(!run) from=p; run++; if(!best||run>best.n) best={n:run,t,from,to:p}; }
+          else run=0;
+        }
+      } return best; };
+    const hot=runs("W");
+    if(hot&&hot.n>2) add("Hot hand",`${hot.n} consecutive ${hot.t.toLowerCase()} wins`,
+      `Longest bet type win streak · Wk${hot.from.w} ${hot.from.y} to Wk${hot.to.w} ${hot.to.y}`,null,"flame");
+    const cold=runs("L");
+    if(cold&&cold.n>2) add("Ice cold",`${cold.n} consecutive ${cold.t.toLowerCase()} losses`,
+      `Longest bet type losing streak · Wk${cold.from.w} ${cold.from.y} to Wk${cold.to.w} ${cold.to.y}`,null,"snow");
+    // who shares your weeks
+    const share=new Map();
+    for(const p of list){
+      for(const q of PICKS){
+        if(q.n===who||q.y!==p.y||q.w!==p.w||!isDecided(q)) continue;
+        if(q.r===p.r) share.set(q.n,(share.get(q.n)||0)+1);
       }
     }
-    return best;
-  };
-  if(solo){
-    const b=streakOf(S.nug.player);
-    if(b) push("Hot hand",
-      `${b.n} consecutive ${b.t.toLowerCase()} wins`,
-      `${b.from.y} wk ${b.from.w} to ${b.to.y} wk ${b.to.w}`, null, "flame");
+    const sh=topOf(share);
+    if(sh) add("Joined at the hip",sh[0],
+      `Matched your result ${Math.round(sh[1]/list.length*100)}% of the time · ${sh[1]} of ${list.length} weeks`,null,"chain");
+    // picked once, lost, never again
+    const once=[...counts.entries()].filter(([t,v])=>v[0]===1&&v[1]===0).map(([t])=>t);
+    const od=list.filter(p=>p.r==="L"&&p.tm.length===1&&once.includes(p.tm[0]))
+                 .sort((a,b)=>b.d-a.d)[0];
+    if(od) add("One and done",od.team,`Picked once, missed the number by ${od.d}, never again`,od.tm[0],"flag");
   }
+  return out;
+}
 
-  const flipW = list.filter(p=>p.r==="L" && p.d<=6).length + list.filter(p=>p.r==="W" && p.d>6).length;
-  const flipL = list.filter(p=>p.r==="W" && p.d<=6).length + list.filter(p=>p.r==="L" && p.d>6).length;
-  const delta = flipW - recordOf(list).w;
-  push("Game of inches", `${delta>=0?"+":"\u2212"}${Math.abs(delta)} win${Math.abs(delta)===1?"":"s"}`,
-    `if every one-score game flipped · ${flipW}–${flipL} · ${(flipW/(flipW+flipL)*100).toFixed(1)}%`, null, "ruler");
-
-  el.innerHTML=cards.join("");
+let POOL=[], DECK=[], HAND=[];
+function cardHTML(c){
+  const art = c.conf ? confLogo(c.conf)
+            : c.team ? logoIMG(c.team,"").replace("tlogo","oddlogo")
+            : c.ic   ? icon(c.ic) : "";
+  const col = c.who ? COLOR[c.who] : "var(--bone)";
+  return `<div class="odd">${art}
+    <span class="tag" style="color:${col}">${c.tag}</span>
+    <div class="lab">${c.lab}</div>
+    <div class="val">${c.val}</div><div class="sub">${c.sub}</div></div>`;
+}
+function refillDeck(){
+  const g=POOL.filter(c=>!c.who), p=POOL.filter(c=>c.who);
+  const sh=a=>a.map(x=>[Math.random(),x]).sort((a,b)=>a[0]-b[0]).map(x=>x[1]);
+  DECK={g:sh(g), p:sh(p)};
+}
+function dealHand(){
+  if(!DECK.g||!DECK.g.length||DECK.p.length<2) refillDeck();
+  HAND=[DECK.g.shift()].filter(Boolean);          // always one group card
+  while(HAND.length<3 && DECK.p.length) HAND.push(DECK.p.shift());
+  while(HAND.length<3 && DECK.g.length) HAND.push(DECK.g.shift());
+  HAND=HAND.map((x,i)=>[Math.random()+i*0.001,x]).sort((a,b)=>a[0]-b[0]).map(x=>x[1]);
+  document.getElementById("odds").innerHTML=HAND.map(cardHTML).join("");
+  const pc=document.getElementById("poolcount");
+  if(pc) pc.textContent=`${POOL.length} Total Nugs`;
+}
+function renderOdds(){
+  const who=S.nug.player;
+  const group=buildCards(null);
+  const sig=c=>c.lab+"|"+c.val+"|"+c.sub;
+  const dupes=new Set(group.map(sig));
+  const personal=(who==="all"? PLAYERS : [who])
+    .flatMap(n=>buildCards(n))
+    .filter(c=>!dupes.has(sig(c)));   // same card, same numbers as the group's
+  POOL = group.concat(personal);
+  refillDeck(); dealHand();
 }
 
 /* ============================ ledger ============================ */
@@ -1426,6 +1517,8 @@ function wire(){
     state.teamQ=e.target.value.trim().toLowerCase(); renderTeams();});
   document.getElementById("logsearch").addEventListener("input",e=>{
     state.logQ=e.target.value.trim().toLowerCase(); state.logN=60; renderLog();});
+  const sf=document.getElementById("shuffle");
+  if(sf) sf.addEventListener("click",dealHand);
   document.getElementById("teammore").addEventListener("click",()=>{
     state.teamAll=!state.teamAll; renderTeams();});
   document.getElementById("logmore").addEventListener("click",()=>{
