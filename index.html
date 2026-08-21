@@ -398,7 +398,7 @@ input[type=search]:focus{outline:2px solid var(--bone);outline-offset:1px}
   <div class="wrap">
     <div class="topbar">
       <b>RBWR</b>
-      <span id="stamp">Weekly parlay ledger</span><span style="color:var(--line2)">build 22</span>
+      <span id="stamp">Weekly parlay ledger</span><span style="color:var(--line2)">build 23</span>
     </div>
   </div>
   <div class="wrap hero">
@@ -494,7 +494,6 @@ input[type=search]:focus{outline:2px solid var(--bone);outline-offset:1px}
 
   <section>
     <div class="shead"><span class="snum">07</span><h2>Nuggets</h2></div>
-    <div class="secfilter" id="f-nug"></div>
     <div class="odds" id="odds"></div>
     <div class="shelfbar"><button id="shuffle">Shuffle Nugs</button>
       <span class="count" id="poolcount"></span></div>
@@ -723,7 +722,6 @@ const S = {
   season: {type:"all"},
   parlay: {year:"all"},
   teams:  {year:"all", player:"all", type:"all"},
-  nug:    {player:"all"},
   ledger: {year:"all", player:"all"}
 };
 const state = {conf:"all", teamAll:false, logN:60,
@@ -860,7 +858,6 @@ function renderFilters(){
   filterRow("f-season", S.season, ["type"],                  renderSeasonMat);
   filterRow("f-parlay", S.parlay, ["year"],                  renderCombos);
   filterRow("f-teams",  S.teams,  ["year","player","type"],  renderTeams);
-  filterRow("f-nug",    S.nug,    ["player"],                renderOdds);
   filterRow("f-ledger", S.ledger, ["year","player"],         renderLog);
 }
 
@@ -1430,12 +1427,10 @@ function dealHand(){
   if(pc) pc.textContent=`${POOL.length} Total Nugs`;
 }
 function renderOdds(){
-  const who=S.nug.player;
   const group=buildCards(null);
   const sig=c=>c.lab+"|"+c.val+"|"+c.sub;
   const dupes=new Set(group.map(sig));
-  const personal=(who==="all"? PLAYERS : [who])
-    .flatMap(n=>buildCards(n))
+  const personal=PLAYERS.flatMap(n=>buildCards(n))
     .filter(c=>!dupes.has(sig(c)));   // same card, same numbers as the group's
   POOL = group.concat(personal);
   refillDeck(); dealHand();
