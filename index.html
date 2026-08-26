@@ -100,6 +100,10 @@ h1{
 .lasthead b{color:var(--bone);font-weight:400}
 .lasthead .cashed{color:var(--adam)}
 .lastrow{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(210px,1fr))}
+.wkshare{border:1px solid var(--line2);padding:4px 11px;margin-left:12px;border-radius:2px;
+  font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink2)}
+.wkshare:hover{border-color:var(--ink3);color:var(--ink)}
+.wkshare.busy{opacity:.4;pointer-events:none}
 .mugcard{display:flex;gap:13px;align-items:center;border:1px solid var(--line);
   background:var(--panel);padding:12px 14px 12px 17px;position:relative}
 .mugcard::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--c)}
@@ -302,7 +306,12 @@ th .arw{opacity:.5;font-size:9px}
 #shuffle{font-family:var(--mono);font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;
   border:1px solid var(--line2);padding:9px 18px;color:var(--ink2);border-radius:2px}
 #shuffle:hover{border-color:var(--ink3);color:var(--ink)}
-.odd{border:1px solid var(--line);background:var(--panel);padding:24px 15px 15px;position:relative}
+.odd{border:1px solid var(--line);background:var(--panel);padding:24px 15px 26px;position:relative}
+.share{position:absolute;right:9px;bottom:7px;padding:4px;line-height:0;color:var(--ink3);opacity:.55;
+  transition:opacity .12s,color .12s}
+.share:hover,.share:focus-visible{opacity:1;color:var(--ink)}
+.share svg{width:15px;height:15px;display:block}
+.share.busy{opacity:.3;pointer-events:none}
 .odd .tag{position:absolute;top:-9px;left:50%;transform:translateX(-50%);
   background:var(--panel);padding:0 10px;font-family:var(--wordmark);font-size:13.5px;
   letter-spacing:.05em;white-space:nowrap}
@@ -398,7 +407,7 @@ input[type=search]:focus{outline:2px solid var(--bone);outline-offset:1px}
   <div class="wrap">
     <div class="topbar">
       <b>RBWR</b>
-      <span id="stamp">Weekly parlay ledger</span><span style="color:var(--line2)">build 23</span>
+      <span id="stamp">Weekly parlay ledger</span><span style="color:var(--line2)">build 26</span>
     </div>
   </div>
   <div class="wrap hero">
@@ -815,6 +824,9 @@ function renderWeekCard(){
         <span class="what">${p.team} ${num}
         <small>${p.r==="W"?"covered":p.r==="P"?"push":"lost"} by ${p.d}</small></span></div>`;
     }).join("") + `</div>`;
+  el.innerHTML += `<div style="margin-top:14px"><button class="wkshare" id="wkshare2">Share this week</button></div>`;
+  const b2=document.getElementById("wkshare2");
+  if(b2) b2.addEventListener("click",()=>shareWeek(y,w,b2));
 }
 
 /* ============================ filters ============================ */
@@ -885,7 +897,8 @@ function renderLast(){
   const cashed = legs.length===4 && legs.every(p=>p.r!=="L");
   document.getElementById("lasthead").innerHTML =
     `Most recent week — <b>${ly} · week ${lw}</b> — ${hit} of ${legs.length} covered` +
-    (cashed ? ` <span class="cashed">— ticket cashed</span>` : "");
+    (cashed ? ` <span class="cashed">— ticket cashed</span>` : "") +
+    `<button class="wkshare" id="wkshare">Share the week</button>`;
   document.getElementById("lastrow").innerHTML = PLAYERS.map(n=>{
     const p = legs.find(x=>x.n===n);
     if(!p) return "";
@@ -899,6 +912,8 @@ function renderLast(){
         <div class="pick">${p.team} ${sign}${p.pts}</div>
         <div class="verdict">${verdict}</div></div></div>`;
   }).join("");
+  const wb=document.getElementById("wkshare");
+  if(wb) wb.addEventListener("click",()=>shareWeek(ly,lw,wb));
 }
 
 /* ============================ standings ============================ */
@@ -1401,7 +1416,183 @@ function buildCards(who){
 }
 
 let POOL=[], DECK=[], HAND=[];
+
+const SHARE_GLYPH = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+  stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+  <path d="M12 16V3"/><path d="m7 8 5-5 5 5"/><path d="M4 14v5a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-5"/></svg>`;
+
+const cssVar = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+
+function loadImg(src, cors){
+  return new Promise(res=>{
+    const im=new Image();
+    if(cors) im.crossOrigin="anonymous";
+    im.onload=()=>res(im); im.onerror=()=>res(null);
+    im.src=src;
+  });
+}
+function wrap(ctx, text, maxW){
+  const words=String(text).split(" "); const lines=[]; let cur="";
+  for(const w of words){
+    const t=cur? cur+" "+w : w;
+    if(ctx.measureText(t).width>maxW && cur){ lines.push(cur); cur=w; } else cur=t;
+  }
+  if(cur) lines.push(cur);
+  return lines;
+}
+async function paintCard(c){
+  if(document.fonts && document.fonts.ready) await document.fonts.ready;
+  const K=2, W=560, PAD=36, ART=58, TAG=40;   // TAG = baseline of the name tag
+  const panel=cssVar("--panel")||"#13201C", line=cssVar("--line")||"#26382F";
+  const ink2=cssVar("--ink2"), ink3=cssVar("--ink3"), bone=cssVar("--bone");
+
+  let art=null;
+  if(c.conf || c.team){
+    const url = c.conf ? (CONF_ID[c.conf] ? "https://a.espncdn.com/i/teamlogos/ncaa_conf/500/"+CONF_ID[c.conf]+".png" : null)
+                       : logoURL(c.team);
+    if(url) art=await loadImg(url,true);
+  } else if(c.ic){
+    const svg=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">${ICON[c.ic].replace(/var\(--panel\)/g,panel)}</svg>`;
+    art=await loadImg("data:image/svg+xml;charset=utf-8,"+encodeURIComponent(svg),false);
+  }
+
+  const m=document.createElement("canvas").getContext("2d");
+  m.font=`500 40px "Big Shoulders Display", Impact, sans-serif`;
+  const valLines=wrap(m,String(c.val).toUpperCase(),W-PAD*2-ART-18);
+  m.font=`15px "DM Mono", ui-monospace, monospace`;
+  const subLines=wrap(m,String(c.sub).replace(/<br>/g," · ").replace(/<[^>]+>/g,""),W-PAD*2);
+
+  const yLab = TAG+34, yVal = yLab+34;
+  const H = yVal + valLines.length*40 + 12 + subLines.length*24 + 44;
+
+  const cv=document.createElement("canvas");
+  cv.width=W*K; cv.height=H*K;
+  const x=cv.getContext("2d"); x.scale(K,K);
+  x.fillStyle=panel; x.fillRect(0,0,W,H);
+  x.strokeStyle=line; x.lineWidth=1; x.strokeRect(.5,.5,W-1,H-1);
+
+  if(art){
+    const ax=W-PAD-ART, ay=TAG+2;
+    if(c.conf||c.team){
+      x.save(); x.beginPath(); x.arc(ax+ART/2,ay+ART/2,ART/2,0,7); x.closePath();
+      x.fillStyle="#EFEFE9"; x.fill(); x.clip();
+      x.drawImage(art,ax+5,ay+5,ART-10,ART-10); x.restore();
+    } else x.drawImage(art,ax,ay,ART,ART);
+  }
+
+  x.textAlign="center";
+  x.font=`400 21px "Archivo Black", "Arial Black", sans-serif`;
+  x.fillStyle = c.who ? COLOR[c.who] : bone;
+  x.fillText(c.tag, W/2, TAG);
+  x.textAlign="left";
+
+  x.font=`13px "DM Mono", ui-monospace, monospace`;
+  x.fillStyle=ink3; x.fillText(String(c.lab).toUpperCase(),PAD,yLab);
+
+  let y=yVal+30;
+  x.font=`500 40px "Big Shoulders Display", Impact, sans-serif`;
+  x.fillStyle=bone;
+  for(const l of valLines){ x.fillText(l,PAD,y); y+=40; }
+  y+=4;
+  x.font=`15px "DM Mono", ui-monospace, monospace`;
+  x.fillStyle=ink2;
+  for(const l of subLines){ x.fillText(l,PAD,y); y+=24; }
+
+  x.font=`400 12px "Archivo Black", "Arial Black", sans-serif`;
+  x.fillStyle=ink3; x.globalAlpha=.6;
+  x.textAlign="right"; x.fillText("RBWR",W-PAD,H-16);
+  return cv;
+}
+async function paintWeek(legs,y,w){
+  if(document.fonts && document.fonts.ready) await document.fonts.ready;
+  const K=2, W=600, PAD=38, ROW=124, AV=76;
+  const panel=cssVar("--panel"), ground=cssVar("--ground"), line=cssVar("--line");
+  const ink=cssVar("--ink"), ink2=cssVar("--ink2"), ink3=cssVar("--ink3"), bone=cssVar("--bone");
+  const order=PLAYERS.map(n=>legs.find(p=>p.n===n)).filter(Boolean);
+  const hit=legs.filter(p=>p.r==="W").length;
+  const clean=legs.length===4 && legs.every(p=>p.r!=="L");
+
+  const mugs=await Promise.all(order.map(p=>{
+    const st=p.r==="L"?"loss":"win", slug=p.n.toLowerCase();
+    const i=pickPhoto(p.n,st,y,w);
+    const stem=i>1?`${slug}-${st}-${i}`:`${slug}-${st}`;
+    return (async()=>{ for(const e of PHOTO_EXT){
+        const im=await loadImg(`photos/${stem}.${e}`,false); if(im) return im; } return null; })();
+  }));
+
+  const H = 118 + order.length*ROW + 78;
+  const cv=document.createElement("canvas"); cv.width=W*K; cv.height=H*K;
+  const x=cv.getContext("2d"); x.scale(K,K);
+  x.fillStyle=ground; x.fillRect(0,0,W,H);
+
+  x.textAlign="center";
+  x.font=`400 40px "Archivo Black","Arial Black",sans-serif`;
+  x.fillStyle=bone; x.fillText("RBWR",W/2,58);
+  x.font=`14px "DM Mono",ui-monospace,monospace`;
+  x.fillStyle=ink3; x.fillText(`${y}  ·  WEEK ${w}`.toUpperCase(),W/2,82);
+  x.textAlign="left";
+  x.strokeStyle=line; x.beginPath(); x.moveTo(PAD,100); x.lineTo(W-PAD,100); x.stroke();
+
+  order.forEach((p,i)=>{
+    const top=118+i*ROW, cy=top+ROW/2-10, col=COLOR[p.n];
+    x.fillStyle=panel; x.fillRect(PAD,top,W-PAD*2,ROW-14);
+    x.fillStyle=col;   x.fillRect(PAD,top,4,ROW-14);
+    const ax=PAD+22, ay=top+(ROW-14-AV)/2;
+    x.save(); x.beginPath(); x.arc(ax+AV/2,ay+AV/2,AV/2,0,7); x.closePath(); x.clip();
+    if(mugs[i]) x.drawImage(mugs[i],ax,ay,AV,AV);
+    else { x.fillStyle=cssVar("--panel2")||"#1A2A24"; x.fillRect(ax,ay,AV,AV);
+      x.fillStyle=col; x.font=`400 30px "Archivo Black",sans-serif`; x.textAlign="center";
+      x.fillText(p.n[0],ax+AV/2,ay+AV/2+11); x.textAlign="left"; }
+    x.restore();
+    x.beginPath(); x.arc(ax+AV/2,ay+AV/2,AV/2,0,7); x.strokeStyle=col; x.lineWidth=2; x.stroke();
+
+    const tx=ax+AV+22;
+    x.font=`500 30px "Big Shoulders Display",Impact,sans-serif`;
+    x.fillStyle=col; x.fillText(p.n.toUpperCase(),tx,cy-16);
+    const vw=x.measureText(p.n.toUpperCase()).width;
+    x.font=`500 22px "Big Shoulders Display",Impact,sans-serif`;
+    x.fillStyle = p.r==="W" ? cssVar("--adam") : p.r==="P" ? ink3 : "#B3706B";
+    x.fillText(p.r==="W"?"— WIN":p.r==="P"?"— PUSH":"— LOSS",tx+vw+10,cy-16);
+    const sign=p.t==="Favorite"?"\u2212":p.t==="Dog"?"+":p.t==="Over"?"o":"u";
+    x.font=`15px "DM Mono",ui-monospace,monospace`;
+    x.fillStyle=ink; x.fillText(`${p.team} ${sign}${p.pts}`,tx,cy+10);
+    x.font=`13px "DM Mono",ui-monospace,monospace`;
+    x.fillStyle=ink3;
+    x.fillText(p.r==="W"?`covered by ${p.d}`:p.r==="P"?"no action":`missed by ${p.d}`,tx,cy+32);
+  });
+
+  x.textAlign="center";
+  x.font=`500 26px "Big Shoulders Display",Impact,sans-serif`;
+  x.fillStyle = clean ? cssVar("--adam") : ink2;
+  x.fillText(clean?"THE TICKET CASHED":`${hit} OF ${legs.length} COVERED`,W/2,H-34);
+  return cv;
+}
+async function shareCanvas(cv,name,btn){
+  const blob=await new Promise(r=>cv.toBlob(r,"image/png"));
+  const file=new File([blob],name,{type:"image/png"});
+  if(navigator.canShare && navigator.canShare({files:[file]})) await navigator.share({files:[file]});
+  else { const u=URL.createObjectURL(blob); const a=document.createElement("a");
+    a.href=u; a.download=name; a.click(); setTimeout(()=>URL.revokeObjectURL(u),4000); }
+}
+async function shareWeek(y,w,btn){
+  btn.classList.add("busy");
+  try{ const legs=PICKS.filter(p=>p.y===y&&p.w===w);
+    await shareCanvas(await paintWeek(legs,y,w),`rbwr-${y}-wk${w}.png`,btn); }
+  catch(e){ console.warn("week share failed",e); }
+  btn.classList.remove("busy");
+}
+async function shareCard(c, btn){
+  btn.classList.add("busy");
+  try{
+    const cv=await paintCard(c);
+    const name=(c.tag+"-"+c.lab).toLowerCase().replace(/[^a-z0-9]+/g,"-")+".png";
+    await shareCanvas(cv,name,btn);
+  }catch(e){ console.warn("share failed",e); }
+  btn.classList.remove("busy");
+}
+let CARDN=0; const CARDREG={};
 function cardHTML(c){
+  const cid="c"+(++CARDN); CARDREG[cid]=c;
   const art = c.conf ? confLogo(c.conf)
             : c.team ? logoIMG(c.team,"").replace("tlogo","oddlogo")
             : c.ic   ? icon(c.ic) : "";
@@ -1409,7 +1600,8 @@ function cardHTML(c){
   return `<div class="odd">${art}
     <span class="tag" style="color:${col}">${c.tag}</span>
     <div class="lab">${c.lab}</div>
-    <div class="val">${c.val}</div><div class="sub">${c.sub}</div></div>`;
+    <div class="val">${c.val}</div><div class="sub">${c.sub}</div>
+    <button class="share" data-card="${cid}" aria-label="Share this nugget as an image">${SHARE_GLYPH}</button></div>`;
 }
 function refillDeck(){
   const g=POOL.filter(c=>!c.who), p=POOL.filter(c=>c.who);
@@ -1512,6 +1704,12 @@ function wire(){
     state.teamQ=e.target.value.trim().toLowerCase(); renderTeams();});
   document.getElementById("logsearch").addEventListener("input",e=>{
     state.logQ=e.target.value.trim().toLowerCase(); state.logN=60; renderLog();});
+  document.addEventListener("click",e=>{
+    const b=e.target && e.target.closest ? e.target.closest(".share") : null;
+    if(!b) return;
+    const c=CARDREG[b.dataset.card];
+    if(c) shareCard(c,b);
+  });
   const sf=document.getElementById("shuffle");
   if(sf) sf.addEventListener("click",dealHand);
   document.getElementById("teammore").addEventListener("click",()=>{
