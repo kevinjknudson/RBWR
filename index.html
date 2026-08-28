@@ -100,6 +100,8 @@ h1{
 .lasthead b{color:var(--bone);font-weight:400}
 .lasthead .cashed{color:var(--adam)}
 .lastrow{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(210px,1fr))}
+.weeknug{margin-top:14px}
+.weeknug .odd{max-width:440px}
 .wkshare{border:1px solid var(--line2);padding:4px 11px;margin-left:12px;border-radius:2px;
   font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink2)}
 .wkshare:hover{border-color:var(--ink3);color:var(--ink)}
@@ -125,7 +127,9 @@ h1{
   text-transform:uppercase;margin-top:5px}
 .mugcard.won .verdict{color:var(--adam)}
 .mugcard.lost .verdict{color:#B3706B}
-.mugcard.pushed .verdict{color:var(--ink3)}
+.mugcard.pushed .verdict,.mugcard.pending .verdict{color:var(--ink3)}
+.mugcard.pending{opacity:.85}
+.mugcard.pending .who .wl{color:var(--ink3)}
 
 /* ---------- the grid ---------- */
 .gridwrap{padding:8px 0 40px}
@@ -165,6 +169,7 @@ html[data-theme="chalk"] .gnames{box-shadow:6px 0 8px -6px rgba(32,50,28,.22)}
 .gcell{width:11px;height:20px;border:1px solid var(--line2);border-radius:1px;position:relative}
 .gcell.w{border-color:transparent}
 .gcell.p{opacity:.55}
+.gcell.pend{border-color:var(--line);border-style:dotted;opacity:.5}
 .gcol.sweep::before{content:"";position:absolute;left:-2px;right:-2px;top:-6px;bottom:-3px;
   background:rgba(243,236,216,.14);border:1px solid rgba(243,236,216,.5);
   border-top:3px solid var(--bone);border-radius:2px;
@@ -332,7 +337,7 @@ input[type=search]:focus{outline:2px solid var(--bone);outline-offset:1px}
 .res{font-weight:500}
 .res.W{color:var(--adam)}
 .res.L{color:#B3706B}
-.res.P{color:var(--ink3)}
+.res.P,.res.N{color:var(--ink3)}
 .more{margin-top:14px}
 .more button{font-family:var(--mono);font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;
   border:1px solid var(--line2);padding:8px 16px;color:var(--ink2)}
@@ -407,7 +412,7 @@ input[type=search]:focus{outline:2px solid var(--bone);outline-offset:1px}
   <div class="wrap">
     <div class="topbar">
       <b>RBWR</b>
-      <span id="stamp">Weekly parlay ledger</span><span style="color:var(--line2)">build 26</span>
+      <span id="stamp">Weekly parlay ledger</span><span style="color:var(--line2)">build 27</span>
     </div>
   </div>
   <div class="wrap hero">
@@ -421,6 +426,7 @@ input[type=search]:focus{outline:2px solid var(--bone);outline-offset:1px}
   <div class="wrap lastwrap">
     <div class="lasthead" id="lasthead"></div>
     <div class="lastrow" id="lastrow"></div>
+    <div class="odds weeknug" id="lastnug"></div>
   </div>
 
   <div class="wrap gridwrap">
@@ -709,8 +715,8 @@ function parseCSV(text){
     const nm=c[ix("name")], raw=c[ix("team")]||"";
     if(isNaN(y)||isNaN(w)||!nm||!raw) continue;
     const tm = raw.split("/").map(v=>{v=v.trim();return ALIAS[v]||v;});
-    const res=(c[ix("result")]||"").trim().charAt(0).toUpperCase();
-    if(!"WLP".includes(res)) continue;
+    let res=(c[ix("result")]||"").trim().charAt(0).toUpperCase();
+    if(res!=="W" && res!=="L" && res!=="P") res="N";   // not played yet
     const d=parseInt(c[ix("diff")],10);
     const oi=ix("opponent");
     out.push([y,w,nm,c[ix("type")]||"",tm.join(" / "),
@@ -744,6 +750,8 @@ function sel(sc){
 }
 
 const isDecided = p => p.r==="W" || p.r==="L";
+const isPending = p => p.r==="N";
+const weekDone = l => l.length===4 && l.every(p=>!isPending(p));
 const SEASON = new Date().getFullYear();
 function pct(w,l){const n=w+l;return n? w/n : 0;}
 function fmtPct(v,n){return n? (v*100).toFixed(1)+"%" : "—";}
@@ -751,7 +759,7 @@ function fmtPct(v,n){return n? (v*100).toFixed(1)+"%" : "—";}
 
 function recordOf(list){
   let w=0,l=0,ps=0;
-  for(const p of list){ if(p.r==="W")w++; else if(p.r==="L")l++; else ps++; }
+  for(const p of list){ if(p.r==="W")w++; else if(p.r==="L")l++; else if(p.r==="P")ps++; }
   return {w,l,p:ps,pct:pct(w,l),n:w+l};
 }
 
@@ -777,7 +785,7 @@ function renderGrid(){
   keys.forEach(([y,w])=>{
     const legs = byWeek.get(y+"-"+w)||[];
     const wins = legs.filter(p=>p.r==="W").length;
-    const sweep = legs.length===4 && legs.every(p=>p.r!=="L");
+    const sweep = weekDone(legs) && legs.every(p=>p.r!=="L");
     if(sweep) sweeps++;
     const yr = y!==prevYear;
     const mark = yr ? `<span class="yrmark">${y}</span>` : "";
@@ -787,6 +795,7 @@ function renderGrid(){
       if(!p) return `<div class="gcell" style="border-color:rgba(38,56,47,.5)"></div>`;
       if(p.r==="W") return `<div class="gcell w" style="background:${COLOR[n]}"></div>`;
       if(p.r==="P") return `<div class="gcell p" style="border-color:${COLOR[n]};border-style:dashed"></div>`;
+      if(isPending(p)) return `<div class="gcell pend"></div>`;
       return `<div class="gcell" style="border-color:${COLOR[n]}66"></div>`;
     }).join("");
     const sel = state.week===y+"-"+w ? " sel":"";
@@ -824,6 +833,8 @@ function renderWeekCard(){
         <span class="what">${p.team} ${num}
         <small>${p.r==="W"?"covered":p.r==="P"?"push":"lost"} by ${p.d}</small></span></div>`;
     }).join("") + `</div>`;
+  const wn=weekNugget(legs,y,w);
+  if(wn) el.innerHTML += `<div class="odds weeknug">${cardHTML(wn)}</div>`;
   el.innerHTML += `<div style="margin-top:14px"><button class="wkshare" id="wkshare2">Share this week</button></div>`;
   const b2=document.getElementById("wkshare2");
   if(b2) b2.addEventListener("click",()=>shareWeek(y,w,b2));
@@ -894,24 +905,29 @@ function renderLast(){
   for(const p of PICKS){ if(p.y>ly||(p.y===ly&&p.w>lw)){ly=p.y;lw=p.w;} }
   const legs = PICKS.filter(p=>p.y===ly&&p.w===lw);
   const hit = legs.filter(p=>p.r==="W").length;
-  const cashed = legs.length===4 && legs.every(p=>p.r!=="L");
+  const pend = legs.some(isPending);
+  const cashed = weekDone(legs) && legs.every(p=>p.r!=="L");
   document.getElementById("lasthead").innerHTML =
-    `Most recent week — <b>${ly} · week ${lw}</b> — ${hit} of ${legs.length} covered` +
+    `Most recent week — <b>${ly} · week ${lw}</b>` +
+    (pend ? ` — still to play` : ` — ${hit} of ${legs.length} covered`) +
     (cashed ? ` <span class="cashed">— ticket cashed</span>` : "") +
     `<button class="wkshare" id="wkshare">Share the week</button>`;
   document.getElementById("lastrow").innerHTML = PLAYERS.map(n=>{
     const p = legs.find(x=>x.n===n);
     if(!p) return "";
-    const cls = p.r==="W" ? "won" : p.r==="P" ? "pushed" : "lost";
+    const cls = p.r==="W" ? "won" : p.r==="P" ? "pushed" : isPending(p) ? "pending" : "lost";
     const sign = p.t==="Favorite" ? "−" : p.t==="Dog" ? "+" : p.t==="Over" ? "o" : "u";
-    const word = p.r==="W" ? "Win" : p.r==="P" ? "Push" : "Loss";
-    const verdict = p.r==="W" ? "Covered by "+p.d : p.r==="P" ? "No action" : "Missed by "+p.d;
+    const word = p.r==="W" ? "Win" : p.r==="P" ? "Push" : isPending(p) ? "Pending" : "Loss";
+    const verdict = p.r==="W" ? "Covered by "+p.d : p.r==="P" ? "No action"
+                  : isPending(p) ? "Not played yet" : "Missed by "+p.d;
     return `<div class="mugcard ${cls}" style="--c:${COLOR[n]}">
       ${mugHTML(n,p.r,ly,lw)}
       <div><div class="who">${n} <span class="wl">— ${word}</span></div>
         <div class="pick">${p.team} ${sign}${p.pts}</div>
         <div class="verdict">${verdict}</div></div></div>`;
   }).join("");
+  const wn=weekNugget(legs,ly,lw);
+  document.getElementById("lastnug").innerHTML = wn ? cardHTML(wn) : "";
   const wb=document.getElementById("wkshare");
   if(wb) wb.addEventListener("click",()=>shareWeek(ly,lw,wb));
 }
@@ -1151,7 +1167,7 @@ function weekSets(){
     if(!m.has(k)) m.set(k,[]);
     m.get(k).push(p);
   }
-  return [...m.values()].filter(l=>l.length===4)
+  return [...m.values()].filter(weekDone)
     .map(l=>PLAYERS.filter(n=>{const p=l.find(x=>x.n===n);return p&&p.r!=="L";}));
 }
 function drow(label,count,total,gold){
@@ -1259,7 +1275,7 @@ function renderTeams(){
 function weekRows(){
   const wk=new Map();
   for(const p of PICKS){ const k=p.y+"-"+p.w; (wk.get(k)||wk.set(k,[]).get(k)).push(p); }
-  return [...wk.entries()].filter(([k,l])=>l.length===4).map(([k,l])=>{
+  return [...wk.entries()].filter(([k,l])=>weekDone(l)).map(([k,l])=>{
     const lost=l.filter(p=>p.r==="L");
     return {k,l,lost,total:l.reduce((a,p)=>a+p.d,0),lostPts:lost.reduce((a,p)=>a+p.d,0)};
   });
@@ -1510,7 +1526,9 @@ async function paintWeek(legs,y,w){
   const ink=cssVar("--ink"), ink2=cssVar("--ink2"), ink3=cssVar("--ink3"), bone=cssVar("--bone");
   const order=PLAYERS.map(n=>legs.find(p=>p.n===n)).filter(Boolean);
   const hit=legs.filter(p=>p.r==="W").length;
-  const clean=legs.length===4 && legs.every(p=>p.r!=="L");
+  const pend=legs.some(isPending);
+  const clean=weekDone(legs) && legs.every(p=>p.r!=="L");
+  const nug=weekNugget(legs,y,w);
 
   const mugs=await Promise.all(order.map(p=>{
     const st=p.r==="L"?"loss":"win", slug=p.n.toLowerCase();
@@ -1520,7 +1538,11 @@ async function paintWeek(legs,y,w){
         const im=await loadImg(`photos/${stem}.${e}`,false); if(im) return im; } return null; })();
   }));
 
-  const H = 118 + order.length*ROW + 78;
+  const mm=document.createElement("canvas").getContext("2d");
+  mm.font=`14px "DM Mono",ui-monospace,monospace`;
+  const nSub = nug ? wrap(mm,String(nug.sub).replace(/<[^>]+>/g,""),W-PAD*2) : [];
+  const nH = nug ? 30 + 30 + nSub.length*22 + 16 : 0;
+  const H = 118 + order.length*ROW + 66 + nH;
   const cv=document.createElement("canvas"); cv.width=W*K; cv.height=H*K;
   const x=cv.getContext("2d"); x.scale(K,K);
   x.fillStyle=ground; x.fillRect(0,0,W,H);
@@ -1551,20 +1573,37 @@ async function paintWeek(legs,y,w){
     x.fillStyle=col; x.fillText(p.n.toUpperCase(),tx,cy-16);
     const vw=x.measureText(p.n.toUpperCase()).width;
     x.font=`500 22px "Big Shoulders Display",Impact,sans-serif`;
-    x.fillStyle = p.r==="W" ? cssVar("--adam") : p.r==="P" ? ink3 : "#B3706B";
-    x.fillText(p.r==="W"?"— WIN":p.r==="P"?"— PUSH":"— LOSS",tx+vw+10,cy-16);
+    x.fillStyle = p.r==="W" ? cssVar("--adam") : (p.r==="P"||isPending(p)) ? ink3 : "#B3706B";
+    x.fillText(p.r==="W"?"— WIN":p.r==="P"?"— PUSH":isPending(p)?"— PENDING":"— LOSS",tx+vw+10,cy-16);
     const sign=p.t==="Favorite"?"\u2212":p.t==="Dog"?"+":p.t==="Over"?"o":"u";
     x.font=`15px "DM Mono",ui-monospace,monospace`;
     x.fillStyle=ink; x.fillText(`${p.team} ${sign}${p.pts}`,tx,cy+10);
     x.font=`13px "DM Mono",ui-monospace,monospace`;
     x.fillStyle=ink3;
-    x.fillText(p.r==="W"?`covered by ${p.d}`:p.r==="P"?"no action":`missed by ${p.d}`,tx,cy+32);
+    x.fillText(p.r==="W"?`covered by ${p.d}`:p.r==="P"?"no action":
+               isPending(p)?"not played yet":`missed by ${p.d}`,tx,cy+32);
   });
 
+  const outY = 118 + order.length*ROW + 30;
   x.textAlign="center";
-  x.font=`500 26px "Big Shoulders Display",Impact,sans-serif`;
-  x.fillStyle = clean ? cssVar("--adam") : ink2;
-  x.fillText(clean?"THE TICKET CASHED":`${hit} OF ${legs.length} COVERED`,W/2,H-34);
+  x.font=`500 27px "Big Shoulders Display",Impact,sans-serif`;
+  x.fillStyle = pend ? bone : clean ? cssVar("--adam") : ink2;
+  x.fillText(pend ? "IT'S OUR WEEK" : clean ? "THE TICKET CASHED"
+                   : `${hit} OF ${legs.length} COVERED`, W/2, outY);
+
+  if(nug){
+    let ny = outY + 34;
+    x.strokeStyle=line; x.beginPath(); x.moveTo(PAD,ny-16); x.lineTo(W-PAD,ny-16); x.stroke();
+    x.font=`12px "DM Mono",ui-monospace,monospace`;
+    x.fillStyle=ink3; x.fillText(String(nug.lab).toUpperCase(),W/2,ny+4);
+    ny+=30;
+    x.font=`500 30px "Big Shoulders Display",Impact,sans-serif`;
+    x.fillStyle=bone; x.fillText(String(nug.val).toUpperCase(),W/2,ny);
+    ny+=26;
+    x.font=`14px "DM Mono",ui-monospace,monospace`;
+    x.fillStyle=ink2;
+    for(const l of nSub){ x.fillText(l,W/2,ny); ny+=22; }
+  }
   return cv;
 }
 async function shareCanvas(cv,name,btn){
@@ -1628,6 +1667,53 @@ function renderOdds(){
   refillDeck(); dealHand();
 }
 
+const TYPE_ORDER=["Favorite","Dog","Over","Under"];
+function shapeKey(l){
+  const c={}; for(const p of l) c[p.t]=(c[p.t]||0)+1;
+  return TYPE_ORDER.filter(t=>c[t]).map(t=>c[t]+"\u00d7"+t).join("|");
+}
+function shapeLabel(l){
+  const c={}; for(const p of l) c[p.t]=(c[p.t]||0)+1;
+  return TYPE_ORDER.filter(t=>c[t]).map(t=>`${c[t]} ${t}${c[t]>1?"s":""}`).join(" + ");
+}
+function allWeeks(){
+  const m=new Map();
+  for(const p of PICKS){ const k=p.y+"-"+p.w; (m.get(k)||m.set(k,[]).get(k)).push(p); }
+  return [...m.entries()].map(([k,l])=>({y:+k.split("-")[0],w:+k.split("-")[1],l}));
+}
+function weekNugget(legs,y,w){
+  if(legs.length<4) return null;
+  const tag=`${y} · WK ${w}`;
+  const mk=(lab,val,sub,ic)=>({tag,lab,val,sub,ic,who:null});
+
+  if(legs.some(isPending)){
+    // before kickoff: how this shape of ticket has fared before
+    const key=shapeKey(legs);
+    const past=allWeeks().filter(x=>!(x.y===y&&x.w===w) && weekDone(x.l) && shapeKey(x.l)===key);
+    const legsPast=past.flatMap(x=>x.l).filter(isDecided);
+    const r=recordOf(legsPast);
+    const cashed=past.filter(x=>x.l.every(p=>p.r!=="L")).length;
+    if(!past.length) return mk("Never tried this",shapeLabel(legs),
+      `This exact shape of ticket has not been played before`,"dice");
+    return mk("This week's shape",shapeLabel(legs),
+      `Played ${past.length} time${past.length===1?"":"s"} before · those legs went ${r.w}\u2013${r.l} · cashed ${cashed===0?"never":cashed===1?"once":cashed+" times"}`,"dice");
+  }
+
+  if(!weekDone(legs)) return null;
+  // after the whistle: how often this exact split has happened
+  const key=PLAYERS.map(n=>{const p=legs.find(x=>x.n===n); return p&&p.r!=="L"?"1":"0";}).join("");
+  const winners=PLAYERS.filter(n=>{const p=legs.find(x=>x.n===n); return p&&p.r!=="L";});
+  const prior=allWeeks().filter(x=>weekDone(x.l) && (x.y<y || (x.y===y&&x.w<w)) &&
+    PLAYERS.map(n=>{const p=x.l.find(q=>q.n===n); return p&&p.r!=="L"?"1":"0";}).join("")===key)
+    .sort((a,b)=>b.y-a.y||b.w-a.w);
+  const label = winners.length===4 ? "All four" : winners.length===0 ? "Nobody" : winners.join(" + ");
+  if(!prior.length) return mk("First of its kind",label,
+    `This exact split has never happened before`,"locked");
+  return mk("Seen this before",label,
+    `This split has happened ${prior.length} time${prior.length===1?"":"s"} · last in ${prior[0].y} week ${prior[0].w}`,
+    winners.length===4?"locked":winners.length===0?"skull":"chain");
+}
+
 /* ============================ ledger ============================ */
 let logSortKey="date", logSortDir=-1;
 function renderLog(){
@@ -1656,8 +1742,8 @@ function renderLog(){
       <td>${logoStack(p.tm,'sm')}${p.team}</td>
       <td>${sign}${p.pts}</td>
       <td class="opp">${oppOf(p)? oppOf(p)[0] : "N/A"}</td>
-      <td class="res ${p.r}">${p.r==="W"?"Win":p.r==="P"?"Push":"Loss"}</td>
-      <td>${p.r==="P"?"—":p.d}</td></tr>`;
+      <td class="res ${p.r}">${p.r==="W"?"Win":p.r==="P"?"Push":isPending(p)?"Pending":"Loss"}</td>
+      <td>${isDecided(p)?p.d:"—"}</td></tr>`;
   }
   document.getElementById("logtable").innerHTML=h+`</tbody>`;
   document.getElementById("logcount").textContent=`${rows.length} picks · showing ${shown.length}`;
