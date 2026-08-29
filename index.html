@@ -412,7 +412,7 @@ input[type=search]:focus{outline:2px solid var(--bone);outline-offset:1px}
   <div class="wrap">
     <div class="topbar">
       <b>RBWR</b>
-      <span id="stamp">Weekly parlay ledger</span><span style="color:var(--line2)">build 27</span>
+      <span id="stamp">Weekly parlay ledger</span><span style="color:var(--line2)">build 32</span>
     </div>
   </div>
   <div class="wrap hero">
@@ -583,6 +583,22 @@ const ICON={
    <path d="M12 8.5 8.4 15l2.4-1.2 1.4 1.9 1.6-1.9 1.9 1.4z" fill="#F3ECD8"/>
    <path d="M22.5 14 20 18.2l1.6-.7 1 1.2 1.1-1.2 1.5.9z" fill="#F3ECD8"/>
    <path d="M1.5 27h29" stroke="#5A7480" stroke-width="1.6" stroke-linecap="round"/>`,
+  pencils:`<g>
+   <path d="M10 2.6 13.2 9.2H6.8Z" fill="#D9B382"/><path d="M10 2.6 11.5 5.7H8.5Z" fill="#2A2A2A"/>
+   <rect x="6.8" y="9.2" width="6.4" height="13.6" fill="#F0C23C"/>
+   <rect x="6.8" y="22.8" width="6.4" height="2.2" fill="#9DB2A6"/>
+   <rect x="6.8" y="25" width="6.4" height="4" rx="1.2" fill="#E58FA0"/></g>
+   <g>
+   <path d="M22 2.6 25.2 9.2H18.8Z" fill="#D9B382"/><path d="M22 2.6 23.5 5.7H20.5Z" fill="#2A2A2A"/>
+   <rect x="18.8" y="9.2" width="6.4" height="13.6" fill="#F0C23C"/>
+   <rect x="18.8" y="22.8" width="6.4" height="2.2" fill="#9DB2A6"/>
+   <rect x="18.8" y="25" width="6.4" height="4" rx="1.2" fill="#E58FA0"/></g>`,
+  coffee:`<path d="M11.5 8.6c1.4-1.6-1.4-2.9 0-4.6M16.5 8.6c1.4-1.6-1.4-2.9 0-4.6M21.5 8.6c1.4-1.6-1.4-2.9 0-4.6"
+   stroke="#7C8F73" stroke-width="1.6" stroke-linecap="round" fill="none"/>
+   <path d="M7.5 12h16.2l-1.7 12.4a2.6 2.6 0 0 1-2.6 2.2h-7.6a2.6 2.6 0 0 1-2.6-2.2z" fill="#F3ECD8"/>
+   <ellipse cx="15.6" cy="12.2" rx="8.1" ry="2.3" fill="#6B4A32"/>
+   <path d="M23.9 15h1.9a3.7 3.7 0 0 1 0 7.4h-1.1" stroke="#F3ECD8" stroke-width="2.2"
+   fill="none" stroke-linecap="round"/>`,
   pig:`<ellipse cx="16" cy="17" rx="11" ry="9.5" fill="#E8A0A8"/>
    <path d="M7.5 9.5 6 4.6l5 2.4zM24.5 9.5 26 4.6l-5 2.4z" fill="#D98891"/>
    <circle cx="11.6" cy="14" r="1.6" fill="#1B2A24"/><circle cx="20.4" cy="14" r="1.6" fill="#1B2A24"/>
@@ -1474,7 +1490,16 @@ async function paintCard(c){
 
   const m=document.createElement("canvas").getContext("2d");
   m.font=`500 40px "Big Shoulders Display", Impact, sans-serif`;
-  const valLines=wrap(m,String(c.val).toUpperCase(),W-PAD*2-ART-18);
+  let valSize=40;
+  if(c.parts){
+    const avail=W-PAD*2-ART-18;
+    while(valSize>17){
+      m.font=`500 ${valSize}px "Big Shoulders Display", Impact, sans-serif`;
+      if(c.parts.reduce((a,p)=>a+m.measureText(p.t.toUpperCase()).width,0)<=avail) break;
+      valSize-=2;
+    }
+  }
+  const valLines = c.parts ? [""] : wrap(m,String(c.val).replace(/<[^>]+>/g,"").toUpperCase(),W-PAD*2-ART-18);
   m.font=`15px "DM Mono", ui-monospace, monospace`;
   const subLines=wrap(m,String(c.sub).replace(/<br>/g," · ").replace(/<[^>]+>/g,""),W-PAD*2);
 
@@ -1506,9 +1531,20 @@ async function paintCard(c){
   x.fillStyle=ink3; x.fillText(String(c.lab).toUpperCase(),PAD,yLab);
 
   let y=yVal+30;
-  x.font=`500 40px "Big Shoulders Display", Impact, sans-serif`;
-  x.fillStyle=bone;
-  for(const l of valLines){ x.fillText(l,PAD,y); y+=40; }
+  if(c.parts){
+    x.font=`500 ${valSize}px "Big Shoulders Display", Impact, sans-serif`;
+    let px=PAD;
+    for(const p of c.parts){
+      x.fillStyle = p.c || bone;
+      const t=p.t.toUpperCase();
+      x.fillText(t,px,y); px+=x.measureText(t).width;
+    }
+    y+=40;
+  } else {
+    x.font=`500 40px "Big Shoulders Display", Impact, sans-serif`;
+    x.fillStyle=bone;
+    for(const l of valLines){ x.fillText(l,PAD,y); y+=40; }
+  }
   y+=4;
   x.font=`15px "DM Mono", ui-monospace, monospace`;
   x.fillStyle=ink2;
@@ -1687,6 +1723,16 @@ function weekNugget(legs,y,w){
   const mk=(lab,val,sub,ic)=>({tag,lab,val,sub,ic,who:null});
 
   if(legs.some(isPending)){
+    // a bettor-and-bet-type combination nobody has ever run before
+    const pkey=l=>PLAYERS.map(n=>{const p=l.find(x=>x.n===n); return p? p.t : "-";}).join("|");
+    const weeks4=allWeeks().filter(x=>x.l.length===4);
+    const mineKey=pkey(legs);
+    const sameBefore=weeks4.filter(x=>!(x.y===y&&x.w===w) && pkey(x.l)===mineKey);
+    if(!sameBefore.length){
+      const uniqCount=new Set(weeks4.map(x=>pkey(x.l))).size;
+      return mk("Parlayigami!", shapeLabel(legs),
+        `This is the first time this bettor and bet type combination has occurred. There have been ${uniqCount} unique bettor\u2013bet type parlays to date`,"crown");
+    }
     // before kickoff: how this shape of ticket has fared before
     const key=shapeKey(legs);
     const past=allWeeks().filter(x=>!(x.y===y&&x.w===w) && weekDone(x.l) && shapeKey(x.l)===key);
@@ -1706,12 +1752,31 @@ function weekNugget(legs,y,w){
   const prior=allWeeks().filter(x=>weekDone(x.l) && (x.y<y || (x.y===y&&x.w<w)) &&
     PLAYERS.map(n=>{const p=x.l.find(q=>q.n===n); return p&&p.r!=="L"?"1":"0";}).join("")===key)
     .sort((a,b)=>b.y-a.y||b.w-a.w);
-  const label = winners.length===4 ? "All four" : winners.length===0 ? "Nobody" : winners.join(" + ");
-  if(!prior.length) return mk("First of its kind",label,
-    `This exact split has never happened before`,"locked");
-  return mk("Seen this before",label,
-    `This split has happened ${prior.length} time${prior.length===1?"":"s"} · last in ${prior[0].y} week ${prior[0].w}`,
-    winners.length===4?"locked":winners.length===0?"skull":"chain");
+  const losers = PLAYERS.filter(n=>{const p=legs.find(x=>x.n===n); return p && p.r==="L";});
+  const freq = prior.length
+    ? `This result has occurred ${prior.length} time${prior.length===1?"":"s"}, most recently in Week ${prior[0].w}, ${prior[0].y}`
+    : `This result has never occurred before`;
+  const seg = ns => ns.length
+    ? ns.flatMap((n,i)=> i ? [{t:", ",c:null},{t:n,c:COLOR[n]}] : [{t:n,c:COLOR[n]}])
+    : [{t:"\u2014",c:null}];
+  const parts = [{t:"W - ",c:null}, ...seg(winners),
+                 {t:"   \u00b7   ",c:null},
+                 {t:"L - ",c:null}, ...seg(losers)];
+  const html = parts.map(p=>p.c?`<span style="color:${p.c}">${p.t}</span>`:p.t).join("");
+
+  const TITLES = {
+    0: ["Locks Down","pencils"],
+    1: ["One & Only","flag"],
+    2: ["Two & Two","chain"],
+    3: [`Mud on ${losers[0]||""}`,"coffee"],
+    4: ["We're Rich!","crown"]
+  };
+  const [title,ic] = TITLES[winners.length] || ["Seen this before","chain"];
+  if(winners.length===4) return mk(title,"Parlay cashed",freq,"crown");
+  if(winners.length===0) return mk(title,"4 Walri!",freq,"pencils");
+  const card = mk(title,html,freq,ic);
+  card.parts = parts;
+  return card;
 }
 
 /* ============================ ledger ============================ */
