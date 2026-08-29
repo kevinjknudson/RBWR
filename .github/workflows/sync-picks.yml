@@ -1,9 +1,21 @@
+# Save at .github/workflows/sync-picks.yml — replaces the existing file.
+# Also add enrich.py at the repo root.
+#
+# Downloads the sheet, then fills in any blank result / margin / opponent by
+# looking up the finished game. Anything already typed in the sheet is left
+# alone. If a game cannot be matched with confidence the row stays blank.
+
 name: Sync picks
 
 on:
   schedule:
     - cron: '23 * * * *'
   workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Report what would be filled without committing'
+        type: boolean
+        default: false
 
 permissions:
   contents: write
@@ -13,6 +25,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Check the arithmetic before trusting it
+        run: python3 enrich.py --self-test
 
       - name: Download the sheet
         env:
@@ -38,10 +57,24 @@ jobs:
           fi
           mv new.csv picks.csv
 
+      - name: Fill in finished games
+        continue-on-error: true
+        run: |
+          if [ "${{ inputs.dry_run }}" = "true" ]; then
+            python3 enrich.py picks.csv --dry-run
+          else
+            python3 enrich.py picks.csv
+          fi
+
       - name: Commit if changed
+        if: ${{ inputs.dry_run != true }}
         run: |
           git config user.name picks-bot
           git config user.email picks-bot@users.noreply.github.com
           git add picks.csv
-          git diff --staged --quiet || git commit -m "Sync picks from sheet"
-          git push
+          if git diff --staged --quiet; then
+            echo "No change since last sync."
+          else
+            git commit -m "Sync picks from sheet"
+            git push
+          fi
