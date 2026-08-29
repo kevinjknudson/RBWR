@@ -6,29 +6,32 @@ Runs inside the GitHub Action, straight after the sheet is downloaded.
 It only ever fills cells the sheet left blank — anything you typed wins.
 If it cannot find a game with confidence it leaves the row alone.
 
+Scores come from the CollegeFootballData API, which needs a free key:
+  1. get one at https://collegefootballdata.com/key
+  2. add it to the repo as a secret named CFBD_API_KEY
+
     python3 enrich.py picks.csv            # fill in and save
     python3 enrich.py picks.csv --dry-run  # report only, change nothing
     python3 enrich.py --self-test          # check the arithmetic, no network
 """
-import csv, sys, json, math, datetime, urllib.request, urllib.error
+import csv, sys, os, json, math, datetime, urllib.request, urllib.error
 
-SCOREBOARD = ("https://site.api.espn.com/apis/site/v2/sports/football/"
-              "college-football/scoreboard?dates={d}&limit=400&groups={g}")
-GROUPS = ["80", "81"]          # 80 = FBS, 81 = FCS
+API = "https://api.collegefootballdata.com/games"
 LOOKBACK_DAYS = 10             # a pick's game is within this many days of the run
 
 ALIAS = {
     "ga tech": "georgia tech", "gatech": "georgia tech", "okie state": "oklahoma state",
     "isu": "iowa state", "kstate": "kansas state", "mich state": "michigan state",
     "cincinatti": "cincinnati", "cincinnatti": "cincinnati", "fresno": "fresno state",
-    "fresno st.": "fresno state", "bama": "alabama", "unt": "north texas",
+    "fresno st": "fresno state", "bama": "alabama", "unt": "north texas",
     "wvu": "west virginia", "louisiana laf": "louisiana", "san jose st": "san jose state",
     "kent st": "kent state", "vandy": "vanderbilt", "uva": "virginia",
     "fsu": "florida state", "va tech": "virginia tech", "niu": "northern illinois",
     "asu": "arizona state", "ecu": "east carolina", "usf": "south florida",
     "ga state": "georgia state", "app state": "appalachian state", "unc": "north carolina",
-    "pitt": "pittsburgh", "ole miss": "mississippi", "uconn": "connecticut",
+    "pitt": "pittsburgh", "mississippi": "ole miss", "uconn": "connecticut",
     "umass": "massachusetts", "ndsu": "north dakota state", "sdsu": "south dakota state",
+    "southern california": "usc", "miami fl": "miami", "miami oh": "miami ohio",
 }
 
 def norm(s):
@@ -51,36 +54,51 @@ def verdict(c):
     if abs(c) < 1e-9: return "Push", "-"
     return ("Win" if c > 0 else "Loss"), str(math.ceil(abs(c) - 1e-9))
 
-def fetch(url):
-    req = urllib.request.Request(url, headers={"User-Agent": "rbwr-sync/1.0"})
-    with urllib.request.urlopen(req, timeout=25) as r:
-        return json.load(r)
+def fetch_year(year, key):
+    """Every game of a season from CollegeFootballData. One call, cached by caller."""
+    import urllib.parse
+    url = API + "?" + urllib.parse.urlencode({"year": year, "seasonType": "both"})
+    req = urllib.request.Request(url, headers={
+        "Authorization": "Bearer " + key,
+        "Accept": "application/json",
+        "User-Agent": "rbwr-sync/2.0",
+    })
+    try:
+        with urllib.request.urlopen(req, timeout=40) as r:
+            return json.load(r)
+    except urllib.error.HTTPError as e:
+        body = ""
+        try: body = e.read().decode()[:180]
+        except Exception: pass
+        print(f"  ! CFBD {year}: HTTP {e.code} {body}", file=sys.stderr)
+        if e.code in (401, 403):
+            print("    (check the CFBD_API_KEY secret)", file=sys.stderr)
+    except Exception as e:
+        print(f"  ! CFBD {year}: {e}", file=sys.stderr)
+    return []
 
-def completed_games(days):
-    """Every finished game in the window, as (teamA, teamB, ptsA, ptsB, date, homeName)."""
-    out, today = [], datetime.date.today()
-    for i in range(days + 1):
-        d = (today - datetime.timedelta(days=i)).strftime("%Y%m%d")
-        for g in GROUPS:
-            try:
-                data = fetch(SCOREBOARD.format(d=d, g=g))
-            except Exception as e:
-                print(f"  ! scoreboard {d} group {g}: {e}", file=sys.stderr)
+def completed_games(years, key):
+    """Finished games in the recent window, shaped like the matcher expects."""
+    cutoff = datetime.date.today() - datetime.timedelta(days=LOOKBACK_DAYS)
+    out = []
+    for y in sorted(years):
+        raw = fetch_year(y, key)
+        print(f"  CFBD {y}: {len(raw)} games returned")
+        for g in raw:
+            hp, ap = g.get("homePoints", g.get("home_points")), g.get("awayPoints", g.get("away_points"))
+            if hp is None or ap is None:
                 continue
-            for ev in data.get("events", []):
-                comp = (ev.get("competitions") or [{}])[0]
-                if not (comp.get("status", {}).get("type", {}) or {}).get("completed"):
-                    continue
-                cs = comp.get("competitors", [])
-                if len(cs) != 2:
-                    continue
-                try:
-                    rec = {c.get("homeAway"): (c["team"].get("location", ""),
-                                               c["team"].get("displayName", ""),
-                                               int(c["score"])) for c in cs}
-                    out.append({"home": rec["home"], "away": rec["away"], "date": d})
-                except Exception:
-                    continue
+            ds = (g.get("startDate") or g.get("start_date") or "")[:10]
+            try:
+                d = datetime.date.fromisoformat(ds)
+            except Exception:
+                continue
+            if d < cutoff:
+                continue
+            ht = g.get("homeTeam", g.get("home_team", ""))
+            at = g.get("awayTeam", g.get("away_team", ""))
+            out.append({"home": (ht, ht, int(hp)), "away": (at, at, int(ap)),
+                        "date": ds})
     return out
 
 def names_of(side):
@@ -103,7 +121,12 @@ def enrich(path, dry=False):
     if not todo:
         return 0
 
-    games = completed_games(LOOKBACK_DAYS)
+    key = os.environ.get("CFBD_API_KEY", "").strip()
+    if not key:
+        print("  ! CFBD_API_KEY is not set — nothing can be looked up", file=sys.stderr)
+        return 0
+    years = {int(r["year"]) for r in todo if str(r.get("year", "")).strip().isdigit()}
+    games = completed_games(years, key)
     print(f"{len(games)} completed games in the last {LOOKBACK_DAYS} days")
 
     filled = 0
