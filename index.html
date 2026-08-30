@@ -412,7 +412,7 @@ input[type=search]:focus{outline:2px solid var(--bone);outline-offset:1px}
   <div class="wrap">
     <div class="topbar">
       <b>RBWR</b>
-      <span id="stamp">Weekly parlay ledger</span><span style="color:var(--line2)">build 32</span>
+      <span id="stamp">Weekly parlay ledger</span><span style="color:var(--line2)">build 33</span>
     </div>
   </div>
   <div class="wrap hero">
@@ -1633,8 +1633,14 @@ async function paintWeek(legs,y,w){
     x.font=`12px "DM Mono",ui-monospace,monospace`;
     x.fillStyle=ink3; x.fillText(String(nug.lab).toUpperCase(),W/2,ny+4);
     ny+=30;
-    x.font=`500 30px "Big Shoulders Display",Impact,sans-serif`;
-    x.fillStyle=bone; x.fillText(String(nug.val).toUpperCase(),W/2,ny);
+    const headline=String(nug.val).replace(/<[^>]+>/g,"").toUpperCase();
+    let hs=30;                                   // shrink until it fits the card
+    while(hs>15){
+      x.font=`500 ${hs}px "Big Shoulders Display",Impact,sans-serif`;
+      if(x.measureText(headline).width<=W-PAD*2) break;
+      hs-=1;
+    }
+    x.fillStyle=bone; x.fillText(headline,W/2,ny);
     ny+=26;
     x.font=`14px "DM Mono",ui-monospace,monospace`;
     x.fillStyle=ink2;
