@@ -367,7 +367,7 @@ year,week,name,type,team,Opponent,points,result,diff
 2026,0,AJ,Favorite,USC,,38.5,,
 2026,0,Kev,Favorite,North Dakota State,,6.5,,
 2026,0,Adam,Favorite,UNLV,,4,,
-2026,1,Ross,Favorite,SMU,,3,,
+2026,1,Ross,Favorite,SMU,,3,Push,-
 2026,1,AJ,Favorite,Miami,,23.5,Win,16
 2026,1,Kev,Favorite,Alabama,,27.5,Win,11
 2026,1,Adam,Favorite,Okie State,,13.5,Loss,28
