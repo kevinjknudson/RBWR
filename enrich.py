@@ -116,8 +116,12 @@ def enrich(path, dry=False):
     if not rows:
         print("no rows"); return 0
     cols = list(rows[0].keys())
-    todo = [r for r in rows if not (r.get("result") or "").strip()]
-    print(f"{len(rows)} rows · {len(todo)} awaiting a result")
+    def blank(r, k): return not (r.get(k) or "").strip()
+    todo = [r for r in rows
+            if blank(r, "result") or blank(r, "diff")
+            or ("opponent" in cols and blank(r, "opponent")
+                and (r.get("type") or "") not in ("Over", "Under"))]
+    print(f"{len(rows)} rows · {len(todo)} with something missing")
     if not todo:
         return 0
 
@@ -155,12 +159,18 @@ def enrich(path, dry=False):
         res, diff = verdict(c)
         if res is None:
             continue
-        r["result"] = res
-        r["diff"] = diff
-        if "opponent" in cols and not (r.get("opponent") or "").strip():
-            r["opponent"] = opp
+        wrote = []
+        if blank(r, "result"):
+            r["result"] = res; wrote.append("result")
+        if blank(r, "diff"):
+            r["diff"] = diff; wrote.append("margin")
+        if "opponent" in cols and blank(r, "opponent") and opp:
+            r["opponent"] = opp; wrote.append("opponent")
+        if not wrote:
+            continue
         filled += 1
-        print(f"  ✓ {r['name']:5s} {raw:26s} {bet:9s} {pts:>6} → {res:5s} by {diff:3s} {opp}")
+        print(f"  ✓ {r['name']:5s} {raw:26s} {bet:9s} {pts:>6} → "
+              f"{res:5s} by {diff:3s} {opp}   [{', '.join(wrote)}]")
 
     if filled and not dry:
         with open(path, "w", newline="") as f:

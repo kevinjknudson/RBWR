@@ -412,7 +412,7 @@ input[type=search]:focus{outline:2px solid var(--bone);outline-offset:1px}
   <div class="wrap">
     <div class="topbar">
       <b>RBWR</b>
-      <span id="stamp">Weekly parlay ledger</span><span style="color:var(--line2)">build 33</span>
+      <span id="stamp">Weekly parlay ledger</span><span style="color:var(--line2)">build 34</span>
     </div>
   </div>
   <div class="wrap hero">
@@ -736,7 +736,7 @@ function parseCSV(text){
     const d=parseInt(c[ix("diff")],10);
     const oi=ix("opponent");
     out.push([y,w,nm,c[ix("type")]||"",tm.join(" / "),
-      parseFloat(c[ix("points")])||0,res,isNaN(d)?0:d,tm, oi>=0?(c[oi]||""):""]);
+      parseFloat(c[ix("points")])||0,res,isNaN(d)?null:d,tm, oi>=0?(c[oi]||""):""]);
   }
   return out;
 }
@@ -767,6 +767,7 @@ function sel(sc){
 
 const isDecided = p => p.r==="W" || p.r==="L";
 const isPending = p => p.r==="N";
+const hasD = p => typeof p.d === "number" && !isNaN(p.d);
 const weekDone = l => l.length===4 && l.every(p=>!isPending(p));
 const SEASON = new Date().getFullYear();
 function pct(w,l){const n=w+l;return n? w/n : 0;}
@@ -847,7 +848,7 @@ function renderWeekCard(){
       return `<div class="wleg ${p.r==="W"?"":"lost"}" style="border-color:${COLOR[n]}">
         <span class="who" style="color:${COLOR[n]}">${n}</span>
         <span class="what">${p.team} ${num}
-        <small>${p.r==="W"?"covered":p.r==="P"?"push":"lost"} by ${p.d}</small></span></div>`;
+        <small>${p.r==="W"?"covered":p.r==="P"?"push":"lost"}${hasD(p)?" by "+p.d:""}</small></span></div>`;
     }).join("") + `</div>`;
   const wn=weekNugget(legs,y,w);
   if(wn) el.innerHTML += `<div class="odds weeknug">${cardHTML(wn)}</div>`;
@@ -934,8 +935,8 @@ function renderLast(){
     const cls = p.r==="W" ? "won" : p.r==="P" ? "pushed" : isPending(p) ? "pending" : "lost";
     const sign = p.t==="Favorite" ? "−" : p.t==="Dog" ? "+" : p.t==="Over" ? "o" : "u";
     const word = p.r==="W" ? "Win" : p.r==="P" ? "Push" : isPending(p) ? "Pending" : "Loss";
-    const verdict = p.r==="W" ? "Covered by "+p.d : p.r==="P" ? "No action"
-                  : isPending(p) ? "Not played yet" : "Missed by "+p.d;
+    const verdict = p.r==="W" ? (hasD(p)?"Covered by "+p.d:"Covered") : p.r==="P" ? "No action"
+                  : isPending(p) ? "Not played yet" : (hasD(p)?"Missed by "+p.d:"Missed");
     return `<div class="mugcard ${cls}" style="--c:${COLOR[n]}">
       ${mugHTML(n,p.r,ly,lw)}
       <div><div class="who">${n} <span class="wl">— ${word}</span></div>
@@ -950,15 +951,20 @@ function renderLast(){
 
 /* ============================ standings ============================ */
 function streaks(list){
-  let best=0,worst=0,run=0;
+  let best=0,worst=0,run=0,cur=0;
   const chron=[...list].sort((a,b)=>a.y-b.y||a.w-b.w);
   for(const p of chron){
-    if(p.r==="P") continue;
+    if(isPending(p)) continue;                 // not played, not a result
+    if(p.r==="P"){                             // a push rescues a losing run,
+      if(run<0) run=0;                         // and leaves a winning one alone
+      cur=run; continue;
+    }
     if(p.r==="W"){ run = run>0? run+1 : 1; } else { run = run<0? run-1 : -1; }
     if(run>best) best=run;
     if(run<worst) worst=run;
+    cur=run;
   }
-  return {best, worst:Math.abs(worst), cur:run};
+  return {best, worst:Math.abs(worst), cur};
 }
 function orderedPlayers(){
   return [...PLAYERS].sort((a,b)=>{
@@ -1153,9 +1159,9 @@ function renderMats(){
   const mSide = S.brk.marginSide;
   const isM = p => mSide==="all" || p.t===mSide;
   const swing = [
-    ["Within 6",   l=>l.filter(p=>isM(p) && p.d<=6)],
-    ["7 – 13",     l=>l.filter(p=>isM(p) && p.d>6 && p.d<14)],
-    ["14+",        l=>l.filter(p=>isM(p) && p.d>=14)],
+    ["Within 6",   l=>l.filter(p=>isM(p) && hasD(p) && p.d<=6)],
+    ["7 – 13",     l=>l.filter(p=>isM(p) && hasD(p) && p.d>6 && p.d<14)],
+    ["14+",        l=>l.filter(p=>isM(p) && hasD(p) && p.d>=14)],
   ];
   document.getElementById("mats").innerHTML =
     matrix("Bet type", byType, "") +
@@ -1293,7 +1299,7 @@ function weekRows(){
   for(const p of PICKS){ const k=p.y+"-"+p.w; (wk.get(k)||wk.set(k,[]).get(k)).push(p); }
   return [...wk.entries()].filter(([k,l])=>weekDone(l)).map(([k,l])=>{
     const lost=l.filter(p=>p.r==="L");
-    return {k,l,lost,total:l.reduce((a,p)=>a+p.d,0),lostPts:lost.reduce((a,p)=>a+p.d,0)};
+    return {k,l,lost,total:l.reduce((a,p)=>a+(p.d||0),0),lostPts:lost.reduce((a,p)=>a+(p.d||0),0)};
   });
 }
 function rec(l){ const w=l.filter(p=>p.r==="W").length; return [w,l.length-w]; }
@@ -1326,11 +1332,11 @@ function buildCards(who){
     if(near){const [y,n]=near.k.split("-");
       add("Heartbreaker",`${near.lostPts} point${near.lostPts===1?"":"s"}`,`Amount the nearest non-winning parlay was from cashing. ${near.lost.map(p=>p.n).join(", ")} L. Wk${n} - ${y}`,null,"heartbreak");}
   } else {
-    const big=[...list].filter(p=>p.r==="W").sort((a,b)=>b.d-a.d)[0];
+    const big=[...list].filter(p=>p.r==="W"&&hasD(p)).sort((a,b)=>b.d-a.d)[0];
     if(big) add("Never in doubt",big.team,`Covered the # by ${big.d} points. Wk${big.w} - ${big.y}`,big.tm[0],null);
-    const bad=[...list].filter(p=>p.r==="L").sort((a,b)=>b.d-a.d)[0];
+    const bad=[...list].filter(p=>p.r==="L"&&hasD(p)).sort((a,b)=>b.d-a.d)[0];
     if(bad) add("Dead on arrival",bad.team,`Missed the number by ${bad.d} points. Wk${bad.w} - ${bad.y}`,bad.tm[0],null);
-    const heart=[...list].filter(p=>p.r==="L").sort((a,b)=>a.d-b.d)[0];
+    const heart=[...list].filter(p=>p.r==="L"&&hasD(p)).sort((a,b)=>a.d-b.d)[0];
     if(heart) add("Heartbreaker",heart.team,`Missed the number by ${heart.d} point${heart.d===1?"":"s"}. Wk${heart.w} - ${heart.y}`,heart.tm[0],null);
   }
 
@@ -1404,8 +1410,8 @@ function buildCards(who){
     add("Lucky number",`${ln[0]}`,`Most commonly played number · ${at.length} bets · ${rec(at)[0]}\u2013${rec(at)[1]}`,null,"dice"); }
 
   // flip
-  const fW=list.filter(p=>p.r==="L"&&p.d<=6).length + list.filter(p=>p.r==="W"&&p.d>6).length;
-  const fL=list.filter(p=>p.r==="W"&&p.d<=6).length + list.filter(p=>p.r==="L"&&p.d>6).length;
+  const fW=list.filter(p=>p.r==="L"&&hasD(p)&&p.d<=6).length + list.filter(p=>p.r==="W"&&(!hasD(p)||p.d>6)).length;
+  const fL=list.filter(p=>p.r==="W"&&hasD(p)&&p.d<=6).length + list.filter(p=>p.r==="L"&&(!hasD(p)||p.d>6)).length;
   const dl=fW-rec(list)[0];
   add("Game of inches",`${dl>=0?"+":"\u2212"}${Math.abs(dl)} win${Math.abs(dl)===1?"":"s"}`,
     `Change in win count if every one-score game flipped outcomes · ${fW}\u2013${fL}`,null,"ruler");
@@ -1440,7 +1446,7 @@ function buildCards(who){
       `Matched your result ${Math.round(sh[1]/list.length*100)}% of the time · ${sh[1]} of ${list.length} weeks`,null,"chain");
     // picked once, lost, never again
     const once=[...counts.entries()].filter(([t,v])=>v[0]===1&&v[1]===0).map(([t])=>t);
-    const od=list.filter(p=>p.r==="L"&&p.tm.length===1&&once.includes(p.tm[0]))
+    const od=list.filter(p=>p.r==="L"&&hasD(p)&&p.tm.length===1&&once.includes(p.tm[0]))
                  .sort((a,b)=>b.d-a.d)[0];
     if(od) add("One and done",od.team,`Picked once, missed the number by ${od.d}, never again`,od.tm[0],"flag");
   }
@@ -1616,8 +1622,8 @@ async function paintWeek(legs,y,w){
     x.fillStyle=ink; x.fillText(`${p.team} ${sign}${p.pts}`,tx,cy+10);
     x.font=`13px "DM Mono",ui-monospace,monospace`;
     x.fillStyle=ink3;
-    x.fillText(p.r==="W"?`covered by ${p.d}`:p.r==="P"?"no action":
-               isPending(p)?"not played yet":`missed by ${p.d}`,tx,cy+32);
+    x.fillText(p.r==="W"?(hasD(p)?`covered by ${p.d}`:"covered"):p.r==="P"?"no action":
+               isPending(p)?"not played yet":(hasD(p)?`missed by ${p.d}`:"missed"),tx,cy+32);
   });
 
   const outY = 118 + order.length*ROW + 30;
@@ -1814,7 +1820,7 @@ function renderLog(){
       <td>${sign}${p.pts}</td>
       <td class="opp">${oppOf(p)? oppOf(p)[0] : "N/A"}</td>
       <td class="res ${p.r}">${p.r==="W"?"Win":p.r==="P"?"Push":isPending(p)?"Pending":"Loss"}</td>
-      <td>${isDecided(p)?p.d:"—"}</td></tr>`;
+      <td>${hasD(p)?p.d:"—"}</td></tr>`;
   }
   document.getElementById("logtable").innerHTML=h+`</tbody>`;
   document.getElementById("logcount").textContent=`${rows.length} picks · showing ${shown.length}`;
