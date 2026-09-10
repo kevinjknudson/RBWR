@@ -17,7 +17,8 @@ Scores come from the CollegeFootballData API, which needs a free key:
 import csv, sys, os, json, math, datetime, urllib.request, urllib.error
 
 API = "https://api.collegefootballdata.com/games"
-LOOKBACK_DAYS = 10             # a pick's game is within this many days of the run
+# Games are found by season and week, not by how recently they were played,
+# so a row left blank for a month still gets filled in.
 
 ALIAS = {
     "ga tech": "georgia tech", "gatech": "georgia tech", "okie state": "oklahoma state",
@@ -78,49 +79,69 @@ def fetch_year(year, key):
     return []
 
 def completed_games(years, key):
-    """Finished games in the recent window, shaped like the matcher expects."""
-    cutoff = datetime.date.today() - datetime.timedelta(days=LOOKBACK_DAYS)
+    """Every finished game of the seasons in play, with its week."""
     out = []
     for y in sorted(years):
         raw = fetch_year(y, key)
         print(f"  CFBD {y}: {len(raw)} games returned")
+        done = 0
         for g in raw:
-            hp, ap = g.get("homePoints", g.get("home_points")), g.get("awayPoints", g.get("away_points"))
+            hp = g.get("homePoints", g.get("home_points"))
+            ap = g.get("awayPoints", g.get("away_points"))
             if hp is None or ap is None:
-                continue
-            ds = (g.get("startDate") or g.get("start_date") or "")[:10]
-            try:
-                d = datetime.date.fromisoformat(ds)
-            except Exception:
-                continue
-            if d < cutoff:
                 continue
             ht = g.get("homeTeam", g.get("home_team", ""))
             at = g.get("awayTeam", g.get("away_team", ""))
+            wk = g.get("week")
             out.append({"home": (ht, ht, int(hp)), "away": (at, at, int(ap)),
-                        "date": ds})
+                        "year": y, "week": wk if isinstance(wk, int) else None})
+            done += 1
+        print(f"  CFBD {y}: {done} of them finished")
     return out
 
 def names_of(side):
     return {norm(side[0]), norm(side[1])}
 
-def find_game(games, teams):
-    """A game involving every named team. Exactly one match, or nothing."""
+def find_game(games, teams, year=None, week=None):
+    """A finished game involving every named team. The week breaks any tie."""
     want = {norm(t) for t in teams}
-    hits = [g for g in games
-            if all(any(w in names_of(g[s]) for s in ("home", "away")) for w in want)]
-    return hits[0] if len(hits) == 1 else None
+    cand = [g for g in games
+            if (year is None or g["year"] == year)
+            and all(any(w in names_of(g[s]) for s in ("home", "away")) for w in want)]
+    if not cand:
+        return None, "no game found"
+    if len(cand) == 1:
+        return cand[0], ""
+    if week is not None:
+        exact = [g for g in cand if g["week"] == week]
+        if len(exact) == 1:
+            return exact[0], ""
+        near = sorted(cand, key=lambda g: abs((g["week"] if g["week"] is not None else 99) - week))
+        d0 = abs((near[0]["week"] if near[0]["week"] is not None else 99) - week)
+        d1 = abs((near[1]["week"] if near[1]["week"] is not None else 99) - week)
+        if d0 < d1:
+            return near[0], ""
+    return None, f"{len(cand)} games match, week did not separate them"
 
 def enrich(path, dry=False):
     rows = list(csv.DictReader(open(path, newline="")))
     if not rows:
         print("no rows"); return 0
     cols = list(rows[0].keys())
-    def blank(r, k): return not (r.get(k) or "").strip()
+    # the sheet's headers may be capitalised or reordered
+    def col(name):
+        for c in cols:
+            if c.strip().lower() == name:
+                return c
+        return None
+    C_RESULT, C_DIFF, C_OPP = col("result"), col("diff"), col("opponent")
+    C_TYPE, C_TEAM, C_PTS = col("type"), col("team"), col("points")
+    C_YEAR, C_WEEK, C_NAME = col("year"), col("week"), col("name")
+    def blank(r, k): return bool(k) and not (r.get(k) or "").strip()
     todo = [r for r in rows
-            if blank(r, "result") or blank(r, "diff")
-            or ("opponent" in cols and blank(r, "opponent")
-                and (r.get("type") or "") not in ("Over", "Under"))]
+            if blank(r, C_RESULT) or blank(r, C_DIFF)
+            or (C_OPP and blank(r, C_OPP)
+                and (r.get(C_TYPE) or "") not in ("Over", "Under"))]
     print(f"{len(rows)} rows · {len(todo)} with something missing")
     if not todo:
         return 0
@@ -129,21 +150,23 @@ def enrich(path, dry=False):
     if not key:
         print("  ! CFBD_API_KEY is not set — nothing can be looked up", file=sys.stderr)
         return 0
-    years = {int(r["year"]) for r in todo if str(r.get("year", "")).strip().isdigit()}
+    years = {int(r[C_YEAR]) for r in todo if str(r.get(C_YEAR, "")).strip().isdigit()}
     games = completed_games(years, key)
-    print(f"{len(games)} completed games in the last {LOOKBACK_DAYS} days")
+    print(f"{len(games)} finished games to match against")
 
     filled = 0
     for r in todo:
-        bet = (r.get("type") or "").strip()
-        raw = (r.get("team") or "").strip()
+        bet = (r.get(C_TYPE) or "").strip()
+        raw = (r.get(C_TEAM) or "").strip()
         teams = [t.strip() for t in raw.split("/")] if "/" in raw else [raw]
-        g = find_game(games, teams)
+        yr = int(r[C_YEAR]) if str(r.get(C_YEAR, "")).strip().isdigit() else None
+        wk = int(r[C_WEEK]) if str(r.get(C_WEEK, "")).strip().isdigit() else None
+        g, why = find_game(games, teams, yr, wk)
         if not g:
-            print(f"  – {r['name']:5s} {raw:26s} no single match, left blank")
+            print(f"  – {r[C_NAME]:5s} {raw:26s} {why}, left blank")
             continue
         try:
-            pts = float(r["points"])
+            pts = float(r[C_PTS])
         except Exception:
             continue
         (hloc, hname, hp), (aloc, aname, ap) = g["home"], g["away"]
@@ -160,16 +183,16 @@ def enrich(path, dry=False):
         if res is None:
             continue
         wrote = []
-        if blank(r, "result"):
-            r["result"] = res; wrote.append("result")
-        if blank(r, "diff"):
-            r["diff"] = diff; wrote.append("margin")
-        if "opponent" in cols and blank(r, "opponent") and opp:
-            r["opponent"] = opp; wrote.append("opponent")
+        if blank(r, C_RESULT):
+            r[C_RESULT] = res; wrote.append("result")
+        if blank(r, C_DIFF):
+            r[C_DIFF] = diff; wrote.append("margin")
+        if C_OPP and blank(r, C_OPP) and opp:
+            r[C_OPP] = opp; wrote.append("opponent")
         if not wrote:
             continue
         filled += 1
-        print(f"  ✓ {r['name']:5s} {raw:26s} {bet:9s} {pts:>6} → "
+        print(f"  ✓ {r[C_NAME]:5s} {raw:26s} {bet:9s} {pts:>6} → "
               f"{res:5s} by {diff:3s} {opp}   [{', '.join(wrote)}]")
 
     if filled and not dry:
