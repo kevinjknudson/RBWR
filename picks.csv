@@ -104,7 +104,7 @@ year,week,name,type,team,Opponent,points,result,diff
 2021,11,Kev,Favorite,Okie State,,3.5,Win,18
 2021,11,AJ,Under,Wake Forest/UNC,,76.5,Loss,37
 2021,12,Adam,Over,Coastal Carolina/GA State,,57,Win,25
-2021,12,Ross,Dog,Minnesota,,5,Push,
+2021,12,Ross,Dog,Minnesota,,5,Push,57
 2021,12,Kev,Dog,New Mexico State,,51.5,Loss,5
 2021,12,AJ,Favorite,Oklahoma,,5.5,Loss,19
 2021,13,AJ,Favorite,Alabama,,20.5,Loss,14
@@ -334,7 +334,7 @@ year,week,name,type,team,Opponent,points,result,diff
 2025,8,Ross,Dog,Purdue ,,3,Loss,16
 2025,8,Adam,Over,GaTech/Duke,,60,Loss,15
 2025,8,AJ,Over,Army/Tulane,,45,Loss,4
-2025,8,Kev,Dog,USC,,10,Push,
+2025,8,Kev,Dog,USC,,10,Push,49
 2025,9,Adam,Favorite,Iowa State,,2.5,Loss,17
 2025,9,AJ,Favorite,Miami,,29,Win,6
 2025,9,Ross,Dog,Tulsa,,5.5,Win,5
@@ -364,10 +364,10 @@ year,week,name,type,team,Opponent,points,result,diff
 2025,15,Kev,Under,Bama/Georgia,,49,Win,14
 2025,15,Adam,Over,Indiana/Ohio State,,47,Loss,24
 2026,0,Ross,Under,TCU/UNC,,47,Win,
-2026,0,AJ,Favorite,USC,,38.5,Loss,
-2026,0,Kev,Favorite,North Dakota State,,6.5,Win,
-2026,0,Adam,Favorite,UNLV,,4,Loss,
-2026,1,Ross,Favorite,SMU,,3,Push,
-2026,1,AJ,Favorite,Miami,,23.5,Win,
-2026,1,Kev,Favorite,Alabama,,27.5,Win,
-2026,1,Adam,Favorite,Okie State,,13.5,Loss,
+2026,0,AJ,Favorite,USC,,38.5,Loss,1
+2026,0,Kev,Favorite,North Dakota State,,6.5,Win,32
+2026,0,Adam,Favorite,UNLV,,4,Loss,11
+2026,1,Ross,Favorite,SMU,,3,Push,-
+2026,1,AJ,Favorite,Miami,,23.5,Win,16
+2026,1,Kev,Favorite,Alabama,,27.5,Win,11
+2026,1,Adam,Favorite,Okie State,,13.5,Loss,28
