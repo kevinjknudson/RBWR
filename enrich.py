@@ -102,26 +102,70 @@ def completed_games(years, key):
 def names_of(side):
     return {norm(side[0]), norm(side[1])}
 
-def find_game(games, teams, year=None, week=None):
-    """A finished game involving every named team. The week breaks any tie."""
+def find_game(games, teams, year, week, offset=0):
+    """A finished game involving every named team, IN THAT WEEK.
+
+    The week must match. A team having exactly one finished game is not a
+    reason to assume it is the one we want — that is how an unplayed pick
+    ends up wearing last week's result.
+    """
     want = {norm(t) for t in teams}
-    cand = [g for g in games
-            if (year is None or g["year"] == year)
-            and all(any(w in names_of(g[s]) for s in ("home", "away")) for w in want)]
-    if not cand:
-        return None, "no game found"
-    if len(cand) == 1:
-        return cand[0], ""
-    if week is not None:
-        exact = [g for g in cand if g["week"] == week]
-        if len(exact) == 1:
-            return exact[0], ""
-        near = sorted(cand, key=lambda g: abs((g["week"] if g["week"] is not None else 99) - week))
-        d0 = abs((near[0]["week"] if near[0]["week"] is not None else 99) - week)
-        d1 = abs((near[1]["week"] if near[1]["week"] is not None else 99) - week)
-        if d0 < d1:
-            return near[0], ""
-    return None, f"{len(cand)} games match, week did not separate them"
+    involving = [g for g in games
+                 if g["year"] == year
+                 and all(any(w in names_of(g[s]) for s in ("home", "away")) for w in want)]
+    if not involving:
+        return None, "no finished game for that team this season"
+    if week is None:
+        return (involving[0], "") if len(involving) == 1 else (None, "no week to match on")
+    target = week + offset
+    exact = [g for g in involving if g["week"] == target]
+    if len(exact) == 1:
+        return exact[0], ""
+    if len(exact) > 1:
+        return None, f"{len(exact)} games in week {target}"
+    return None, f"no finished game in week {target} yet"
+
+def season_offset(rows, games, year, C):
+    """Does the sheet's week numbering line up with the feed's?
+
+    Checked against rows whose result is already known, so a season that
+    counts weeks differently still backfills correctly.
+    """
+    known = [r for r in rows
+             if str(r.get(C["year"], "")).strip() == str(year)
+             and (r.get(C["result"]) or "").strip()
+             and str(r.get(C["week"], "")).strip().lstrip("-").isdigit()]
+    if len(known) < 4:
+        return 0
+    best, best_hits = 0, -1
+    for off in (0, 1, -1):
+        hits = 0
+        for r in known:
+            raw = (r.get(C["team"]) or "").strip()
+            teams = [t.strip() for t in raw.split("/")] if "/" in raw else [raw]
+            g, _ = find_game(games, teams, year, int(r[C["week"]]), off)
+            if not g:
+                continue
+            try:
+                pts = float(r[C["points"]])
+            except Exception:
+                continue
+            bet = (r.get(C["type"]) or "").strip()
+            (hl, hn, hp), (al, an, ap) = g["home"], g["away"]
+            if bet in ("Over", "Under"):
+                c = cover(bet, pts, total=hp + ap)
+            else:
+                home = norm(teams[0]) in names_of(g["home"])
+                c = cover(bet, pts, margin=(hp - ap) if home else (ap - hp))
+            res, _ = verdict(c)
+            if res and res[0].upper() == (r.get(C["result"]) or " ")[0].upper():
+                hits += 1
+        if hits > best_hits:
+            best, best_hits = off, hits
+    if best_hits >= 0:
+        print(f"  {year}: week numbering offset {best:+d} "
+              f"({best_hits}/{len(known)} known results agree)")
+    return best
 
 def enrich(path, dry=False):
     rows = list(csv.DictReader(open(path, newline="")))
@@ -153,6 +197,9 @@ def enrich(path, dry=False):
     years = {int(r[C_YEAR]) for r in todo if str(r.get(C_YEAR, "")).strip().isdigit()}
     games = completed_games(years, key)
     print(f"{len(games)} finished games to match against")
+    C = {"year": C_YEAR, "week": C_WEEK, "team": C_TEAM, "type": C_TYPE,
+         "points": C_PTS, "result": C_RESULT}
+    offsets = {y: season_offset(rows, games, y, C) for y in years}
 
     filled = 0
     for r in todo:
@@ -161,7 +208,7 @@ def enrich(path, dry=False):
         teams = [t.strip() for t in raw.split("/")] if "/" in raw else [raw]
         yr = int(r[C_YEAR]) if str(r.get(C_YEAR, "")).strip().isdigit() else None
         wk = int(r[C_WEEK]) if str(r.get(C_WEEK, "")).strip().isdigit() else None
-        g, why = find_game(games, teams, yr, wk)
+        g, why = find_game(games, teams, yr, wk, offsets.get(yr, 0))
         if not g:
             print(f"  – {r[C_NAME]:5s} {raw:26s} {why}, left blank")
             continue
