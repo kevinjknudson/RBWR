@@ -241,137 +241,137 @@ year,week,name,type,team,Opponent,points,result,diff
 2023,14,Kev,Dog,UNLV,vs Boise State,2.5,Loss,22
 2024,1,AJ,Favorite,Michigan,,21,Loss,1
 2024,1,Kev,Over,Pitt/Kent St,,55.5,Win,24
-2024,1,Ross,Dog,Stanford,vs TCU,9,Win,2
+2024,1,Ross,Dog,Stanford,,9,Win,2
 2024,1,Adam,Favorite,VA Tech,,13.5,Loss,21
-2024,2,Ross,Favorite,Kansas,at Illinois,5.5,Loss,12
-2024,2,Kev,Favorite,Navy,vs Temple,12.5,Win,15
-2024,2,AJ,Dog,Syracuse,vs Georgia Tech,2.5,Win,6
-2024,2,Adam,Favorite,Utah,vs Baylor,14.5,Loss,4
-2024,3,Ross,Favorite,Alabama,at Wisconsin,17.5,Win,15
-2024,3,Kev,Dog,Boston College,at Missouri,16.5,Win,11
-2024,3,Adam,Favorite,Indiana,at UCLA,3,Win,26
-2024,3,AJ,Favorite,Minnesota,vs Nevada,17.5,Win,10
+2024,2,Ross,Favorite,Kansas,,5.5,Loss,12
+2024,2,Kev,Favorite,Navy,,12.5,Win,15
+2024,2,AJ,Dog,Syracuse,,2.5,Win,6
+2024,2,Adam,Favorite,Utah,,14.5,Loss,4
+2024,3,Ross,Favorite,Alabama,,17.5,Win,15
+2024,3,Kev,Dog,Boston College,,16.5,Win,11
+2024,3,Adam,Favorite,Indiana,,3,Win,26
+2024,3,AJ,Favorite,Minnesota,,17.5,Win,10
 2024,4,AJ,Under,Florida/Mississippi State,,58.5,Loss,15
-2024,4,Adam,Dog,Navy,vs Memphis,9,Win,21
-2024,4,Kev,Favorite,Okie State,vs Utah,2.5,Loss,6
-2024,4,Ross,Favorite,Tennessee,at Oklahoma,6.5,Win,4
+2024,4,Adam,Dog,Navy,,9,Win,21
+2024,4,Kev,Favorite,Okie State,,2.5,Loss,6
+2024,4,Ross,Favorite,Tennessee,,6.5,Win,4
 2024,5,Kev,Over,Fordham/Monmouth,,63.5,Win,21
-2024,5,Ross,Favorite,Ohio State,at Michigan State,23.5,Win,8
-2024,5,Adam,Favorite,Ole Miss,vs Kentucky,15.5,Loss,19
-2024,5,AJ,Favorite,UConn,vs Buffalo,5.5,Win,39
+2024,5,Ross,Favorite,Ohio State,,23.5,Win,8
+2024,5,Adam,Favorite,Ole Miss,,15.5,Loss,19
+2024,5,AJ,Favorite,UConn,,5.5,Win,39
 2024,6,AJ,Over,Florida/UCF,,62,Loss,25
-2024,6,Kev,Dog,Minnesota,vs USC,9,Win,16
-2024,6,Ross,Favorite,Ohio State,vs Iowa,19.5,Win,9
+2024,6,Kev,Dog,Minnesota,,9,Win,16
+2024,6,Ross,Favorite,Ohio State,,19.5,Win,9
 2024,6,Adam,Over,TCU/Houston,,51,Loss,2
-2024,7,AJ,Dog,Cincinnatti,at UCF,2.5,Win,9
-2024,7,Adam,Favorite,Minnesota,at UCLA,3.5,Win,1
-2024,7,Ross,Favorite,Ohio State,at Oregon,3,Loss,4
-2024,7,Kev,Favorite,Pitt,vs California,2.5,Loss,1
-2024,8,Ross,Favorite,Iowa,at Michigan State,4,Loss,16
-2024,8,AJ,Dog,Maryland,vs USC,7.5,Win,9
+2024,7,AJ,Dog,Cincinnatti,,2.5,Win,9
+2024,7,Adam,Favorite,Minnesota,,3.5,Win,1
+2024,7,Ross,Favorite,Ohio State,,3,Loss,4
+2024,7,Kev,Favorite,Pitt,,2.5,Loss,1
+2024,8,Ross,Favorite,Iowa,,4,Loss,16
+2024,8,AJ,Dog,Maryland,,7.5,Win,9
 2024,8,Kev,Under,Oregon/Purdue,,60.5,Win,26
-2024,8,Adam,Favorite,Wisconsin,at Northwestern,7.5,Win,13
-2024,9,Adam,Over,Texas/Vandy,,51,Push,-
-2024,9,AJ,Favorite,Notre Dame,at Navy,14,Win,23
-2024,9,Kev,Favorite,Michigan,vs Michigan State,4.5,Win,3
-2024,9,Ross,Favorite,Boise State,at UNLV,3.5,Win,2
-2024,10,Adam,Dog,Florida,at Georgia,14.5,Win,1
-2024,10,AJ,Favorite,Minnesota,at Illinois,3,Win,5
-2024,10,Kev,Favorite,Navy,at Rice,10.5,Loss,25
+2024,8,Adam,Favorite,Wisconsin,,7.5,Win,13
+2024,9,Adam,Over,Texas/Vandy,,51,Push,
+2024,9,AJ,Favorite,Notre Dame,,14,Win,23
+2024,9,Kev,Favorite,Michigan,,4.5,Win,3
+2024,9,Ross,Favorite,Boise State,,3.5,Win,2
+2024,10,Adam,Dog,Florida,,14.5,Win,1
+2024,10,AJ,Favorite,Minnesota,,3,Win,5
+2024,10,Kev,Favorite,Navy,,10.5,Loss,25
 2024,10,Ross,Over,Wisconsin/Iowa,,41.5,Win,11
 2024,11,Adam,Over,Vandy/South Carolina,,45.5,Loss,11
-2024,11,AJ,Favorite,TCU,vs Oklahoma State,10.5,Win,15
+2024,11,AJ,Favorite,TCU,,10.5,Win,15
 2024,11,Kev,Under,Army/North Texas,,62.5,Win,46
-2024,11,Ross,Favorite,Oklahoma,at Missouri,3.5,Loss,11
+2024,11,Ross,Favorite,Oklahoma,,3.5,Loss,11
 2024,12,Adam,Under,Boise State/San Jose State,,61.5,Loss,2
-2024,12,AJ,Dog,Michigan State,at Illinois,2.5,Loss,20
+2024,12,AJ,Dog,Michigan State,,2.5,Loss,20
 2024,12,Kev,Over,LSU/Florida,,55.5,Loss,13
-2024,12,Ross,Favorite,Oregon,at Wisconsin,13.5,Loss,11
-2024,13,AJ,Favorite,Ohio State,vs Indiana,10.5,Win,13
-2024,13,Adam,Favorite,Alabama,at Oklahoma,13.5,Loss,35
-2024,13,Kev,Favorite,Colorado,at Kansas,2.5,Loss,19
-2024,13,Ross,Favorite,Notre Dame,vs Army,14,Win,21
-2024,14,AJ,Dog,Baylor,vs Kansas,1.5,Win,30
-2024,14,Adam,Dog,Syracuse,vs Miami,11,Win,15
-2024,14,Kev,Favorite,Arizona State,at Arizona,8.5,Win,34
-2024,14,Ross,Dog,South Carolina,at Clemson,3,Win,6
-2024,15,AJ,Dog,Penn State,at Oregon,3.5,Loss,5
+2024,12,Ross,Favorite,Oregon,,13.5,Loss,11
+2024,13,AJ,Favorite,Ohio State,,10.5,Win,13
+2024,13,Adam,Favorite,Alabama,,13.5,Loss,35
+2024,13,Kev,Favorite,Colorado,,2.5,Loss,19
+2024,13,Ross,Favorite,Notre Dame,,14,Win,21
+2024,14,AJ,Dog,Baylor,,1.5,Win,30
+2024,14,Adam,Dog,Syracuse,,11,Win,15
+2024,14,Kev,Favorite,Arizona State,,8.5,Win,34
+2024,14,Ross,Dog,South Carolina,,3,Win,6
+2024,15,AJ,Dog,Penn State,,3.5,Loss,5
 2024,15,Adam,Over,Clemson/SMU,,55.5,Win,10
-2024,15,Kev,Favorite,Arizona State,vs Iowa State,1.5,Win,25
-2024,15,Ross,Dog,Clemson,at SMU,2.5,Win,6
+2024,15,Kev,Favorite,Arizona State,,1.5,Win,25
+2024,15,Ross,Dog,Clemson,,2.5,Win,6
 2025,0,Adam,Favorite,Kansas,,13.5,Win,11
 2025,0,AJ,Under,Stanford/Hawaii,,50,Win,7
 2025,0,Kev,Favorite,Kansas State,,3,Loss,6
 2025,0,Ross,Over,Western Kentucky/Sam Houston State,,60.5,Win,5
-2025,1,Kev,Dog,Baylor,vs Auburn,1,Loss,13
+2025,1,Kev,Dog,Baylor,,1,Loss,13
 2025,1,AJ,Favorite,Penn State,,43,Loss,8
 2025,1,Ross,Favorite,Georgia Tech,,3.5,Win,4
 2025,1,Adam,Dog,Toledo,,10,Win,2
 2025,2,Adam,Over,Fresno State/Oregon State,,45,Win,18
-2025,2,Ross,Dog,Western Kentucky,at Toledo,7,Loss,17
-2025,2,AJ,Dog,Iowa,at Iowa State,3.5,Win,1
-2025,2,Kev,Favorite,Syracuse,vs UConn,6.5,Win,1
-2025,3,Adam,Favorite,Liberty,at Bowling Green,5,Loss,15
-2025,3,Ross,Favorite,Houston,vs Colorado,4,Win,12
-2025,3,AJ,Dog,Arkansas,at Ole Miss,7,Win,1
-2025,3,Kev,Favorite,Georgia,at Tennessee,3.5,Loss,1
-2025,4,Adam,Favorite,Utah,vs Texas Tech,3.5,Loss,28
+2025,2,Ross,Dog,Western Kentucky,,7,Loss,17
+2025,2,AJ,Dog,Iowa,,3.5,Win,1
+2025,2,Kev,Favorite,Syracuse,,6.5,Win,1
+2025,3,Adam,Favorite,Liberty,,5,Loss,15
+2025,3,Ross,Favorite,Houston,,4,Win,12
+2025,3,AJ,Dog,Arkansas,,7,Win,1
+2025,3,Kev,Favorite,Georgia,,3.5,Loss,1
+2025,4,Adam,Favorite,Utah,,3.5,Loss,28
 2025,4,AJ,Favorite,FIU,,5,Loss,27
-2025,4,Ross,Favorite,Wisconsin,vs Maryland,10,Loss,27
-2025,4,Kev,Favorite,Buffalo,vs Troy,5.5,Loss,10
+2025,4,Ross,Favorite,Wisconsin,,10,Loss,27
+2025,4,Kev,Favorite,Buffalo,,5.5,Loss,10
 2025,5,Ross,Over,Ohio State/Washington,,51.5,Loss,22
-2025,5,Adam,Favorite,Penn State,vs Oregon,3.5,Loss,10
-2025,5,AJ,Dog,UCLA,at Northwestern,6.5,Win,4
-2025,5,Kev,Favorite,Indiana,at Iowa,7.5,Loss,3
-2025,6,AJ,Favorite,Texas,at Florida,5.5,Loss,14
-2025,6,Adam,Favorite,Baylor,vs Kansas State,6,Loss,5
-2025,6,Ross,Favorite,Alabama,vs Vanderbilt,10.5,Win,6
-2025,6,Kev,Favorite,Notre Dame,vs Boise State,20.5,Win,1
-2025,7,Kev,Favorite,Penn State,vs Northwestern,21,Loss,22
-2025,7,Ross,Favorite,Oregon,vs Indiana,7,Loss,17
+2025,5,Adam,Favorite,Penn State,,3.5,Loss,10
+2025,5,AJ,Dog,UCLA,,6.5,Win,4
+2025,5,Kev,Favorite,Indiana,,7.5,Loss,3
+2025,6,AJ,Favorite,Texas,,5.5,Loss,14
+2025,6,Adam,Favorite,Baylor,,6,Loss,5
+2025,6,Ross,Favorite,Alabama,,10.5,Win,6
+2025,6,Kev,Favorite,Notre Dame,,20.5,Win,1
+2025,7,Kev,Favorite,Penn State,,21,Loss,22
+2025,7,Ross,Favorite,Oregon,,7,Loss,17
 2025,7,AJ,Over,Navy/Temple,,52,Win,11
-2025,7,Adam,Favorite,Cincinnati,vs UCF,10.5,Loss,2
-2025,8,Ross,Dog,Purdue ,at Northwestern,3,Loss,16
+2025,7,Adam,Favorite,Cincinnati,,10.5,Loss,2
+2025,8,Ross,Dog,Purdue ,,3,Loss,16
 2025,8,Adam,Over,GaTech/Duke,,60,Loss,15
 2025,8,AJ,Over,Army/Tulane,,45,Loss,4
-2025,8,Kev,Dog,USC,at Notre Dame,10,Push,-
-2025,9,Adam,Favorite,Iowa State,vs BYU,2.5,Loss,17
-2025,9,AJ,Favorite,Miami,vs Stanford,29,Win,6
-2025,9,Ross,Dog,Tulsa,vs Temple,5.5,Win,5
-2025,9,Kev,Favorite,VA Tech,vs California,4.5,Win,4
+2025,8,Kev,Dog,USC,,10,Push,
+2025,9,Adam,Favorite,Iowa State,,2.5,Loss,17
+2025,9,AJ,Favorite,Miami,,29,Win,6
+2025,9,Ross,Dog,Tulsa,,5.5,Win,5
+2025,9,Kev,Favorite,VA Tech,,4.5,Win,4
 2025,10,Kev,Under,Navy/UNT,,65.5,Win,18
-2025,10,Adam,Dog,Rice,vs Memphis,14,Loss,10
-2025,10,Ross,Favorite,Tennessee,vs Oklahoma,3,Loss,9
-2025,10,AJ,Favorite,Arkansas,vs Mississippi State,4.5,Loss,8
-2025,11,Kev,Favorite,Texas Tech,vs BYU,10.5,Win,12
-2025,11,Ross,Favorite,Indiana,at Penn State,15,Loss,12
-2025,11,Adam,Favorite,Houston,at UCF,1,Win,2
-2025,11,AJ,Dog,Auburn,at Vanderbilt,6.5,Loss,1
-2025,12,Adam,Favorite,Georgia,vs Texas,6.5,Win,19
-2025,12,AJ,Dog,Clemson,at Louisville,2.5,Win,4
+2025,10,Adam,Dog,Rice,,14,Loss,10
+2025,10,Ross,Favorite,Tennessee,,3,Loss,9
+2025,10,AJ,Favorite,Arkansas,,4.5,Loss,8
+2025,11,Kev,Favorite,Texas Tech,,10.5,Win,12
+2025,11,Ross,Favorite,Indiana,,15,Loss,12
+2025,11,Adam,Favorite,Houston,,1,Win,2
+2025,11,AJ,Dog,Auburn,,6.5,Loss,1
+2025,12,Adam,Favorite,Georgia,,6.5,Win,19
+2025,12,AJ,Dog,Clemson,,2.5,Win,4
 2025,12,Kev,Over,Notre Dame/Pitt,,53.5,Loss,2
-2025,12,Ross,Favorite,USC,vs Iowa,6.5,Loss,2
-2025,13,Ross,Dog,UCLA,vs Washington,10.5,Loss,24
-2025,13,AJ,Dog,Cincinnati ,vs BYU,3,Loss,9
+2025,12,Ross,Favorite,USC,,6.5,Loss,2
+2025,13,Ross,Dog,UCLA,,10.5,Loss,24
+2025,13,AJ,Dog,Cincinnati ,,3,Loss,9
 2025,13,Kev,Under,Ohio State/Rutgers,,55.5,Win,5
-2025,13,Adam,Dog,TCU,at Houston,1,Win,4
-2025,14,Ross,Favorite,Indiana,at Purdue,28.5,Win,25
-2025,14,AJ,Favorite,Miami,at Pittsburgh,7,Win,24
+2025,13,Adam,Dog,TCU,,1,Win,4
+2025,14,Ross,Favorite,Indiana,,28.5,Win,25
+2025,14,AJ,Favorite,Miami,,7,Win,24
 2025,14,Kev,Over,Miami/Pitt,,49,Loss,4
-2025,14,Adam,Favorite,BYU,vs UCF,17.5,Win,3
-2025,15,Ross,Favorite,North Texas,at Tulane,2,Loss,15
-2025,15,AJ,Favorite,Ohio State,vs Indiana,4,Loss,7
+2025,14,Adam,Favorite,BYU,,17.5,Win,3
+2025,15,Ross,Favorite,North Texas,,2,Loss,15
+2025,15,AJ,Favorite,Ohio State,,4,Loss,7
 2025,15,Kev,Under,Bama/Georgia,,49,Win,14
 2025,15,Adam,Over,Indiana/Ohio State,,47,Loss,24
 2026,0,Ross,Under,TCU/UNC,,47,Win,
 2026,0,AJ,Favorite,USC,,38.5,Loss,
 2026,0,Kev,Favorite,North Dakota State,,6.5,Win,
 2026,0,Adam,Favorite,UNLV,,4,Loss,
-2026,1,Ross,Favorite,SMU,at Florida State,3,Push,-
-2026,1,AJ,Favorite,Miami,at Stanford,23.5,Win,16
-2026,1,Kev,Favorite,Alabama,vs East Carolina,27.5,Win,11
-2026,1,Adam,Favorite,Okie State,at Tulsa,13.5,Loss,28
-2026,2,Ross,Favorite,Iowa,vs Iowa State,14,Loss,11
-2026,2,AJ,Dog,UCF,at Pittsburgh,7,Win,2
-2026,2,Kev,Favorite,Ohio,vs Jacksonville State,2.5,Loss,1
-2026,2,Adam,Favorite,Illinois,vs Duke,6,Loss,10
+2026,1,Ross,Favorite,SMU,,3,Push,
+2026,1,AJ,Favorite,Miami,,23.5,Win,
+2026,1,Kev,Favorite,Alabama,,27.5,Win,
+2026,1,Adam,Favorite,Okie State,,13.5,Loss,
+2026,2,Ross,Favorite,Iowa,,14,,
+2026,2,AJ,Dog,UCF,,7,,
+2026,2,Kev,Favorite,Ohio,,2.5,,
+2026,2,Adam,Favorite,Illinois,,6,,
