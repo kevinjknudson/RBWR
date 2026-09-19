@@ -27,11 +27,18 @@ on:
 permissions:
   contents: write
 
+# Two runs overlapping is what causes a rejected push. Queue them instead.
+concurrency:
+  group: sync-picks
+  cancel-in-progress: false
+
 jobs:
   sync:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - uses: actions/setup-python@v5
         with:
@@ -80,10 +87,20 @@ jobs:
         run: |
           git config user.name picks-bot
           git config user.email picks-bot@users.noreply.github.com
-          git add picks.csv enriched-cache.csv
+          git add picks.csv enriched-cache.csv 2>/dev/null || git add picks.csv
           if git diff --staged --quiet; then
             echo "No change since last sync."
-          else
-            git commit -m "Sync picks from sheet"
-            git push
+            exit 0
           fi
+          git commit -m "Sync picks from sheet"
+          for attempt in 1 2 3; do
+            if git push; then
+              echo "pushed on attempt $attempt"
+              exit 0
+            fi
+            echo "push rejected — someone else committed first, rebasing (attempt $attempt)"
+            git pull --rebase --autostash origin main || {
+              echo "rebase failed, leaving main alone"; exit 1; }
+          done
+          echo "still could not push after 3 attempts"
+          exit 1
