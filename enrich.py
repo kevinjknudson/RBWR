@@ -11,6 +11,10 @@ Scores come from the CollegeFootballData API, which needs a free key:
   2. add it to the repo as a secret named CFBD_API_KEY
 
     python3 enrich.py picks.csv            # fill in and save
+
+Anything it works out is remembered in enriched-cache.csv, so a row is only
+ever looked up once. Old seasons are never re-fetched just because their
+opponent column is empty — the site already knows those.
     python3 enrich.py picks.csv --dry-run  # report only, change nothing
     python3 enrich.py --self-test          # check the arithmetic, no network
 """
@@ -182,11 +186,36 @@ def enrich(path, dry=False):
     C_TYPE, C_TEAM, C_PTS = col("type"), col("team"), col("points")
     C_YEAR, C_WEEK, C_NAME = col("year"), col("week"), col("name")
     def blank(r, k): return bool(k) and not (r.get(k) or "").strip()
+    def rowkey(r): return f"{r.get(C_YEAR,'')}-{r.get(C_WEEK,'')}-{r.get(C_NAME,'')}"
+
+    # anything worked out on a previous run
+    cache, cpath = {}, os.path.join(os.path.dirname(path) or ".", "enriched-cache.csv")
+    if os.path.exists(cpath):
+        for c in csv.DictReader(open(cpath, newline="")):
+            cache[c["key"]] = c
+    applied = 0
+    for r in rows:
+        c = cache.get(rowkey(r))
+        if not c:
+            continue
+        for col, fld in ((C_RESULT, "result"), (C_DIFF, "diff"), (C_OPP, "opponent")):
+            if col and blank(r, col) and (c.get(fld) or "").strip():
+                r[col] = c[fld]; applied += 1
+    if applied:
+        print(f"{applied} cell(s) restored from the cache")
+
+    years_in_file = [int(r[C_YEAR]) for r in rows
+                     if str(r.get(C_YEAR, "")).strip().isdigit()]
+    CURRENT = max(years_in_file) if years_in_file else None
+
+    # A missing opponent is only worth an API call for the current season.
+    # Earlier seasons are already covered by the map baked into the site.
     todo = [r for r in rows
             if blank(r, C_RESULT) or blank(r, C_DIFF)
             or (C_OPP and blank(r, C_OPP)
-                and (r.get(C_TYPE) or "") not in ("Over", "Under"))]
-    print(f"{len(rows)} rows · {len(todo)} with something missing")
+                and (r.get(C_TYPE) or "") not in ("Over", "Under")
+                and str(r.get(C_YEAR, "")).strip() == str(CURRENT))]
+    print(f"{len(rows)} rows · {len(todo)} still need a lookup")
     if not todo:
         return 0
 
@@ -195,6 +224,14 @@ def enrich(path, dry=False):
         print("  ! CFBD_API_KEY is not set — nothing can be looked up", file=sys.stderr)
         return 0
     years = {int(r[C_YEAR]) for r in todo if str(r.get(C_YEAR, "")).strip().isdigit()}
+    if not years:
+        print("nothing to look up — no API calls made")
+        if applied and not dry:
+            with open(path, "w", newline="") as f:
+                w = csv.DictWriter(f, fieldnames=cols); w.writeheader(); w.writerows(rows)
+        return applied
+    print(f"seasons to fetch: {sorted(years)}  ({len(years)} API call"
+          f"{'' if len(years)==1 else 's'})")
     games = completed_games(years, key)
     print(f"{len(games)} finished games to match against")
     C = {"year": C_YEAR, "week": C_WEEK, "team": C_TEAM, "type": C_TYPE,
@@ -242,11 +279,21 @@ def enrich(path, dry=False):
         print(f"  ✓ {r[C_NAME]:5s} {raw:26s} {bet:9s} {pts:>6} → "
               f"{res:5s} by {diff:3s} {opp}   [{', '.join(wrote)}]")
 
-    if filled and not dry:
+    if (filled or applied) and not dry:
         with open(path, "w", newline="") as f:
             w = csv.DictWriter(f, fieldnames=cols)
             w.writeheader(); w.writerows(rows)
-        print(f"wrote {filled} result{'' if filled == 1 else 's'} to {path}")
+        print(f"wrote {filled} lookup{'' if filled == 1 else 's'} to {path}")
+        for r in rows:
+            vals = {"result": (r.get(C_RESULT) or "").strip(),
+                    "diff":   (r.get(C_DIFF) or "").strip(),
+                    "opponent": (r.get(C_OPP) or "").strip() if C_OPP else ""}
+            if any(vals.values()):
+                cache[rowkey(r)] = dict(key=rowkey(r), **vals)
+        with open(cpath, "w", newline="") as f:
+            w = csv.DictWriter(f, fieldnames=["key", "result", "diff", "opponent"])
+            w.writeheader(); w.writerows(cache[k] for k in sorted(cache))
+        print(f"cache now holds {len(cache)} rows")
     elif dry:
         print(f"dry run — {filled} row(s) would have been filled")
     return filled
