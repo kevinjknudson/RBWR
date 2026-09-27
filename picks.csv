@@ -379,7 +379,7 @@ year,week,name,type,team,Opponent,points,result,diff
 2026,3,AJ,Over,USC/Rutgers,,59.5,Win,18
 2026,3,Kev,Under,Colorado/Northwestern,,48.5,Win,1
 2026,3,Adam,Dog,Houston,at Texas Tech,7.5,Win,6
-2026,4,Ross,Over,Oregon/USC,,61,,
-2026,4,AJ,Favorite,Washington,,10,,
+2026,4,Ross,Over,Oregon/USC,,61,Win,7
+2026,4,AJ,Favorite,Washington,vs Minnesota,10,Loss,13
 2026,4,Kev,Over,Indiana/Northwestern,,49,Win,3
 2026,4,Adam,Dog,California,vs Clemson,0.5,Loss,14
