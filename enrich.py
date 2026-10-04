@@ -18,7 +18,7 @@ opponent column is empty — the site already knows those.
     python3 enrich.py picks.csv --dry-run  # report only, change nothing
     python3 enrich.py --self-test          # check the arithmetic, no network
 """
-import csv, sys, os, json, math, datetime, urllib.request, urllib.error
+import csv, sys, os, json, math, datetime, unicodedata, urllib.request, urllib.error
 
 API = "https://api.collegefootballdata.com/games"
 # Games are found by season and week, not by how recently they were played,
@@ -40,9 +40,18 @@ ALIAS = {
 }
 
 def norm(s):
-    s = (s or "").strip().lower()
-    s = s.replace("&", "and").replace(".", "").replace("'", "")
-    s = ALIAS.get(s, s)
+    """Fold a team name down to something two sources can agree on.
+
+    The feed writes schools the way they do: San Jos\u00e9 State, Hawai\u02bbi,
+    Texas A&M. The sheet writes them the way you type them. Accents, okinas
+    and apostrophes are stripped on both sides so the two meet in the middle.
+    """
+    s = unicodedata.normalize("NFKD", (s or "").strip().lower())
+    s = "".join(ch for ch in s if not unicodedata.combining(ch))
+    s = s.replace("&", "and")
+    for ch in ".'\u2019\u02bb\u0060\u00b4-":
+        s = s.replace(ch, "")
+    s = ALIAS.get(" ".join(s.split()), " ".join(s.split()))
     return " ".join(s.split())
 
 def cover(bet, points, margin=None, total=None):
