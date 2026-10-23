@@ -395,7 +395,7 @@ year,week,name,type,team,Opponent,points,result,diff
 2026,7,AJ,Under,Texas/Florida,vs Penn State,51.5,Win,1
 2026,7,Kev,Over,Appalachian State/Coastal Carolina,vs Alabama,48.5,Win,19
 2026,7,Adam,Under,Kansas/Kansas State,vs Oklahoma State,55.5,Loss,4
-2026,7,Ross,Dog,Kansas,at BYU,2.5,Loss,15
-2026,7,AJ,Dog,Michigan,vs Penn State,7,Win,1
-2026,7,Kev,Dog,Tennessee,vs Alabama,2.5,Win,19
-2026,7,Adam,Dog,Houston,vs Oklahoma State,7,Loss,4
+2026,8,Ross,Dog,Kansas,,2.5,,
+2026,8,AJ,Dog,Michigan,,7,,
+2026,8,Kev,Dog,Tennessee,,2.5,,
+2026,8,Adam,Dog,Houston,,7,,
