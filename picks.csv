@@ -400,6 +400,6 @@ year,week,name,type,team,Opponent,points,result,diff
 2026,8,Kev,Dog,Tennessee,at South Carolina,2.5,Loss,1
 2026,8,Adam,Dog,Houston,at Utah,7,Loss,1
 2026,9,Ross,Under,Michigan/Rutgers,,45.5,Loss,4
-2026,9,AJ,Over,UCLA/Nevada,,43.5,,
+2026,9,AJ,Over,UCLA/Nevada,,43.5,Loss,17
 2026,9,Kev,Over,UCF/ Baylor,,48.5,Win,2
-2026,9,Adam,Favorite,Air Force,,0.5,,
+2026,9,Adam,Favorite,Air Force,vs UConn,0.5,Win,9
