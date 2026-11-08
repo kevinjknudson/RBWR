@@ -412,7 +412,7 @@ input[type=search]:focus{outline:2px solid var(--bone);outline-offset:1px}
   <div class="wrap">
     <div class="topbar">
       <b>RBWR</b>
-      <span id="stamp">Weekly parlay ledger</span><span style="color:var(--line2)">build 36</span>
+      <span id="stamp">Weekly parlay ledger</span><span style="color:var(--line2)">build 37</span>
     </div>
   </div>
   <div class="wrap hero">
@@ -1778,11 +1778,26 @@ function weekNugget(legs,y,w){
   const key = letter(legs);
   const by = r => PLAYERS.filter(n=>{const p=legs.find(x=>x.n===n); return p && p.r===r;});
   const winners=by("W"), pushes=by("P"), losers=by("L");
-  const prior=allWeeks().filter(x=>weekDone(x.l) && (x.y<y || (x.y===y&&x.w<w)) && letter(x.l)===key)
-    .sort((a,b)=>b.y-a.y||b.w-a.w);
-  const freq = prior.length
-    ? `This result has occurred ${prior.length} time${prior.length===1?"":"s"}, most recently in Week ${prior[0].w}, ${prior[0].y}`
-    : `This result has never occurred before`;
+  // Every finished week, this one included, so the counts below agree with
+  // the week-by-week detail no matter which week the card is shown for.
+  const done=allWeeks().filter(x=>weekDone(x.l));
+  const tally=new Map();
+  for(const x of done){ const k=letter(x.l); tally.set(k,(tally.get(k)||0)+1); }
+  const others=done.filter(x=>letter(x.l)===key && !(x.y===y&&x.w===w));
+  const before=others.filter(x=>x.y<y || (x.y===y&&x.w<w)).sort((a,b)=>b.y-a.y||b.w-a.w);
+  const nOther=others.length;
+  const ord=n=>{ const t=n%100; if(t>=11&&t<=13) return n+"th";
+    return n+({1:"st",2:"nd",3:"rd"}[n%10]||"th"); };
+  const mine=tally.get(key)||1;
+  const rank=1+[...tally.values()].filter(c=>c>mine).length;     // 1 = most common
+  const tied=[...tally.values()].filter(c=>c===mine).length>1;
+  const pct=Math.round(mine/done.length*100);
+  const popular=`It\u2019s ${tied?"tied for ":"the "}${rank===1?"":ord(rank)+" "}most popular result, occurring in ${pct}% of weeks.`;
+  const seen = nOther
+    ? `This result has also occurred ${nOther} other time${nOther===1?"":"s"}`
+        + (before.length ? `, most recently in Week ${before[0].w}, ${before[0].y}` : "") + "."
+    : `This is the only time this result has occurred.`;
+  const freq = `${seen} ${popular}`;
 
   const seg = ns => ns.flatMap((n,i)=> i ? [{t:", ",c:null},{t:n,c:COLOR[n]}] : [{t:n,c:COLOR[n]}]);
   const dash = [{t:"\u2014",c:null}];
